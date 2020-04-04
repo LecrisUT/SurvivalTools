@@ -31,20 +31,16 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="1SettingsHelper">
-      <HintPath>..\..\1.0\Assemblies\1SettingsHelper.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System.Runtime.InteropServices.RuntimeInformation" />
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="Alerts\Alert_SurvivalToolNeedsReplacing.cs" />
     <Compile Include="Alerts\Alert_ColonistNeedsSurvivalTool.cs" />
     <Compile Include="DefOfs\ST_ConceptDefOf.cs" />
     <Compile Include="DefOfs\ST_RecipeDefOf.cs" />
     <Compile Include="DefOfs\ST_ThingCategoryDefOf.cs" />
+    <Compile Include="DefOfs\AutoPatch.cs" />
     <Compile Include="ToolAssignments\Dialog_ManageSurvivalToolAssignments.cs" />
     <Compile Include="Harmony\Patch_Mineable_Notify_TookMiningDamage.cs" />
     <Compile Include="Harmony\Patch_MassUtility.cs" />
@@ -92,11 +88,25 @@
     <Compile Include="AI\WorkGiver_FellTrees.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="SurvivalTools.csproj.user" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="1SettingsHelper, Version=0.19.1.36477, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\1.1\Assemblies\1SettingsHelper.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Krafs.Rimworld.Ref">
-      <Version>1.1.2571</Version>
+      <Version>1.1.2589</Version>
     </PackageReference>
     <PackageReference Include="Lib.Harmony">
-      <Version>2.0.0.8</Version>
+      <Version>2.0.0.9</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
+    </PackageReference>
+    <PackageReference Include="UnlimitedHugs.Rimworld.HugsLib">
+      <Version>7.1.4</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
     </PackageReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
