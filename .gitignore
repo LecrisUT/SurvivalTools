@@ -22,3 +22,4 @@ Source/SurvivalTools.code-workspace
 1.1/Assemblies/SurvivalTools.pdb
 1.1/Assemblies/*
 *.dll
+Source/SurvivalTools/obj/Release/build.force
