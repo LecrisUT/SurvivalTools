@@ -20,6 +20,10 @@ Source/SurvivalTools/obj/Debug/SurvivalTools.csprojAssemblyReference.cache
 Source/SurvivalTools/obj/Release/SurvivalTools.csproj.FileListAbsolute.txt
 Source/SurvivalTools.code-workspace
 1.1/Assemblies/SurvivalTools.pdb
-1.1/Assemblies/*
-*.dll
+1.1/Assemblies/*dll
+1.0/Assemblies/*.dll
+!1.0/Assemblies/1SettingsHelper.dll
+!1.1/Assemblies/1SettingsHelper.dll
 Source/SurvivalTools/obj/Release/build.force
+Source/SurvivalTools/obj/Debug/SurvivalTools.dll
+Source/SurvivalTools/obj/Release/SurvivalTools.dll
