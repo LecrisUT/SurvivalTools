@@ -37,6 +37,7 @@
   <ItemGroup>
     <Compile Include="Alerts\Alert_SurvivalToolNeedsReplacing.cs" />
     <Compile Include="Alerts\Alert_ColonistNeedsSurvivalTool.cs" />
+    <Compile Include="DefOfs\MiscDefOf.cs" />
     <Compile Include="DefOfs\ST_ConceptDefOf.cs" />
     <Compile Include="DefOfs\ST_RecipeDefOf.cs" />
     <Compile Include="DefOfs\ST_ThingCategoryDefOf.cs" />

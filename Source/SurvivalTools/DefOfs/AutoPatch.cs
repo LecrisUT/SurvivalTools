@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using RimWorld;
 using Verse;
-using Verse.AI;
 using System.Reflection;
 
 namespace SurvivalTools
@@ -16,8 +15,8 @@ namespace SurvivalTools
     {
         public StatDef oldStat;
         public StatDef newStat;
-        public Type oldStatType = typeof(StatDefOf);
-        public Type newStatType = typeof(ST_StatDefOf);
+        public Type oldStatType;
+        public Type newStatType;
         // Patch jobDrivers to use ST stats
         private bool patchAllJobDrivers = true;
         private List<Type> JobDriverExemption = new List<Type>();
@@ -43,6 +42,13 @@ namespace SurvivalTools
                 skip = WorkGiverExemption.Contains(wg) ? true : false;
             else
                 skip = WorkGiverList.Contains(wg) ? false : true;
+        }
+        public bool CheckIfValidPatch()
+        {
+            if (oldStat is null) return false;
+            if (!patchAllJobDrivers && (JobDriverList.Count == 0)) return false;
+            if (!patchAllWorkGivers && (WorkGiverList.Count == 0)) return false;
+            return true;
         }
     }
     public class JobDriverPatch
