@@ -9,6 +9,7 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using Verse.AI;
+//using TurretExtensions;
 
 namespace SurvivalTools.HarmonyPatches
 {
@@ -20,7 +21,12 @@ namespace SurvivalTools.HarmonyPatches
         public override void DefsLoaded()
         {
             // Automatic patches
+            StringBuilder Test = new StringBuilder("Test 0\n");
+            foreach (RaceExemption exemption in MiscDef.IgnoreRaceList)
+                Test.AppendLine($"{exemption.defName} : {exemption.race} : {exemption.all}");
+            Logger.Message(Test.ToString());
             harmony.PatchAll(Assembly.GetExecutingAssembly());
+            AutoPatchInitialize();
             PatchJobDrivers();
             FindJobDefs();
             PatchWorkGivers();
@@ -52,14 +58,16 @@ namespace SurvivalTools.HarmonyPatches
             //        Log.Error("Survival Tools - Could not find CombatExtended.CompInventory type to patch");
             //}
         }
-
+        #region AutoPatch_Properties
         public static bool FoundWorker = false;
         public static List<StatPatchDef> FoundPatch = new List<StatPatchDef>();
         public static List<MethodInfo> auxMethods;
         public static List<StatPatchDef> auxPatch = new List<StatPatchDef>();
         private static readonly Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+        public static List<Type> JobDefOfTypes;
         private static MethodInfo TryDegradeTool =>
            AccessTools.Method(typeof(SurvivalToolUtility), nameof(SurvivalToolUtility.TryDegradeTool), new[] { typeof(Pawn), typeof(StatDef) });
+        #endregion
         #region AutoPatch_Transpiler_Methods
         private static IEnumerable<CodeInstruction> Transpile_Replace_Stat(IEnumerable<CodeInstruction> instructions)
         {
@@ -364,7 +372,15 @@ namespace SurvivalTools.HarmonyPatches
                         if (jobDef.driverClass.IsSubclassOf(jdPatch.driver) || jobDef.driverClass == jdPatch.driver)
                         {
                             found = true;
-                            patch.FoundJobDef.Add(new JobDefPatch(jobDef, AccessTools.Field(typeof(JobDefOf), jobDef.defName)));
+                            foreach (Type defOfType in JobDefOfTypes)
+                            {
+                                FieldInfo fieldInfo = AccessTools.Field(defOfType, jobDef.defName);
+                                if (fieldInfo != null)
+                                {
+                                    patch.FoundJobDef.Add(new JobDefPatch(jobDef, fieldInfo));
+                                    break;
+                                }
+                            }
                             break;
                         }
                     if (found)
@@ -441,6 +457,50 @@ namespace SurvivalTools.HarmonyPatches
                     }
         }
         #endregion
+        #region Utility
+        private void AutoPatchInitialize()
+        {
+            foreach (StatPatchDef patch in AutoPatch.StatsToPatch)
+                if (!patch.CheckIfValidPatch())
+                {
+                    Logger.Error($"Invalid AutoPatch: {patch} ({patch.modContentPack?.Name}) : {patch.oldStat?.defName}");
+                    AutoPatch.StatsToPatch.Remove(patch);
+                }
+            List<Type> allDefsOfs = new List<Type>();
+            foreach (Assembly assembly in assemblies)
+                allDefsOfs.AddRange(assembly.GetTypes().Where(t => t.HasAttribute<DefOf>()));
+            JobDefOfTypes = allDefsOfs.Where(t => t.GetFields().Where(tt => tt.FieldType == typeof(JobDef)).Count() > 0).ToList();
+            List<Type> StatDefOfTypes = allDefsOfs.Where(t => t.GetFields().Where(tt => tt.FieldType == typeof(StatDef)).Count() > 0).ToList();
+            foreach (StatPatchDef patch in AutoPatch.StatsToPatch)
+            {
+                if (patch.oldStatType is null)
+                {
+                    List<Type> foundTypes = StatDefOfTypes.Where(t => AccessTools.Field(t, patch.oldStat.defName) != null).ToList();
+                    if (foundTypes.Count > 1)
+                    {
+                        StringBuilder message = new StringBuilder("Please report this back to us: ");
+                        message.AppendLine("AutoPatchInitialize : Found more than one stat with the same name");
+                        foreach (Type type in foundTypes)
+                            message.AppendLine($"Type: {type} | oldStat: {patch.oldStat} | FieldInfo: {AccessTools.Field(type, patch.oldStat.defName)}");
+                        Logger.Error(message.ToString());
+                    }
+                    patch.oldStatType = foundTypes[0];
+                }
+                if (patch.newStatType is null && patch.newStat != null)
+                {
+                    List<Type> foundTypes = StatDefOfTypes.Where(t => AccessTools.Field(t, patch.newStat.defName) != null).ToList();
+                    if (foundTypes.Count > 1)
+                    {
+                        StringBuilder message = new StringBuilder("Please report this back to us: ");
+                        message.AppendLine("AutoPatchInitialize : Found more than one stat with the same name");
+                        foreach (Type type in foundTypes)
+                            message.AppendLine($"Type: {type} | oldStat: {patch.newStat} | FieldInfo: {AccessTools.Field(type, patch.newStat.defName)}");
+                        Logger.Error(message.ToString());
+                    }
+                    patch.newStatType = foundTypes[0];
+                }
+            }
+        }
         private void PrintPatchDebug()
         {
             StringBuilder debugString = new StringBuilder($"Stats auto patched:\n");
@@ -472,5 +532,6 @@ namespace SurvivalTools.HarmonyPatches
             }
             Logger.Message(debugString.ToString(), false);
         }
+        #endregion
     }
 }

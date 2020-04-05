@@ -21,10 +21,20 @@ namespace SurvivalTools
         {
             if (req.Thing is Pawn pawn && pawn.CanUseSurvivalTools())
             {
+                //if (pawn.HasSurvivalToolFor(parentStat, out SurvivalTool tool, out float statFactor))
+                //    val *= statFactor;
+                //else
+                //    val *= NoToolStatFactor;
                 if (pawn.HasSurvivalToolFor(parentStat, out SurvivalTool tool, out float statFactor))
+                {
                     val *= statFactor;
+                    Log.Message($"Test 0 [patched] : {pawn} : {pawn.Name} : {parentStat}");
+                }
                 else
+                {
                     val *= NoToolStatFactor;
+                    Log.Message($"Test 1 [noPatched] : {pawn} : {pawn.Name} : {parentStat}");
+                }
             }
         }
 

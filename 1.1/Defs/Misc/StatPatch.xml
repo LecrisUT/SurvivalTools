@@ -4,17 +4,25 @@
         <oldStat>MiningSpeed</oldStat>
         <newStat>DiggingSpeed</newStat>
         <patchAllJobDrivers>true</patchAllJobDrivers>
-        <JobDriverExemption>
-            <li>JobDriver_BuildSnowman</li>
-        </JobDriverExemption>
         <patchAllWorkGivers>true</patchAllWorkGivers>
     </SurvivalTools.StatPatchDef>
     
+    <SurvivalTools.StatPatchDef>
+        <defName>PatchMiningYield</defName>
+        <oldStat>MiningYield</oldStat>
+        <newStat>MiningYieldDigging</newStat>
+        <patchAllJobDrivers>true</patchAllJobDrivers>
+        <patchAllWorkGivers>true</patchAllWorkGivers>
+    </SurvivalTools.StatPatchDef>
+
     <SurvivalTools.StatPatchDef>
         <defName>PatchConstruction</defName>
         <oldStat>ConstructionSpeed</oldStat>
         <patchAllJobDrivers>true</patchAllJobDrivers>
         <patchAllWorkGivers>true</patchAllWorkGivers>
+        <JobDriverExemption>
+            <li>JobDriver_BuildSnowman</li>
+        </JobDriverExemption>
     </SurvivalTools.StatPatchDef>
 
     <SurvivalTools.StatPatchDef>
