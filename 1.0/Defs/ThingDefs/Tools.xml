@@ -1,7 +1,8 @@
 <Defs>
+    <!-- simple Tools -->
 
-    <ThingDef Name="SurvivalToolBasic" ParentName="BaseSurvivalTool" Abstract="True">
-        <techLevel>Neolithic</techLevel>
+	<ThingDef Name="SurvivalToolBasic" ParentName="BaseSurvivalTool" Abstract="True">
+        <techLevel>Medieval</techLevel>
         <statBases>
             <WorkToMake>1800</WorkToMake>
         </statBases>
@@ -41,9 +42,7 @@
             </li>
         </comps>
     </ThingDef>
-
-    <!-- Tools -->
-
+	
     <ThingDef ParentName="SurvivalToolBasic">
         <defName>SurvivalTools_Axe</defName>
         <label>axe</label>
@@ -59,7 +58,7 @@
         <modExtensions>
             <li Class="SurvivalTools.SurvivalToolProperties">
                 <baseWorkStatFactors>
-                    <TreeFellingSpeed>1</TreeFellingSpeed>
+                    <TreeFellingSpeed>0.8</TreeFellingSpeed>
                 </baseWorkStatFactors>
                 <defaultSurvivalToolAssignmentTags>
                     <li>PlantWorker</li>
@@ -103,7 +102,7 @@
         <modExtensions>
             <li Class="SurvivalTools.SurvivalToolProperties">
                 <baseWorkStatFactors>
-                    <DiggingSpeed>1</DiggingSpeed>
+                    <DiggingSpeed>0.8</DiggingSpeed>
                     <MiningYieldDigging>1</MiningYieldDigging>
                 </baseWorkStatFactors>
                 <defaultSurvivalToolAssignmentTags>
@@ -147,7 +146,7 @@
         <modExtensions>
             <li Class="SurvivalTools.SurvivalToolProperties">
                 <baseWorkStatFactors>
-                    <ConstructionSpeed>1</ConstructionSpeed>
+                    <ConstructionSpeed>0.8</ConstructionSpeed>
                 </baseWorkStatFactors>
                 <defaultSurvivalToolAssignmentTags>
                     <li>Constructor</li>
@@ -190,7 +189,7 @@
         <modExtensions>
             <li Class="SurvivalTools.SurvivalToolProperties">
                 <baseWorkStatFactors>
-                    <PlantHarvestingSpeed>1</PlantHarvestingSpeed>
+                    <PlantHarvestingSpeed>0.8</PlantHarvestingSpeed>
                 </baseWorkStatFactors>
                 <defaultSurvivalToolAssignmentTags>
                     <li>PlantWorker</li>
@@ -218,6 +217,283 @@
         </tools>
     </ThingDef>
 
+    <!-- industrial tools -->
+	
+	<ThingDef Name="SurvivalToolIndustrial" ParentName="BaseSurvivalTool" Abstract="True">
+        <techLevel>Industrial</techLevel>
+        <statBases>
+            <WorkToMake>5000</WorkToMake>
+        </statBases>
+        <stuffCategories>
+            <li>Metallic</li>
+        </stuffCategories>
+        <smeltable>true</smeltable>
+        <recipeMaker>
+            <workSpeedStat>SmithingSpeed</workSpeedStat>
+            <workSkill>Crafting</workSkill>
+            <effectWorking>Smith</effectWorking>
+            <soundWorking>Recipe_Smith</soundWorking>
+            <defaultIngredientFilter>
+                <categories>
+                    <li>Root</li>
+                </categories>
+                <disallowedThingDefs>
+                    <li>Silver</li>
+                    <li>Gold</li>
+                </disallowedThingDefs>
+            </defaultIngredientFilter>
+            <unfinishedThingDef>UnfinishedWeapon</unfinishedThingDef>
+        </recipeMaker>
+        <thingCategories>
+            <li>SurvivalToolsIndustrial</li>
+        </thingCategories>
+        <comps>
+            <li>
+                <compClass>CompQuality</compClass>
+            </li>
+        </comps>
+    </ThingDef>
+
+	<ThingDef ParentName="SurvivalToolIndustrial">
+        <defName>SurvivalTools_Chainsaw</defName>
+        <label>Chainsaw</label>
+        <description>Effective at chopping down trees with its spinning chain. This can also be used as a brutal melee weapon in a pinch.</description>
+        <graphicData>
+            <texPath>Things/Item/Equipment/Tool/Chainsaw</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+			<shaderType>CutoutComplex</shaderType>	 
+        </graphicData>
+        <statBases>
+            <Mass>9</Mass>
+        </statBases>
+		<costStuffCount>20</costStuffCount>
+        <stuffCategories>
+            <li>Metallic</li>
+        </stuffCategories>
+		<costList>
+		  <ComponentIndustrial>1</ComponentIndustrial>
+		  <Steel>10</Steel>
+		  <Chemfuel>55</Chemfuel>
+		</costList>
+        <equippedStatOffsets>
+            <MoveSpeed>-0.3</MoveSpeed>
+        </equippedStatOffsets>
+        <modExtensions>
+            <li Class="SurvivalTools.SurvivalToolProperties">
+                <baseWorkStatFactors>
+                    <TreeFellingSpeed>1.5</TreeFellingSpeed>
+                </baseWorkStatFactors>
+                <defaultSurvivalToolAssignmentTags>
+                    <li>PlantWorker</li>
+                </defaultSurvivalToolAssignmentTags>
+            </li>
+        </modExtensions>
+        <tools>
+            <li>
+                <label>handle</label>
+                <capacities>
+                    <li>Blunt</li>
+                </capacities>
+                <power>14</power>
+                <cooldownTime>2.5</cooldownTime>
+            </li>
+            <li>
+                <label>chain</label>
+                <labelUsedInLogging>false</labelUsedInLogging>
+                <capacities>
+                    <li>Cut</li>
+                </capacities>
+                <power>10.1</power>
+                <cooldownTime>1.1</cooldownTime>
+            </li>
+        </tools>
+        <recipeMaker>
+            <recipeUsers>
+                <li>TableMachining</li>
+            </recipeUsers>
+            <researchPrerequisite>ChainsawResearch</researchPrerequisite>
+        </recipeMaker>
+    </ThingDef>
+	
+	<ThingDef ParentName="SurvivalToolIndustrial">
+        <defName>SurvivalTools_Jackhammer</defName>
+        <label>Jackhammer</label>
+        <description>Effective at mining stones. Not really useful as a melee weapon.</description>
+        <graphicData>
+            <texPath>Things/Item/Equipment/Tool/JackHammer</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+			<shaderType>CutoutComplex</shaderType>	 
+        </graphicData>
+        <statBases>
+            <Mass>11</Mass>
+        </statBases>
+		<costStuffCount>16</costStuffCount>
+		<costList>
+		  <ComponentIndustrial>2</ComponentIndustrial>
+		  <Steel>40</Steel>
+		</costList>
+        <equippedStatOffsets>
+            <MoveSpeed>-0.32</MoveSpeed>
+        </equippedStatOffsets>
+        <modExtensions>
+            <li Class="SurvivalTools.SurvivalToolProperties">
+                <baseWorkStatFactors>
+                    <DiggingSpeed>1.5</DiggingSpeed>
+                    <MiningYieldDigging>1.3</MiningYieldDigging>
+                </baseWorkStatFactors>
+                <defaultSurvivalToolAssignmentTags>
+                    <li>Miner</li>
+                </defaultSurvivalToolAssignmentTags>
+            </li>
+        </modExtensions>
+        <tools>
+            <li>
+                <label>handle</label>
+                <capacities>
+                    <li>Blunt</li>
+                </capacities>
+                <power>9</power>
+                <cooldownTime>2.5</cooldownTime>
+            </li>
+            <li>
+                <label>head</label>
+                <labelUsedInLogging>false</labelUsedInLogging>
+                <capacities>
+                    <li>Poke</li>
+                </capacities>
+                <power>14.1</power>
+				<armorPenetration>0.3</armorPenetration>
+                <cooldownTime>2.9</cooldownTime>
+            </li>
+        </tools>
+        <recipeMaker>
+            <recipeUsers>
+                <li>TableMachining</li>
+            </recipeUsers>
+            <researchPrerequisite>GasCompressionResearch</researchPrerequisite>
+        </recipeMaker>
+    </ThingDef>
+	
+	<ThingDef ParentName="SurvivalToolIndustrial">
+        <defName>SurvivalTools_Shovel</defName>
+        <label>Shovel</label>
+		<techLevel>Medieval</techLevel>
+        <description>Effective at digging out plants. Effective as melee weapon. Empreror approves.</description>
+        <graphicData>
+            <texPath>Things/Item/Equipment/Tool/Shovel</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+			<shaderType>CutoutComplex</shaderType>	 
+        </graphicData>
+        <statBases>
+            <Mass>5</Mass>
+        </statBases>
+		<costStuffCount>15</costStuffCount>
+        <stuffCategories>
+            <li>Metallic</li>
+        </stuffCategories>
+		<costList>
+		  <WoodLog>20</WoodLog>
+		</costList>
+        <equippedStatOffsets>
+            <MoveSpeed>-0.1</MoveSpeed>
+        </equippedStatOffsets>
+        <modExtensions>
+            <li Class="SurvivalTools.SurvivalToolProperties">
+             <baseWorkStatFactors>
+                    <PlantHarvestingSpeed>1.3</PlantHarvestingSpeed>
+                </baseWorkStatFactors>
+                <defaultSurvivalToolAssignmentTags>
+                    <li>PlantWorker</li>
+                </defaultSurvivalToolAssignmentTags>
+            </li>
+        </modExtensions>
+        <tools>
+            <li>
+                <label>handle</label>
+                <capacities>
+                    <li>Poke</li>
+                </capacities>
+                <power>10</power>
+                <cooldownTime>2.1</cooldownTime>
+            </li>
+            <li>
+                <label>head</label>
+                <capacities>
+                    <li>Blunt</li>
+                    <li>Cut</li>
+                </capacities>
+                <power>17.1</power>
+				<armorPenetration>0.3</armorPenetration>
+                <cooldownTime>1.78</cooldownTime>
+            </li>
+        </tools>
+        <recipeMaker>
+            <recipeUsers>
+                <li>FueledSmithy</li>
+                <li>ElectricSmithy</li>
+            </recipeUsers>
+            <researchPrerequisite>Smithing</researchPrerequisite>
+        </recipeMaker>
+    </ThingDef>
+	
+    <ThingDef ParentName="SurvivalToolIndustrial">
+        <defName>SurvivalTools_BuildingOmnitool</defName>
+        <label>Construction omnitool</label>
+        <description>This tool can be used to punch holes, punch nails, shape materials and weld. This can also be used as a melee weapon in a pinch.</description>
+        <graphicData>
+            <texPath>Things/Item/Equipment/Tool/ConstructionTool</texPath>
+            <graphicClass>Graphic_Single</graphicClass>
+			<shaderType>CutoutComplex</shaderType>	 
+        </graphicData>
+        <statBases>
+            <Mass>5</Mass>
+        </statBases>
+		<costStuffCount>20</costStuffCount>
+		<costList>
+		  <ComponentIndustrial>4</ComponentIndustrial>
+		  <Chemfuel>20</Chemfuel>
+		  <Steel>28</Steel>
+		</costList>
+        <equippedStatOffsets>
+            <MoveSpeed>-0.1</MoveSpeed>
+        </equippedStatOffsets>
+        <modExtensions>
+            <li Class="SurvivalTools.SurvivalToolProperties">
+               <baseWorkStatFactors>
+                    <ConstructionSpeed>1.67</ConstructionSpeed>
+                </baseWorkStatFactors>
+                <defaultSurvivalToolAssignmentTags>
+                    <li>Constructor</li>
+                </defaultSurvivalToolAssignmentTags>
+            </li>
+        </modExtensions>
+        <tools>
+            <li>
+                <label>handle</label>
+                <capacities>
+                    <li>Blunt</li>
+                </capacities>
+                <power>9</power>
+                <cooldownTime>2.5</cooldownTime>
+            </li>
+            <li>
+                <label>head</label>
+                <capacities>
+                    <li>Stab</li>
+                </capacities>
+				<armorPenetration>0.6</armorPenetration>
+                <power>20.1</power>
+                <cooldownTime>2.78</cooldownTime>
+            </li>
+        </tools>
+        <recipeMaker>
+            <recipeUsers>
+                <li>TableMachining</li>
+            </recipeUsers>
+            <researchPrerequisite>BuildingToolResearch</researchPrerequisite>
+        </recipeMaker>
+    </ThingDef>
+	
     <!-- Glitterworld Multitool -->
 
     <ThingDef ParentName="BaseSurvivalTool">
