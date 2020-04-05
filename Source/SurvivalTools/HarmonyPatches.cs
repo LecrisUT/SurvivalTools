@@ -21,10 +21,6 @@ namespace SurvivalTools.HarmonyPatches
         public override void DefsLoaded()
         {
             // Automatic patches
-            StringBuilder Test = new StringBuilder("Test 0\n");
-            foreach (RaceExemption exemption in MiscDef.IgnoreRaceList)
-                Test.AppendLine($"{exemption.defName} : {exemption.race} : {exemption.all}");
-            Logger.Message(Test.ToString());
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             AutoPatchInitialize();
             PatchJobDrivers();
@@ -531,6 +527,12 @@ namespace SurvivalTools.HarmonyPatches
                 }
             }
             Logger.Message(debugString.ToString(), false);
+
+            StringBuilder OtherPatches = new StringBuilder("Other Patches:\n");
+            OtherPatches.AppendLine("Race exemption list: (I know how it sounds, but it's not racist ><)");
+            foreach (RaceExemption exemption in MiscDef.IgnoreRaceList)
+                OtherPatches.AppendLine($"{exemption.defName} : {exemption.race} : {exemption.all}");
+            Logger.Message(OtherPatches.ToString());
         }
         #endregion
     }
