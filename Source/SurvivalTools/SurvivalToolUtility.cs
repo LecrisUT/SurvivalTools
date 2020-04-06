@@ -3,6 +3,7 @@ using RimWorld.Planet;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 using Verse;
 using Verse.AI;
 
@@ -169,10 +170,18 @@ namespace SurvivalTools
                 tool.workTicksDone++;
                 if (tool.workTicksDone >= tool.WorkTicksToDegrade)
                 {
-                    tool.TakeDamage(new DamageInfo(DamageDefOf.Deterioration, 1));
+                    ST_Degrade(tool, pawn);
                     tool.workTicksDone = 0;
                 }
             }
+        }
+        public static MethodInfo modDegrade;
+        public static void ST_Degrade(Thing item, Pawn pawn)
+        {
+            if (modDegrade is null)
+                item.TakeDamage(new DamageInfo(DamageDefOf.Deterioration, 1));
+            else
+                modDegrade.Invoke(null, new[] { item, pawn });
         }
 
         public static IEnumerable<Thing> GetHeldSurvivalTools(this ThingOwner container) =>

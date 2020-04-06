@@ -27,6 +27,10 @@ namespace SurvivalTools.HarmonyPatches
             FindJobDefs();
             PatchWorkGivers();
             PrintPatchDebug();
+            // Search and add LTS's Degrade mod
+            Type LTS_Degradation_Utility = GenTypes.GetTypeInAnyAssembly("Degradation.Utility.Utility", null);
+            if (LTS_Degradation_Utility != null)
+                SurvivalToolUtility.modDegrade = AccessTools.Method(LTS_Degradation_Utility, "DegradeTool");
             // Manual patches
             // Plants that obstruct construction zones
             // erdelf never fails to impress :)
