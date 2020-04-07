@@ -1,0 +1,9 @@
+<LanguageData>
+
+    <ToolEstimatedLifespan.label>расчетный срок службы инструмента</ToolEstimatedLifespan.label>
+    <ToolEstimatedLifespan.description>Количество непрерывного использования этого инструмента, которое он может выдержать до поломки. Это не принимает во внимание текущее состояние инструмента.</ToolEstimatedLifespan.description>
+
+    <ToolEffectivenessFactor.label>коэффициент эффективности инструмента</ToolEffectivenessFactor.label>
+    <ToolEffectivenessFactor.description>Глобальный множитель модификаторов статистики этого инструмента.</ToolEffectivenessFactor.description>
+
+</LanguageData>
