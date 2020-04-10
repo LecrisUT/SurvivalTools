@@ -61,10 +61,10 @@ namespace SurvivalTools
 
                 if (HoldingPawn != null && HoldingPawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>() is Pawn_SurvivalToolAssignmentTracker tracker &&
                     tracker.forcedHandler.IsForced(this))
-                    label = $", {"ApparelForcedLower".Translate()}: " + label;
+                    label = $"({"ApparelForcedLower".Translate()}) " + label;
 
                 if (InUse)
-                    label = $", {"ToolInUse".Translate()}: " + label;
+                    label = $"{"ToolInUse".Translate()}: " + label;
 
                 return label;
             }
