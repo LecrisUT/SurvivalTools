@@ -13,6 +13,12 @@
     </ThingCategoryDef>
 
     <ThingCategoryDef>
+        <defName>SurvivalToolsMedieval</defName>
+        <label>medieval tools</label>
+        <parent>SurvivalTools</parent>
+    </ThingCategoryDef>
+
+    <ThingCategoryDef>
         <defName>SurvivalToolsIndustrial</defName>
         <label>modern tools</label>
         <parent>SurvivalTools</parent>

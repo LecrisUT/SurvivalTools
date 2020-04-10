@@ -232,6 +232,7 @@ namespace SurvivalTools.HarmonyPatches
             HarmonyMethod transpileReplaceStat = new HarmonyMethod(patchType, nameof(Transpile_Replace_Stat));
             HarmonyMethod transpileSearchCalledFunction = new HarmonyMethod(patchType, nameof(Transpile_Search_CalledFunction));
             HarmonyMethod transpileAddDegrade = new HarmonyMethod(patchType, nameof(Transpile_AddDegrade));
+            // AutoPatch
             FoundWorker = false;
             for (int i = 0; i < assemblies.Length; i++)
             {
@@ -279,9 +280,10 @@ namespace SurvivalTools.HarmonyPatches
                             harmony.Patch(jbMethod, transpiler: transpileReplaceStat);
                             if (FoundWorker)
                             {
-                                harmony.Patch(jbMethod, transpiler: transpileAddDegrade);
                                 foreach (StatPatchDef patch in FoundPatch)
                                 {
+                                    if (patch.addTollDegrade)
+                                        harmony.Patch(jbMethod, transpiler: transpileAddDegrade);
                                     JobDriverPatch jdpatch = patch.FoundJobDrivers.Find(t => t.driver == jobDriver);
                                     if (jdpatch is null)
                                     {
@@ -295,7 +297,7 @@ namespace SurvivalTools.HarmonyPatches
                         }
                     }
                     // Patch MakeToil again: Add ToolDegrade if there are function calls with speed stat
-                    foreach (StatPatchDef patch in auxPatch)
+                    foreach (StatPatchDef patch in auxPatch.Where(t => t.addTollDegrade))
                     {
                         JobDriverPatch jdpatch = patch.FoundJobDrivers.Find(t => t.driver == jobDriver);
                         if (jdpatch.FoundStage2) continue;
@@ -360,6 +362,59 @@ namespace SurvivalTools.HarmonyPatches
                     }
                 }
             }
+            // Extra Patches
+            foreach (StatPatchDef patch in AutoPatch.StatsToPatch.Where(t => t.OtherTypes.Count > 0))
+            {
+                patch.skip = false;
+                foreach (Type jobDriver in patch.OtherTypes)
+                {
+                    FoundWorker = false;
+                    // Patch auxiliary methods: Don't add ToolDegrade here
+                    List<MethodInfo> jbMethods = AccessTools.GetDeclaredMethods(jobDriver);
+                    foreach (MethodInfo jbMethod in jbMethods)
+                    {
+                        FoundWorker = false;
+                        if (jbMethod.IsAbstract) continue;
+                        harmony.Patch(jbMethod, transpiler: transpileReplaceStat);
+                        if (FoundWorker)
+                        {
+                            JobDriverPatch jdpatch = patch.FoundJobDrivers.Find(t => t.driver == jobDriver);
+                            if (jdpatch is null)
+                            {
+                                jdpatch = new JobDriverPatch(jobDriver);
+                                patch.FoundJobDrivers.Add(jdpatch);
+                            }
+                            jdpatch.methods.Add(jbMethod);
+                            jdpatch.FoundStage1 = true;
+                        }
+                    }
+                    // Patch MakeToil: Assumed is in delegated method: add ToolDegrade here
+                    Type[] nestedTypes = jobDriver.GetNestedTypes(BindingFlags.NonPublic | BindingFlags.Instance);
+                    foreach (Type nType in nestedTypes)
+                    {
+                        jbMethods = AccessTools.GetDeclaredMethods(nType);
+                        foreach (MethodInfo jbMethod in jbMethods)
+                        {
+                            FoundWorker = false;
+                            if (jbMethod.IsAbstract) continue;
+                            harmony.Patch(jbMethod, transpiler: transpileReplaceStat);
+                            if (FoundWorker)
+                            {
+                                if (patch.addTollDegrade)
+                                    harmony.Patch(jbMethod, transpiler: transpileAddDegrade);
+                                JobDriverPatch jdpatch = patch.FoundJobDrivers.Find(t => t.driver == jobDriver);
+                                if (jdpatch is null)
+                                {
+                                    jdpatch = new JobDriverPatch(jobDriver);
+                                    patch.FoundJobDrivers.Add(jdpatch);
+                                }
+                                jdpatch.methods.Add(jbMethod);
+                                jdpatch.FoundStage2 = true;
+                            }
+                        }
+                    }
+                }
+            }
         }
         public void FindJobDefs()
         {
@@ -391,13 +446,63 @@ namespace SurvivalTools.HarmonyPatches
         public void PatchWorkGivers()
         {
             HarmonyMethod transpileSearchWorkGiver = new HarmonyMethod(patchType, nameof(Transpile_Search_WorkGiver));
+            // Patch directly from list
+            foreach(StatPatchDef patch in AutoPatch.StatsToPatch.Where(t=>!t.patchAllWorkGivers))
+                foreach(Type workGiver in patch.WorkGiverList)
+                {
+                    WorkGiverPatch wgpatch = patch.FoundWorkGivers.Find(t => t.giver == workGiver);
+                    if (wgpatch is null)
+                    {
+                        wgpatch = new WorkGiverPatch(workGiver);
+                        patch.FoundWorkGivers.Add(wgpatch);
+                    }
+                }
+            
             for (int i = 0; i < assemblies.Length; i++)
             {
                 IEnumerable<Type> AllWorkGivers = assemblies[i].GetTypes().Where(t => t.IsSubclassOf(typeof(WorkGiver)));
                 foreach (Type workGiver in AllWorkGivers)
                 {
-                    foreach (StatPatchDef patch in AutoPatch.StatsToPatch)
+                    foreach (StatPatchDef patch in AutoPatch.StatsToPatch.Where(t => t.patchAllWorkGivers))
+                    {
                         patch.CheckWorkGiver(workGiver);
+                        if (workGiver.IsAbstract)
+                            continue;
+                        // Check if there are fields or properties with jobdef
+                        if (!patch.skip)
+                        {
+                            List<FieldInfo> fieldInfos = AccessTools.GetDeclaredFields(workGiver)?.Where(t => t.FieldType == typeof(JobDef)).ToList();
+                            foreach (FieldInfo fieldInfo in fieldInfos)
+                                if (patch.FoundJobDef.Exists(t => t.def == fieldInfo.GetValue(AccessTools.CreateInstance(workGiver)) as JobDef))
+                                {
+                                    //patch.skip = true;
+                                    WorkGiverPatch wgpatch = patch.FoundWorkGivers.Find(t => t.giver == workGiver);
+                                    if (wgpatch is null)
+                                    {
+                                        wgpatch = new WorkGiverPatch(workGiver);
+                                        patch.FoundWorkGivers.Add(wgpatch);
+                                    }
+                                    wgpatch.fields.Add(fieldInfo);
+
+                                }
+                            List<PropertyInfo> propInfos = AccessTools.GetDeclaredProperties(workGiver)?.Where(t => t.PropertyType == typeof(JobDef)).ToList();
+                            foreach (PropertyInfo propInfo in propInfos)
+                                if (propInfo.GetGetMethod()?.IsAbstract == false)
+                                    if (patch.FoundJobDef.Exists(t => t.def == propInfo.GetValue(AccessTools.CreateInstance(workGiver)) as JobDef))
+                                    {
+                                        //patch.skip = true;
+                                        WorkGiverPatch wgpatch = patch.FoundWorkGivers.Find(t => t.giver == workGiver);
+                                        if (wgpatch is null)
+                                        {
+                                            wgpatch = new WorkGiverPatch(workGiver);
+                                            patch.FoundWorkGivers.Add(wgpatch);
+                                        }
+                                        wgpatch.properties.Add(propInfo);
+
+                                    }
+                        }
+                    }
+                    // Check if methods call a jobdef
                     FoundPatch = new List<StatPatchDef>();
                     List<MethodInfo> wgMethods = AccessTools.GetDeclaredMethods(workGiver);
                     foreach (MethodInfo wgMethod in wgMethods)
@@ -524,9 +629,15 @@ namespace SurvivalTools.HarmonyPatches
                 debugString.AppendLine($"\nWorkGivers:");
                 foreach (WorkGiverPatch wgPatch in patch.FoundWorkGivers)
                 {
-                    debugString.Append($"{wgPatch.giver} :");
+                    debugString.Append($"{wgPatch.giver} :: Methods :");
                     foreach (MethodInfo method in wgPatch.methods)
                         debugString.Append($": {method} ");
+                    debugString.Append($":: Properties :");
+                    foreach (PropertyInfo prop in wgPatch.properties)
+                        debugString.Append($": {prop.Name} ");
+                    debugString.Append($":: Fields :");
+                    foreach (FieldInfo field in wgPatch.fields)
+                        debugString.Append($": {field.Name} ");
                     debugString.AppendLine("");
                 }
             }

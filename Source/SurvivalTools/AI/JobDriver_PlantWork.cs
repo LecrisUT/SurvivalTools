@@ -63,12 +63,12 @@ namespace SurvivalTools
             cut.tickAction = delegate ()
             {
                 Pawn actor = cut.actor;
-                SurvivalToolUtility.TryDegradeTool(actor, ST_StatDefOf.TreeFellingSpeed);
+                SurvivalToolUtility.TryDegradeTool(actor, ST_StatDefOf.PlantWorkSpeed_Felling_Tool);
                 if (actor.skills != null)
                 {
                     actor.skills.Learn(SkillDefOf.Plants, this.xpPerTick, false);
                 }
-                float statValue = actor.GetStatValue(ST_StatDefOf.TreeFellingSpeed, true);
+                float statValue = actor.GetStatValue(ST_StatDefOf.PlantWorkSpeed_Felling_Tool, true);
                 float num = statValue;
                 Plant plant = this.Plant;
                 num *= Mathf.Lerp(3.3f, 1f, plant.Growth);

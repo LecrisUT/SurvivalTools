@@ -15,8 +15,8 @@
 
     <!-- Mining-related -->
     <StatDef>
-        <defName>DiggingSpeed</defName>
-        <label>digging speed</label>
+        <defName>MiningSpeed_Tool</defName>
+        <label>mining speed (tool)</label>
         <description>The speed at which this person digs at walls.</description>
         <category>PawnWork</category>
         <defaultBaseValue>1</defaultBaseValue>
@@ -61,8 +61,8 @@
     </StatDef>
 
     <StatDef>
-        <defName>MiningYieldDigging</defName>
-        <label>mining yield (digging)</label>
+        <defName>MiningYield_Tool</defName>
+        <label>mining yield (tool)</label>
         <description>The percentage of mined resources a miner will produce. This only applies to wall mining. This doesn't affect the production rate of rock chunks.</description>
         <category>PawnWork</category>
         <defaultBaseValue>1</defaultBaseValue>
@@ -119,8 +119,8 @@
 
     <!-- Plant-related -->
     <StatDef>
-        <defName>PlantHarvestingSpeed</defName>
-        <label>plant harvesting speed</label>
+        <defName>PlantWorkSpeed_Harvesting_Tool</defName>
+        <label>plant harvesting speed (tool)</label>
         <description>The speed at which this person harvests plants.</description>
         <category>PawnWork</category>
         <defaultBaseValue>1</defaultBaseValue>
@@ -156,8 +156,8 @@
     </StatDef>
 
     <StatDef>
-        <defName>TreeFellingSpeed</defName>
-        <label>tree felling speed</label>
+        <defName>PlantWorkSpeed_Felling_Tool</defName>
+        <label>tree felling speed (tool)</label>
         <description>The speed at which this person fells trees.</description>
         <category>PawnWork</category>
         <defaultBaseValue>1</defaultBaseValue>
@@ -192,4 +192,50 @@
         </parts>
     </StatDef>
 
+    <!-- Construction-related -->
+    <StatDef>
+        <defName>ConstructionSpeed_Tool</defName>
+        <label>consturction speed (tool)</label>
+        <description>The speed at which this person constructs and repairs buildings using a tool.</description>
+        <category>PawnWork</category>
+        <defaultBaseValue>1</defaultBaseValue>
+        <minValue>0</minValue>
+        <toStringStyle>PercentZero</toStringStyle>
+        <statFactors>
+            <li>WorkSpeedGlobal</li>
+        </statFactors>
+        <skillNeedFactors>
+            <li Class="SkillNeed_BaseBonus">
+                <skill>Construction</skill>
+                <baseValue>0.3</baseValue>
+                <bonusPerLevel>0.0875</bonusPerLevel>
+            </li>
+        </skillNeedFactors>
+        <capacityFactors>
+            <li>
+                <capacity>Manipulation</capacity>
+                <weight>1</weight>
+            </li>
+            <li>
+                <capacity>Sight</capacity>
+                <weight>0.2</weight>
+                <max>1</max>
+            </li>
+        </capacityFactors>
+        <scenarioRandomizable>true</scenarioRandomizable>
+        <parts>
+            <li Class="SurvivalTools.StatPart_SurvivalTool">
+                <noToolStatFactorHardcore>0</noToolStatFactorHardcore>
+            </li>
+        </parts>
+        <postProcessCurve>
+            <points>
+                <li>(0, 0)</li>
+                <li>(0.00001, 0.10)</li>
+                <li>(0.04, 0.10)</li>
+                <li>(0.10, 0.10)</li>
+                <li>(99999, 99999)</li>
+            </points>
+        </postProcessCurve>
+    </StatDef>
 </Defs>

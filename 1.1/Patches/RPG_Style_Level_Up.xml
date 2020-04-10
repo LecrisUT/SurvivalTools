@@ -1,74 +1,97 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Patch>
 	<Operation Class="PatchOperationFindMod">
-		<mods><li>RPG Style Level Up Mod</li></mods>
-        <match Class="PatchOperationSequence">
-            <success>Always</success>
+		<mods>
+			<li>RPG Style Level Up Mod</li>
+		</mods>
+		<match Class="PatchOperationSequence">
+			<success>Always</success>
 			<operations>
-			<li Class="PatchOperationConditional">
-				<xpath>/Defs/StatDef[defName="DiggingSpeed"]/parts</xpath>
-				<nomatch Class="PatchOperationAdd">
-					<xpath>/Defs/StatDef[defName="DiggingSpeed"]</xpath>
+				<li Class="PatchOperationConditional">
+					<xpath>/Defs/StatDef[defName="ConstructionSpeed_Tool"]/parts</xpath>
+					<nomatch Class="PatchOperationAdd">
+						<xpath>/Defs/StatDef[defName="ConstructionSpeed_Tool"]</xpath>
 						<value>
 							<parts>
-								<li Class="FP_RSLUM.StatPart_STR"> 
-								<weight>0.5</weight>
+								<li Class="FP_RSLUM.StatPart_STR">
+									<weight>0.5</weight>
 								</li>
 							</parts>
 						</value>
-				</nomatch>
-				<match Class="PatchOperationAdd">
-				<xpath>/Defs/StatDef[defName="DiggingSpeed"]/parts</xpath>
-					<value>
-						<li Class="FP_RSLUM.StatPart_STR"> 
+					</nomatch>
+					<match Class="PatchOperationAdd">
+						<xpath>/Defs/StatDef[defName="ConstructionSpeed_Tool"]/parts</xpath>
+						<value>
+							<li Class="FP_RSLUM.StatPart_STR">
 								<weight>0.5</weight>
-								</li>
-					</value>
-				</match>
-			</li>
-			<li Class="PatchOperationConditional">
-				<xpath>/Defs/StatDef[defName="PlantHarvestingSpeed"]/parts</xpath>
-				<nomatch Class="PatchOperationAdd">
-					<xpath>/Defs/StatDef[defName="PlantHarvestingSpeed"]</xpath>
+							</li>
+						</value>
+					</match>
+				</li>
+				<li Class="PatchOperationConditional">
+					<xpath>/Defs/StatDef[defName="MiningSpeed_Tool"]/parts</xpath>
+					<nomatch Class="PatchOperationAdd">
+						<xpath>/Defs/StatDef[defName="MiningSpeed_Tool"]</xpath>
 						<value>
 							<parts>
-								<li Class="FP_RSLUM.StatPart_STR"> 
-								<weight>0.5</weight>
+								<li Class="FP_RSLUM.StatPart_STR">
+									<weight>0.5</weight>
 								</li>
 							</parts>
 						</value>
-				</nomatch>
-				<match Class="PatchOperationAdd">
-				<xpath>/Defs/StatDef[defName="PlantHarvestingSpeed"]/parts</xpath>
-					<value>
-						<li Class="FP_RSLUM.StatPart_STR"> 
+					</nomatch>
+					<match Class="PatchOperationAdd">
+						<xpath>/Defs/StatDef[defName="MiningSpeed_Tool"]/parts</xpath>
+						<value>
+							<li Class="FP_RSLUM.StatPart_STR">
 								<weight>0.5</weight>
-								</li>
-					</value>
-				</match>
-			</li>
-			<li Class="PatchOperationConditional">
-				<xpath>/Defs/StatDef[defName="TreeFellingSpeed"]/parts</xpath>
-				<nomatch Class="PatchOperationAdd">
-					<xpath>/Defs/StatDef[defName="TreeFellingSpeed"]</xpath>
+							</li>
+						</value>
+					</match>
+				</li>
+				<li Class="PatchOperationConditional">
+					<xpath>/Defs/StatDef[defName="PlantWorkSpeed_Harvesting_Tool"]/parts</xpath>
+					<nomatch Class="PatchOperationAdd">
+						<xpath>/Defs/StatDef[defName="PlantWorkSpeed_Harvesting_Tool"]</xpath>
 						<value>
 							<parts>
-								<li Class="FP_RSLUM.StatPart_STR"> 
-								<weight>0.5</weight>
+								<li Class="FP_RSLUM.StatPart_STR">
+									<weight>0.5</weight>
 								</li>
 							</parts>
 						</value>
-				</nomatch>
-				<match Class="PatchOperationAdd">
-				<xpath>/Defs/StatDef[defName="TreeFellingSpeed"]/parts</xpath>
-					<value>
-						<li Class="FP_RSLUM.StatPart_STR"> 
+					</nomatch>
+					<match Class="PatchOperationAdd">
+						<xpath>/Defs/StatDef[defName="PlantWorkSpeed_Harvesting_Tool"]/parts</xpath>
+						<value>
+							<li Class="FP_RSLUM.StatPart_STR">
 								<weight>0.5</weight>
+							</li>
+						</value>
+					</match>
+				</li>
+				<li Class="PatchOperationConditional">
+					<xpath>/Defs/StatDef[defName="PlantWorkSpeed_Felling_Tool"]/parts</xpath>
+					<nomatch Class="PatchOperationAdd">
+						<xpath>/Defs/StatDef[defName="PlantWorkSpeed_Felling_Tool"]</xpath>
+						<value>
+							<parts>
+								<li Class="FP_RSLUM.StatPart_STR">
+									<weight>0.5</weight>
 								</li>
-					</value>
-				</match>
-			</li>
-            </operations>
-        </match>
+							</parts>
+						</value>
+					</nomatch>
+					<match Class="PatchOperationAdd">
+						<xpath>/Defs/StatDef[defName="PlantWorkSpeed_Felling_Tool"]/parts</xpath>
+						<value>
+							<li Class="FP_RSLUM.StatPart_STR">
+								<weight>0.5</weight>
+							</li>
+						</value>
+					</match>
+				</li>
+			</operations>
+		</match>
 	</Operation>
 </Patch>
