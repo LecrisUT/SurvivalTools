@@ -11,6 +11,7 @@
         <defName>PatchMiningYield</defName>
         <oldStat>MiningYield</oldStat>
         <newStat>MiningYield_Tool</newStat>
+        <addToolDegrade>false</addToolDegrade>
         <patchAllJobDrivers>false</patchAllJobDrivers>
         <patchAllWorkGivers>false</patchAllWorkGivers>
         <OtherTypes>

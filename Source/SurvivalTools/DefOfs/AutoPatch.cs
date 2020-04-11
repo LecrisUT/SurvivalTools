@@ -32,7 +32,7 @@ namespace SurvivalTools
         public List<WorkGiverPatch> FoundWorkGivers = new List<WorkGiverPatch>();
         public List<JobDefPatch> FoundJobDef = new List<JobDefPatch>();
         public bool skip;
-        public bool addTollDegrade = true;
+        public bool addToolDegrade = true;
         public void CheckJobDriver(Type jd)
         {
             if (patchAllJobDrivers)

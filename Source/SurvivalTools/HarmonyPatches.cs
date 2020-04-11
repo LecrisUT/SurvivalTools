@@ -287,7 +287,7 @@ namespace SurvivalTools.HarmonyPatches
                             harmony.Patch(jbMethod, transpiler: transpileReplaceStat);
                             foreach (StatPatchDef patch in FoundPatch)
                             {
-                                if (patch.addTollDegrade)
+                                if (patch.addToolDegrade)
                                     harmony.Patch(jbMethod, transpiler: transpileAddDegrade);
                                 JobDriverPatch jdpatch = patch.FoundJobDrivers.Find(t => t.driver == jobDriver);
                                 if (jdpatch is null)
@@ -302,7 +302,7 @@ namespace SurvivalTools.HarmonyPatches
                     }
                 }
                 // Patch MakeToil again: Add ToolDegrade if there are function calls with speed stat
-                foreach (StatPatchDef patch in auxPatch.Where(t => t.addTollDegrade))
+                foreach (StatPatchDef patch in auxPatch.Where(t => t.addToolDegrade))
                 {
                     JobDriverPatch jdpatch = patch.FoundJobDrivers.Find(t => t.driver == jobDriver);
                     if (jdpatch.FoundStage2) continue;
@@ -402,7 +402,7 @@ namespace SurvivalTools.HarmonyPatches
                             if (SearchForStat(jbMethod))
                             {
                                 harmony.Patch(jbMethod, transpiler: transpileReplaceStat);
-                                if (patch.addTollDegrade)
+                                if (patch.addToolDegrade)
                                     harmony.Patch(jbMethod, transpiler: transpileAddDegrade);
                                 JobDriverPatch jdpatch = patch.FoundJobDrivers.Find(t => t.driver == jobDriver);
                                 if (jdpatch is null)
