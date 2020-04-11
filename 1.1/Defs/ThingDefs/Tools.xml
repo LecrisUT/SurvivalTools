@@ -1,12 +1,13 @@
 <Defs>
     <!-- Primitive -->
-    <ThingDef Name="SurvivalToolBasic" ParentName="BaseSurvivalTool" Abstract="True">
+    <ThingDef Name="SurvivalToolPrimitive" ParentName="BaseSurvivalTool" Abstract="True">
         <techLevel>Neolithic</techLevel>
         <statBases>
 			<WorkToMake>1500</WorkToMake>
         </statBases>
 		<stuffCategories>
             <li>Stony</li>
+            <li>Woody</li>
         </stuffCategories>
         <smeltable>true</smeltable>
         <recipeMaker>
@@ -42,13 +43,14 @@
 
     <!-- Tools -->
 
-    <ThingDef ParentName="SurvivalToolBasic">
+    <ThingDef ParentName="SurvivalToolPrimitive">
         <defName>SurvivalTools_Primitive_Axe</defName>
         <label>primitive axe</label>
         <description>Effective at chopping down trees thanks to the head that's attached to its handle. This can also be used as a melee weapon in a pinch.</description>
         <graphicData>
-            <texPath>Things/Item/Equipment/Tool/Axe</texPath>
+            <texPath>Things/Item/Equipment/Tool/primal_axe</texPath>
             <graphicClass>Graphic_Single</graphicClass>
+			<shaderType>CutoutComplex</shaderType>	 
         </graphicData>
 		<costStuffCount>40</costStuffCount>
         <statBases>
@@ -86,51 +88,7 @@
         </tools>
     </ThingDef>
 
-    <ThingDef ParentName="SurvivalToolBasic">
-        <defName>SurvivalTools_Primitive_Pickaxe</defName>
-        <label>primitive pickaxe</label>
-        <description>Comprising of a weighted head that's attached to a handle, pickaxes are effective at breaking solid rocks. This can also be used as a melee weapon in a pinch.</description>
-        <costStuffCount>40</costStuffCount>
-        <statBases>
-            <Mass>2.5</Mass>
-        </statBases>
-        <graphicData>
-            <texPath>Things/Item/Equipment/Tool/Pickaxe</texPath>
-            <graphicClass>Graphic_Single</graphicClass>
-        </graphicData>
-        <modExtensions>
-            <li Class="SurvivalTools.SurvivalToolProperties">
-                <baseWorkStatFactors>
-                    <MiningSpeed_Tool>0.7</MiningSpeed_Tool>
-                    <MiningYield_Tool>0.7</MiningYield_Tool>
-                </baseWorkStatFactors>
-                <defaultSurvivalToolAssignmentTags>
-                    <li>Miner</li>
-                </defaultSurvivalToolAssignmentTags>
-            </li>
-        </modExtensions>
-        <tools>
-            <li>
-                <label>handle</label>
-                <capacities>
-                    <li>Poke</li>
-                </capacities>
-                <power>9</power>
-                <cooldownTime>2</cooldownTime>
-            </li>
-            <li>
-                <label>head</label>
-                <labelUsedInLogging>false</labelUsedInLogging>
-                <capacities>
-                    <li>Stab</li>
-                </capacities>
-                <power>15.1</power>
-                <cooldownTime>2.6</cooldownTime>
-            </li>
-        </tools>
-    </ThingDef>
-
-    <ThingDef ParentName="SurvivalToolBasic">
+    <ThingDef ParentName="SurvivalToolPrimitive">
         <defName>SurvivalTools_Primitive_Hammer</defName>
         <label>primitive hammer</label>
         <description>A simple hammer that's a vital part of any constructor's arsenal of tools. This can also be used as a melee weapon in a pinch.</description>
@@ -139,16 +97,19 @@
             <Mass>0.5</Mass>
         </statBases>
         <graphicData>
-            <texPath>Things/Item/Equipment/Tool/Hammer</texPath>
+            <texPath>Things/Item/Equipment/Tool/primal_hammer</texPath>
             <graphicClass>Graphic_Single</graphicClass>
+			<shaderType>CutoutComplex</shaderType>	 
         </graphicData>
         <modExtensions>
             <li Class="SurvivalTools.SurvivalToolProperties">
                 <baseWorkStatFactors>
+                    <MiningSpeed_Tool>0.7</MiningSpeed_Tool>
+                    <MiningYield_Tool>0.7</MiningYield_Tool>
                     <ConstructionSpeed_Tool>0.7</ConstructionSpeed_Tool>
                 </baseWorkStatFactors>
                 <defaultSurvivalToolAssignmentTags>
-                    <li>Constructor</li>
+                    <li>Miner</li>
                 </defaultSurvivalToolAssignmentTags>
             </li>
         </modExtensions>
@@ -173,7 +134,7 @@
         </tools>
     </ThingDef>
 
-    <ThingDef ParentName="SurvivalToolBasic">
+    <ThingDef ParentName="SurvivalToolPrimitive">
         <defName>SurvivalTools_Primitive_Sickle</defName>
         <label>primitive sickle</label>
         <description>A curved blade that's attached to a small handle which is typically used to cut plants. This can also be used as a melee weapon in a pinch.</description>
@@ -182,8 +143,9 @@
             <Mass>0.5</Mass>
         </statBases>
         <graphicData>
-            <texPath>Things/Item/Equipment/Tool/Sickle</texPath>
+            <texPath>Things/Item/Equipment/Tool/primal_sickle</texPath>
             <graphicClass>Graphic_Single</graphicClass>
+			<shaderType>CutoutComplex</shaderType>	 
         </graphicData>
         <modExtensions>
             <li Class="SurvivalTools.SurvivalToolProperties">
