@@ -58,7 +58,7 @@ The load order is included in the About.xml file. If you find any potential prob
 Special thanks to Bar0th for all the help getting this R2R.
 
 Additional Survival tool graphics are provided by:
-- Vladislav
+- Kasmex Forever#0915 - graphic's commissar
 - Vova
 Show them your appreciation as we hope to continue working with them.
 
