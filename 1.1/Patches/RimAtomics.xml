@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+	<Operation Class="PatchOperationFindMod">
+		<mods><li>Rimatomics</li></mods>
+        <match Class="PatchOperationConditional">
+			<xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchConstruction"]</xpath>
+			<match Class="PatchOperationSequence">
+            	<success>Always</success>
+				<operations>
+				<li Class="PatchOperationConditional">
+					<xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchConstruction"]/WorkGiverExemption</xpath>
+					<nomatch Class="PatchOperationAdd">
+						<xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchConstruction"]</xpath>
+						<value>
+							<WorkGiverExemption>
+								<li>Rimatomics.WorkGiver_SuperviseResearch</li>
+							</WorkGiverExemption>
+						</value>
+					</nomatch>
+					<match Class="PatchOperationAdd">
+						<xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchConstruction"]/WorkGiverExemption</xpath>
+						<value>
+            				<li>Rimatomics.WorkGiver_SuperviseResearch</li>
+						</value>
+					</match>
+				</li>
+            	</operations>
+			</match>
+        </match>
+	</Operation>
+</Patch>

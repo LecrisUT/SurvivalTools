@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+    <Operation Class="PatchOperationFindMod">
+        <mods>
+            <li>Vanilla Weapons Expanded</li>
+        </mods>
+        <match Class="PatchOperationSequence">
+            <!--success>Always</success-->
+            <operations>
+                <li Class="PatchOperationConditional">
+                    <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Pickaxe"]</xpath>
+                    <match Class="PatchOperationSequence">
+                        <!--success>Always</success-->
+                        <operations>
+                            <li Class="PatchOperationAdd">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Pickaxe"]</xpath>
+                                <value>
+                                    <thingClass>SurvivalTools.SurvivalTool</thingClass>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationAddModExtension">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Pickaxe"]</xpath>
+                                <value>
+                                    <li Class="SurvivalTools.SurvivalToolProperties">
+                                        <baseWorkStatFactors>
+                                            <MiningSpeed_Tool>1</MiningSpeed_Tool>
+                                            <MiningYield_Tool>1</MiningYield_Tool>
+                                        </baseWorkStatFactors>
+                                        <defaultSurvivalToolAssignmentTags>
+                                            <li>Miner</li>
+                                        </defaultSurvivalToolAssignmentTags>
+                                    </li>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationAdd">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Pickaxe"]</xpath>
+                                <value>
+                                    <thingCategories>
+                                        <li>SurvivalToolsMedieval</li>
+                                    </thingCategories>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationAdd">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Pickaxe"]/statBases</xpath>
+                                <value>
+                                    <ToolEffectivenessFactor>1</ToolEffectivenessFactor>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationRemove">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Pickaxe"]/equippedStatOffsets</xpath>
+                            </li>
+                            <li Class="PatchOperationRemove">
+                                <xpath>/Defs/ThingDef[defName="SurvivalTools_Pickaxe"]</xpath>
+                            </li>
+                        </operations>
+                    </match>
+                </li>
+                <li Class="PatchOperationConditional">
+                    <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Hammer"]</xpath>
+                    <match Class="PatchOperationSequence">
+                        <success>Always</success>
+                        <operations>
+                            <li Class="PatchOperationAdd">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Hammer"]</xpath>
+                                <value>
+                                    <thingClass>SurvivalTools.SurvivalTool</thingClass>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationAddModExtension">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Hammer"]</xpath>
+                                <value>
+                                    <li Class="SurvivalTools.SurvivalToolProperties">
+                                        <baseWorkStatFactors>
+                                            <ConstructionSpeed_Tool>1</ConstructionSpeed_Tool>
+                                        </baseWorkStatFactors>
+                                        <defaultSurvivalToolAssignmentTags>
+                                            <li>Constructor</li>
+                                        </defaultSurvivalToolAssignmentTags>
+                                    </li>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationAdd">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Hammer"]</xpath>
+                                <value>
+                                    <thingCategories>
+                                        <li>SurvivalToolsMedieval</li>
+                                    </thingCategories>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationAdd">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Hammer"]/statBases</xpath>
+                                <value>
+                                    <ToolEffectivenessFactor>1</ToolEffectivenessFactor>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationRemove">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Hammer"]/equippedStatOffsets</xpath>
+                            </li>
+                            <li Class="PatchOperationRemove">
+                                <xpath>/Defs/ThingDef[defName="SurvivalTools_Hammer"]</xpath>
+                            </li>
+                        </operations>
+                    </match>
+                </li>
+                <li Class="PatchOperationConditional">
+                    <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Axe"]</xpath>
+                    <match Class="PatchOperationSequence">
+                        <success>Always</success>
+                        <operations>
+                            <li Class="PatchOperationAdd">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Axe"]</xpath>
+                                <value>
+                                    <thingClass>SurvivalTools.SurvivalTool</thingClass>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationAddModExtension">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Axe"]</xpath>
+                                <value>
+                                    <li Class="SurvivalTools.SurvivalToolProperties">
+                                        <baseWorkStatFactors>
+                                            <PlantWorkSpeed_Felling_Tool>0.7</PlantWorkSpeed_Felling_Tool>
+                                        </baseWorkStatFactors>
+                                        <defaultSurvivalToolAssignmentTags>
+                                            <li>PlantWorker</li>
+                                        </defaultSurvivalToolAssignmentTags>
+                                    </li>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationAdd">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Axe"]</xpath>
+                                <value>
+                                    <thingCategories>
+                                        <li>SurvivalToolsNeolithic</li>
+                                    </thingCategories>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationAdd">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Axe"]/statBases</xpath>
+                                <value>
+                                    <ToolEffectivenessFactor>1</ToolEffectivenessFactor>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationRemove">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Axe"]/equippedStatOffsets</xpath>
+                            </li>
+                            <li Class="PatchOperationRemove">
+                                <xpath>/Defs/ThingDef[defName="SurvivalTools_Primitive_Axe"]</xpath>
+                            </li>
+                        </operations>
+                    </match>
+                </li>
+                <li Class="PatchOperationConditional">
+                    <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Wrench"]</xpath>
+                    <match Class="PatchOperationSequence">
+                        <success>Always</success>
+                        <operations>
+                            <li Class="PatchOperationAdd">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Wrench"]</xpath>
+                                <value>
+                                    <thingClass>SurvivalTools.SurvivalTool</thingClass>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationAddModExtension">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Wrench"]</xpath>
+                                <value>
+                                    <li Class="SurvivalTools.SurvivalToolProperties">
+                                        <baseWorkStatFactors>
+                                            <ConstructionSpeed_Tool>1.67</ConstructionSpeed_Tool>
+                                        </baseWorkStatFactors>
+                                        <defaultSurvivalToolAssignmentTags>
+                                            <li>Constructor</li>
+                                        </defaultSurvivalToolAssignmentTags>
+                                    </li>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationAdd">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Wrench"]</xpath>
+                                <value>
+                                    <thingCategories>
+                                        <li>SurvivalToolsIndustrial</li>
+                                    </thingCategories>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationAdd">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Wrench"]/statBases</xpath>
+                                <value>
+                                    <ToolEffectivenessFactor>1</ToolEffectivenessFactor>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationRemove">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Wrench"]/equippedStatOffsets</xpath>
+                            </li>
+                            <li Class="PatchOperationRemove">
+                                <xpath>/Defs/ThingDef[defName="SurvivalTools_BuildingOmnitool"]</xpath>
+                            </li>
+                        </operations>
+                    </match>
+                </li>
+                <li Class="PatchOperationConditional">
+                    <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Shovel"]</xpath>
+                    <match Class="PatchOperationSequence">
+                        <success>Always</success>
+                        <operations>
+                            <li Class="PatchOperationAdd">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Shovel"]</xpath>
+                                <value>
+                                    <thingClass>SurvivalTools.SurvivalTool</thingClass>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationAddModExtension">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Shovel"]</xpath>
+                                <value>
+                                    <li Class="SurvivalTools.SurvivalToolProperties">
+                                        <baseWorkStatFactors>
+                                            <PlantWorkSpeed_Harvesting_Tool>1.3</PlantWorkSpeed_Harvesting_Tool>
+                                        </baseWorkStatFactors>
+                                        <defaultSurvivalToolAssignmentTags>
+                                            <li>PlantWorker</li>
+                                        </defaultSurvivalToolAssignmentTags>
+                                    </li>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationAdd">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Shovel"]</xpath>
+                                <value>
+                                    <thingCategories>
+                                        <li>SurvivalToolsIndustrial</li>
+                                    </thingCategories>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationAdd">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Shovel"]/statBases</xpath>
+                                <value>
+                                    <ToolEffectivenessFactor>1</ToolEffectivenessFactor>
+                                </value>
+                            </li>
+                            <li Class="PatchOperationRemove">
+                                <xpath>/Defs/ThingDef[defName="VWE_MeleeWeapon_Shovel"]/equippedStatOffsets</xpath>
+                            </li>
+                            <li Class="PatchOperationRemove">
+                                <xpath>/Defs/ThingDef[defName="SurvivalTools_Shovel"]</xpath>
+                            </li>
+                        </operations>
+                    </match>
+                </li>
+            </operations>
+        </match>
+    </Operation>
+</Patch>

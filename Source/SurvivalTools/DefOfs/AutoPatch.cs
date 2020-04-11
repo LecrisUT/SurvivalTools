@@ -15,20 +15,24 @@ namespace SurvivalTools
     {
         public StatDef oldStat;
         public StatDef newStat;
+        public FieldInfo oldStatFieldInfo;
+        public FieldInfo newStatFieldInfo;
         public Type oldStatType;
         public Type newStatType;
         // Patch jobDrivers to use ST stats
         private bool patchAllJobDrivers = true;
         private List<Type> JobDriverExemption = new List<Type>();
         private List<Type> JobDriverList = new List<Type>();
+        public List<Type> OtherTypes = new List<Type>();
         // Patch workGivers to require tool
-        private bool patchAllWorkGivers = true;
+        public bool patchAllWorkGivers = true;
         private List<Type> WorkGiverExemption = new List<Type>();
-        private List<Type> WorkGiverList = new List<Type>();
+        public List<Type> WorkGiverList = new List<Type>();
         public List<JobDriverPatch> FoundJobDrivers = new List<JobDriverPatch>();
         public List<WorkGiverPatch> FoundWorkGivers = new List<WorkGiverPatch>();
         public List<JobDefPatch> FoundJobDef = new List<JobDefPatch>();
         public bool skip;
+        public bool addToolDegrade = true;
         public void CheckJobDriver(Type jd)
         {
             if (patchAllJobDrivers)
@@ -41,13 +45,14 @@ namespace SurvivalTools
             if (patchAllWorkGivers)
                 skip = WorkGiverExemption.Contains(wg) ? true : false;
             else
-                skip = WorkGiverList.Contains(wg) ? false : true;
+                skip = true;
         }
         public bool CheckIfValidPatch()
         {
-            if (oldStat is null) return false;
-            if (!patchAllJobDrivers && (JobDriverList.Count == 0)) return false;
-            if (!patchAllWorkGivers && (WorkGiverList.Count == 0)) return false;
+            if (oldStat is null)
+                return false;
+            if (!patchAllJobDrivers && (JobDriverList.Count == 0) && (OtherTypes.Count == 0))
+                return false;
             return true;
         }
     }
@@ -71,6 +76,8 @@ namespace SurvivalTools
     {
         public Type giver;
         public List<MethodInfo> methods = new List<MethodInfo>();
+        public List<PropertyInfo> properties = new List<PropertyInfo>();
+        public List<FieldInfo> fields = new List<FieldInfo>();
         public WorkGiverPatch(Type Giver) { giver = Giver; }
     }
 }

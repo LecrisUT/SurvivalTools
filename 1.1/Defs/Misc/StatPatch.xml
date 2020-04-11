@@ -1,8 +1,8 @@
 <Defs>
     <SurvivalTools.StatPatchDef>
-        <defName>PatchMining</defName>
+        <defName>PatchMiningSpeed</defName>
         <oldStat>MiningSpeed</oldStat>
-        <newStat>DiggingSpeed</newStat>
+        <newStat>MiningSpeed_Tool</newStat>
         <patchAllJobDrivers>true</patchAllJobDrivers>
         <patchAllWorkGivers>true</patchAllWorkGivers>
     </SurvivalTools.StatPatchDef>
@@ -10,14 +10,19 @@
     <SurvivalTools.StatPatchDef>
         <defName>PatchMiningYield</defName>
         <oldStat>MiningYield</oldStat>
-        <newStat>MiningYieldDigging</newStat>
-        <patchAllJobDrivers>true</patchAllJobDrivers>
-        <patchAllWorkGivers>true</patchAllWorkGivers>
+        <newStat>MiningYield_Tool</newStat>
+        <addToolDegrade>false</addToolDegrade>
+        <patchAllJobDrivers>false</patchAllJobDrivers>
+        <patchAllWorkGivers>false</patchAllWorkGivers>
+        <OtherTypes>
+            <li>Mineable</li>
+        </OtherTypes>
     </SurvivalTools.StatPatchDef>
 
     <SurvivalTools.StatPatchDef>
         <defName>PatchConstruction</defName>
         <oldStat>ConstructionSpeed</oldStat>
+        <newStat>ConstructionSpeed_Tool</newStat>
         <patchAllJobDrivers>true</patchAllJobDrivers>
         <patchAllWorkGivers>true</patchAllWorkGivers>
         <JobDriverExemption>
@@ -26,14 +31,14 @@
     </SurvivalTools.StatPatchDef>
 
     <SurvivalTools.StatPatchDef>
-        <defName>PatchPlant</defName>
+        <defName>PatchPlantHarvesting</defName>
         <oldStat>PlantWorkSpeed</oldStat>
-        <newStat>PlantHarvestingSpeed</newStat>
-        <patchAllJobDrivers>true</patchAllJobDrivers>
+        <newStat>PlantWorkSpeed_Harvesting_Tool</newStat>
+        <patchAllJobDrivers>false</patchAllJobDrivers>
         <patchAllWorkGivers>true</patchAllWorkGivers>
-        <JobDriverExemption>
-            <li>JobDriver_PlantSow</li>
-        </JobDriverExemption>
+        <JobDriverList>
+            <li>JobDriver_PlantWork</li>
+        </JobDriverList>
         <WorkGiverExemption>
             <li>WorkGiver_GrowerSow</li>
         </WorkGiverExemption>

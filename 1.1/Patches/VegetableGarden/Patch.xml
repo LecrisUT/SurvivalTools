@@ -12,11 +12,11 @@
                     <value>
                         <li Class="SurvivalTools.StuffPropsTool">
                             <toolStatFactors>
-                                <TreeFellingSpeed>0.5</TreeFellingSpeed>
-                                <PlantHarvestingSpeed>0.5</PlantHarvestingSpeed>
-                                <DiggingSpeed>0.5</DiggingSpeed>
-                                <MiningYieldDigging>0.7</MiningYieldDigging>
-                                <ConstructionSpeed>0.5</ConstructionSpeed>
+                                <PlantWorkSpeed_Felling_Tool>0.5</PlantWorkSpeed_Felling_Tool>
+                                <PlantWorkSpeed_Harvesting_Tool>0.5</PlantWorkSpeed_Harvesting_Tool>
+                                <MiningSpeed_Tool>0.5</MiningSpeed_Tool>
+                                <MiningYield_Tool>0.7</MiningYield_Tool>
+                                <ConstructionSpeed_Tool>0.5</ConstructionSpeed_Tool>
                             </toolStatFactors>
                         </li>
                     </value>
@@ -26,11 +26,11 @@
                     <value>
                         <li Class="SurvivalTools.StuffPropsTool">
                             <toolStatFactors>
-                                <TreeFellingSpeed>0.7</TreeFellingSpeed>
-                                <PlantHarvestingSpeed>0.7</PlantHarvestingSpeed>
-                                <DiggingSpeed>0.7</DiggingSpeed>
-                                <MiningYieldDigging>0.85</MiningYieldDigging>
-                                <ConstructionSpeed>0.7</ConstructionSpeed>
+                                <PlantWorkSpeed_Felling_Tool>0.7</PlantWorkSpeed_Felling_Tool>
+                                <PlantWorkSpeed_Harvesting_Tool>0.7</PlantWorkSpeed_Harvesting_Tool>
+                                <MiningSpeed_Tool>0.7</MiningSpeed_Tool>
+                                <MiningYield_Tool>0.85</MiningYield_Tool>
+                                <ConstructionSpeed_Tool>0.7</ConstructionSpeed_Tool>
                             </toolStatFactors>
                         </li>
                     </value>
