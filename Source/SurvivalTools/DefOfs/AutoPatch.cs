@@ -15,6 +15,8 @@ namespace SurvivalTools
     {
         public StatDef oldStat;
         public StatDef newStat;
+        public FieldInfo oldStatFieldInfo;
+        public FieldInfo newStatFieldInfo;
         public Type oldStatType;
         public Type newStatType;
         // Patch jobDrivers to use ST stats
