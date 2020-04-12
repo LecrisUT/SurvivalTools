@@ -6,6 +6,6 @@ namespace SurvivalTools
 {
     public class WorkGiverExtension : DefModExtension
     {
-        public List<StatDef> requiredStats = new List<StatDef>();
+        public List<StatDef> requiredStats;
     }
 }

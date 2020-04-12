@@ -1,5 +1,4 @@
-﻿using SettingsHelper; // TODO: Switch to not use SettingsHelper
-//using HugsLib;
+﻿using SettingsHelper;
 using UnityEngine;
 using Verse;
 

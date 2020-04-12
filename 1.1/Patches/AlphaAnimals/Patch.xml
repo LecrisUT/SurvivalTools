@@ -14,11 +14,11 @@
                     <value>
                         <li Class="SurvivalTools.StuffPropsTool">
                             <toolStatFactors>
-                                <PlantWorkSpeed_Felling_Tool>0.7</PlantWorkSpeed_Felling_Tool>
-                                <PlantWorkSpeed_Harvesting_Tool>0.7</PlantWorkSpeed_Harvesting_Tool>
-                                <MiningSpeed_Tool>0.55</MiningSpeed_Tool>
-                                <MiningYield_Tool>0.8</MiningYield_Tool>
-                                <ConstructionSpeed_Tool>0.55</ConstructionSpeed_Tool>
+                                <TreeFellingSpeed>0.7</TreeFellingSpeed>
+                                <PlantHarvestingSpeed>0.7</PlantHarvestingSpeed>
+                                <DiggingSpeed>0.55</DiggingSpeed>
+                                <MiningYieldDigging>0.8</MiningYieldDigging>
+                                <ConstructionSpeed>0.55</ConstructionSpeed>
                             </toolStatFactors>
                         </li>
                     </value>
@@ -30,10 +30,10 @@
                     <value>
                         <li Class="SurvivalTools.StuffPropsTool">
                             <toolStatFactors>
-                                <PlantWorkSpeed_Felling_Tool>1.1</PlantWorkSpeed_Felling_Tool>
-                                <PlantWorkSpeed_Harvesting_Tool>1.1</PlantWorkSpeed_Harvesting_Tool>
-                                <MiningSpeed_Tool>1.1</MiningSpeed_Tool>
-                                <ConstructionSpeed_Tool>1.1</ConstructionSpeed_Tool>
+                                <TreeFellingSpeed>1.1</TreeFellingSpeed>
+                                <PlantHarvestingSpeed>1.1</PlantHarvestingSpeed>
+                                <DiggingSpeed>1.1</DiggingSpeed>
+                                <ConstructionSpeed>1.1</ConstructionSpeed>
                             </toolStatFactors>
                         </li>
                     </value>
