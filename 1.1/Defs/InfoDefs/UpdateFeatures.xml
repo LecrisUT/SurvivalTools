@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<HugsLib.UpdateFeatureDef Abstract="true" Name="SurvivalTools_Update_Base">
+		<modNameReadable>Survival Tools</modNameReadable>
+		<modIdentifier>[LC]SurvivalTools</modIdentifier>
+		<linkUrl>https://github.com/LecrisUT/SurvivalTools</linkUrl>
+	</HugsLib.UpdateFeatureDef>
+	
+	<HugsLib.UpdateFeatureDef ParentName="SurvivalTools_Update_Base">
+		<defName>SurvivalTools_2_3</defName>
+		<assemblyVersion>2.3.0</assemblyVersion>
+		<content>&lt;b&gt;[XND]Survival Tools&lt;/b&gt; oficially reborn.|Introduced new tool tiers:|img:Textures\Things\Item\Equipment\Tool\primal_axe.png,Textures\Things\Item\Equipment\Tool\primal_hammer.png,Textures\Things\Item\Equipment\Tool\primal_sickle.png|caption:Primitive tools|img:Textures\Things\Item\Equipment\Tool\Axe.png,Textures\Things\Item\Equipment\Tool\Hammer.png,Textures\Things\Item\Equipment\Tool\Pickaxe.png,Textures\Things\Item\Equipment\Tool\Sickle.png|caption:Medieval tools (Original)|img:Textures\Things\Item\Equipment\Tool\Shovel.png,Textures\Things\Item\Equipment\Tool\Chainsaw.png,Textures\Things\Item\Equipment\Tool\ConstructionTool.png,Textures\Things\Item\Equipment\Tool\JackHammer.png|caption:Modern tools|img:Textures\Things\Item\Equipment\Tool\GlitterworldMultitool.png|caption:Spacer tool (Original)|Introduced various mod compatibilities</content>
+	</HugsLib.UpdateFeatureDef>
+</Defs>

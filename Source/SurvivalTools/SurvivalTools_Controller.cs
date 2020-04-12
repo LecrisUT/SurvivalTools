@@ -12,10 +12,11 @@ using Verse.AI;
 
 namespace SurvivalTools.HarmonyPatches
 {
-    internal class HarmonyPatches : ModBase
+    internal class SurvivalTools_Controller : ModBase
     {
-        private static readonly Type patchType = typeof(HarmonyPatches);
-        public static Harmony harmony = new Harmony("jelly.survivaltoolsreborn");
+        private static readonly Type patchType = typeof(SurvivalTools_Controller);
+        public static Harmony harmony = new Harmony("Lecris.survivaltools");
+        public override string ModIdentifier => "[LC]SurvivalTools";
         public override void DefsLoaded()
         {
             // Automatic patches
