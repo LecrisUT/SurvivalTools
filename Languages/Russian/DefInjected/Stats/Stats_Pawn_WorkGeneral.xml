@@ -1,0 +1,18 @@
+<LanguageData>
+
+        <SurvivalToolCarryCapacity.label>грузоподъемность</SurvivalToolCarryCapacity.label>
+        <SurvivalToolCarryCapacity.description>Сколько инструментов эта пешка может нести в своем инвентаре. Если у неё будет больше инструментов, чем она может нести, она не сможет использовать лишние инструменты.</SurvivalToolCarryCapacity.description>
+
+        <DiggingSpeed.label>скорость копания</DiggingSpeed.label>
+        <DiggingSpeed.description>Скорость, с которой этот человек копается в стенах.</DiggingSpeed.description>
+
+        <MiningYieldDigging.label>добыча полезных ископаемых</MiningYieldDigging.label>
+        <MiningYieldDigging.description>Процент добытых ресурсов, которые добывает шахтёр. Это касается только копания стен. Это не влияет на скорость производства кусков породы.</MiningYieldDigging.description>
+
+        <PlantHarvestingSpeed.label>скорость уборки растений</PlantHarvestingSpeed.label>
+        <PlantHarvestingSpeed.description>Скорость, с которой этот человек собирает растения.</PlantHarvestingSpeed.description>
+
+        <TreeFellingSpeed.label>скорость рубки деревьев</TreeFellingSpeed.label>
+        <TreeFellingSpeed.description>Скорость, с которой этот человек рубит деревья.</TreeFelling.Speeddescription>
+
+</LanguageData>

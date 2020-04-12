@@ -1,0 +1,46 @@
+<Defs>
+    <SurvivalTools.StatPatchDef>
+        <defName>PatchMiningSpeed</defName>
+        <oldStat>MiningSpeed</oldStat>
+        <newStat>MiningSpeed_Tool</newStat>
+        <patchAllJobDrivers>true</patchAllJobDrivers>
+        <patchAllWorkGivers>true</patchAllWorkGivers>
+    </SurvivalTools.StatPatchDef>
+    
+    <SurvivalTools.StatPatchDef>
+        <defName>PatchMiningYield</defName>
+        <oldStat>MiningYield</oldStat>
+        <newStat>MiningYield_Tool</newStat>
+        <addToolDegrade>false</addToolDegrade>
+        <patchAllJobDrivers>false</patchAllJobDrivers>
+        <patchAllWorkGivers>false</patchAllWorkGivers>
+        <OtherTypes>
+            <li>Mineable</li>
+        </OtherTypes>
+    </SurvivalTools.StatPatchDef>
+
+    <SurvivalTools.StatPatchDef>
+        <defName>PatchConstruction</defName>
+        <oldStat>ConstructionSpeed</oldStat>
+        <newStat>ConstructionSpeed_Tool</newStat>
+        <patchAllJobDrivers>true</patchAllJobDrivers>
+        <patchAllWorkGivers>true</patchAllWorkGivers>
+        <JobDriverExemption>
+            <li>JobDriver_BuildSnowman</li>
+        </JobDriverExemption>
+    </SurvivalTools.StatPatchDef>
+
+    <SurvivalTools.StatPatchDef>
+        <defName>PatchPlantHarvesting</defName>
+        <oldStat>PlantWorkSpeed</oldStat>
+        <newStat>PlantWorkSpeed_Harvesting_Tool</newStat>
+        <patchAllJobDrivers>false</patchAllJobDrivers>
+        <patchAllWorkGivers>true</patchAllWorkGivers>
+        <JobDriverList>
+            <li>JobDriver_PlantWork</li>
+        </JobDriverList>
+        <WorkGiverExemption>
+            <li>WorkGiver_GrowerSow</li>
+        </WorkGiverExemption>
+    </SurvivalTools.StatPatchDef>
+</Defs>

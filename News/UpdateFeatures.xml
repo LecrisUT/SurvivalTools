@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Defs>
+	<HugsLib.UpdateFeatureDef Abstract="true" Name="SurvivalTools_Update_Base">
+		<modNameReadable>Survival Tools</modNameReadable>
+		<modIdentifier>Lecris.survivaltoolsreborn</modIdentifier>
+		<linkUrl>https://github.com/LecrisUT/SurvivalTools</linkUrl>
+	</HugsLib.UpdateFeatureDef>
+	
+	<HugsLib.UpdateFeatureDef ParentName="SurvivalTools_Update_Base">
+		<defName>SurvivalTools_2_3_0</defName>
+		<assemblyVersion>2.3.0</assemblyVersion>
+		<content>&lt;b&gt;[XND]Survival Tools&lt;/b&gt; officially reborn.|Introduced new tool tiers:|img:images/primal_axe,images/primal_hammer,images/primal_sickle|caption:Primitive tools|img:images/Axe,images/Hammer,images/Pickaxe,images/Sickle|caption:Medieval tools (Original)|img:images/Shovel,images/Chainsaw,images/ConstructionTool,images/JackHammer|caption:Modern tools|img:images/GlitterworldMultitool|caption:Spacer tool (Original)|Introduced various mod compatibilities:|*Vanilla Weapons Expanded|*RPG Level Up|*Misc Robots++|*In principle all modded jobs</content>
+	</HugsLib.UpdateFeatureDef>
+</Defs>

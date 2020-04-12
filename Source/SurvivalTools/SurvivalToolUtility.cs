@@ -3,6 +3,7 @@ using RimWorld.Planet;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Reflection;
 using Verse;
 using Verse.AI;
 
@@ -39,7 +40,8 @@ namespace SurvivalTools
 
         public static bool CanUseSurvivalTools(this Pawn pawn) =>
             pawn.RaceProps.intelligence >= Intelligence.ToolUser && pawn.Faction == Faction.OfPlayer &&
-            (pawn.equipment != null || pawn.inventory != null) && pawn.TraderKind == null;
+            (pawn.equipment != null || pawn.inventory != null) && pawn.TraderKind == null &&
+            !(MiscDef.IgnoreRaceList.Find(t => t.race == pawn.kindDef.race)?.all == true);
 
         public static bool IsUnderSurvivalToolCarryLimitFor(this int count, Pawn pawn) =>
             !SurvivalToolsSettings.toolLimit || count < pawn.GetStatValue(ST_StatDefOf.SurvivalToolCarryCapacity, false);
@@ -64,9 +66,16 @@ namespace SurvivalTools
                 Log.Error($"Tried to check if {def} is a usable tool but has null tool properties");
                 return false;
             }
+            if (MiscDef.IgnoreRaceList.Find(t => t.race == pawn.kindDef.race)?.all == true)
+                return false;
             foreach (StatModifier modifier in props.baseWorkStatFactors)
                 if (modifier.stat?.Worker?.IsDisabledFor(pawn) == false)
-                    return true;
+                {
+                    if (MiscDef.IgnoreRaceList.Find(t => t.race == pawn.kindDef.race)?.stat.Contains(modifier.stat) == true)
+                        return false;
+                    else
+                        return true;
+                }
             return false;
         }
 
@@ -99,6 +108,8 @@ namespace SurvivalTools
         public static SurvivalTool GetBestSurvivalTool(this Pawn pawn, StatDef stat)
         {
             if (!pawn.CanUseSurvivalTools())
+                return null;
+            if (MiscDef.IgnoreRaceList.Find(t => t.race == pawn.kindDef.race)?.stat.Contains(stat) == true)
                 return null;
 
             SurvivalTool tool = null;
@@ -159,10 +170,18 @@ namespace SurvivalTools
                 tool.workTicksDone++;
                 if (tool.workTicksDone >= tool.WorkTicksToDegrade)
                 {
-                    tool.TakeDamage(new DamageInfo(DamageDefOf.Deterioration, 1));
+                    ST_Degrade(tool, pawn);
                     tool.workTicksDone = 0;
                 }
             }
+        }
+        public static MethodInfo modDegrade;
+        public static void ST_Degrade(Thing item, Pawn pawn)
+        {
+            if (modDegrade is null)
+                item.TakeDamage(new DamageInfo(DamageDefOf.Deterioration, 1));
+            else
+                modDegrade.Invoke(null, new[] { item, pawn });
         }
 
         public static IEnumerable<Thing> GetHeldSurvivalTools(this ThingOwner container) =>

@@ -17,6 +17,18 @@
   <SurvivalTools_Sickle.description>一把弯曲的刀刃，连接在一个小刀柄上，它通常用来切割植物。紧要关头它也能当近战武器使用。</SurvivalTools_Sickle.description>
   <SurvivalTools_Sickle.tools.0.label>手柄</SurvivalTools_Sickle.tools.0.label>
   <SurvivalTools_Sickle.tools.1.label>前端</SurvivalTools_Sickle.tools.1.label>
+  
+  <SurvivalTools_Chainsaw.tools.0.label>手柄</SurvivalTools_Chainsaw.tools.0.label>
+  
+  <SurvivalTools_Jackhammer.tools.0.label>手柄</SurvivalTools_Jackhammer.tools.0.label>
+  <SurvivalTools_Jackhammer.tools.1.label>前端</SurvivalTools_Jackhammer.tools.1.label>
+  
+  <SurvivalTools_Shovel.tools.0.label>手柄</SurvivalTools_Shovel.tools.0.label>
+  <SurvivalTools_Shovel.tools.1.label>前端</SurvivalTools_Shovel.tools.1.label>
+  
+  <SurvivalTools_BuildingOmnitool.tools.0.label>手柄</SurvivalTools_BuildingOmnitool.tools.0.label>
+  <SurvivalTools_BuildingOmnitool.tools.1.label>前端</SurvivalTools_BuildingOmnitool.tools.1.label>
+  
   <!-- Glitterworld Multitool -->
   <SurvivalTools_Multitool.label>闪耀世界的工具</SurvivalTools_Multitool.label>
   <SurvivalTools_Multitool.description>一种超高科技的工具，常用于闪耀世界中的家用机器人，又由于它们的结构相似也可用于其他人形机器。</SurvivalTools_Multitool.description>

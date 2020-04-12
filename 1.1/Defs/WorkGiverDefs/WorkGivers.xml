@@ -14,7 +14,7 @@
         <modExtensions>
             <li Class="SurvivalTools.WorkGiverExtension">
                 <requiredStats>
-                    <li>TreeFellingSpeed</li>
+                    <li>PlantWorkSpeed_Felling_Tool</li>
                 </requiredStats>
             </li>
         </modExtensions>

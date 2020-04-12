@@ -1,0 +1,76 @@
+Updated/Continued and Uploaded with permission from the Original Author XeoNovaDan
+Original Mod found here: https://steamcommunity.com/sharedfiles/filedetails/?id=1566269698
+
+Non Steam: https://github.com/Jellypowered/SurvivalTools/releases/tag/2.0
+
+Overview
+Survival Tools adds several essential tools to RimWorld as well as an actual need to manage those tools. To make management easier, there is an outfit-esque system (configurable through the Assign tab) which allows for colonists to automatically pick up tools on occasions, depending on whether they actually need them or not. I'd also highly recommend using [url=https://steamcommunity.com/sharedfiles/filedetails/?id=1539025677]Cut Plants Before Building[/url] with this.
+
+The following is a list of tool types that are added, and what stats they affect:
+
+    Axe - Tree felling speed
+    Pickaxe - Mining speed and yield (excluding deep drilling)
+    Hammer - Construction speed
+    Sickle - Plant harvest speed
+    Glitterworld Multitool- All of the above
+
+
+If a colonist doesn't have any tools required for a certain stat, they receive a significant work speed penalty in that stat - though colonists with good tools will actually be more efficient compared to vanilla. Colonists can use tools either equipped in their main hand or directly from their inventory - the functionality to pick up items being added allowing for the latter, and in turn allowing non-violent's to use tools. Colonists can only hold up to two tools at once in their inventory, though tool belts increase that to four.
+
+Most tools can be produced at crafting spots or smithies, but can also be found in structures upon generation of a new map or purchased from traders and settlements. Tool belts are only producible at tailoring benches though, as well as purchasable.
+
+The overall effectiveness of a tool is determined by what it's made out of, as well as its quality. For example: a plasteel axe will be great at cutting down trees, and a uranium pick axe will be the most effective at digging through rocks and otherwise extracting resources from veins.
+
+Beware though, since tools do actually degrade over use! The useful lifespan of a tool depends on its maximum HP and its quality. If colonists are using tools that will degrade soon, an alert will show on the right-hand side of the screen prompting you to replace those tools.
+
+Several features can be toggled, including the inventory limitation for tools and the degradation rate of tools as they get used. There is also a toggle for a hardcore mode which makes certain tasks completely impossible without tools (e.g. mining), as well as increasing the rate at which tools degrade.
+
+Powered by the Harmony Patch Library!
+
+Compatibility
+Should be safely addable to existing savegames, though do note that you will need to make tools for all of your colonists if this is the case since they won't work at full speed otherwise. There may be some errors thrown when removing this from an ongoing save, though these should be harmless other than all tools being removed from that game.
+
+Survival Tools is compatible with any modded jobs added. If you find any missing or illogical application, please report them.
+Currently, tool efficiency of modded materials are added manually, with the list of supported mods given below. This will eventually be changed for an automatic patching method, but in the meantime feel free to [url=temp]add and share[url] additional mod material patches:
+
+    Alpha Animals
+    Atlas' Materials
+    Crystalloid (Rewritten)
+    Expanded Woodworking (+ VGP patch)*
+    Glitter Tech
+    Kura's Extra Gems
+    Kura's Extra Stone
+    Mechalit Core
+    Metals+
+    RimBees
+    Rimefeller
+    Rim of Madness - Bones
+    Vegetable Garden
+
+The load order is included in the About.xml file. If you find any potential problem with the load order, please report them and we will include them below and in the About.xml file.
+
+    Harmony
+    Core
+    HugsLib
+    SurvivalTools
+
+
+Special thanks to Bar0th for all the help getting this R2R.
+
+Additional Survival tool graphics are provided by:
+- Kasmex Forever#0915 - graphic's commissar
+- Vova
+Show them your appreciation as we hope to continue working with them.
+
+Lecris would also like to thank CodeOptimist and Pelador, for their help in kickstarting this modding hobby.
+
+Credits Continued from XeoNovaDan!
+Brrainz - For his amazing work on the Harmony Patch Library
+Mehni - Allowing me to use code from Pick Up and Haul and Numbers
+Shotgunfrenzy - For kindly providing all of the artwork featured in this mod
+erdelf - erdelf
+Why_is_that - For his Settings Helper which allowed for the degradation rate slider
+Marnador - For the RimWorld-style font
+
+Since steam is not a very good place to keep track of issues, please consider using the Github Link[github.com] to post issues. (Also giving some feedback on the upcoming ideas is appreciated :-) ).
+If you can't or are not familiar with Github. There's no problem, go ahead and use steam's systems, your feedback is much appreciated.

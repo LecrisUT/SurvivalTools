@@ -1,0 +1,10 @@
+<Patch>
+
+    <Operation Class="PatchOperationAdd">
+        <xpath>Defs/ResearchProjectDef[defName="GasOperation"]/prerequisites</xpath>
+        <value>
+			<li>GasCompressionResearch</li>
+        </value>
+    </Operation>
+
+</Patch>
