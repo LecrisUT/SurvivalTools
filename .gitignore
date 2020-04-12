@@ -8,7 +8,6 @@
 Source/SurvivalTools/.vs
 Source/SurvivalTools/SurvivalTools.code-workspace
 Source/SurvivalTools/SurvivalTools.csproj.user
-Source/SurvivalTools/obj/Release
-Source/SurvivalTools/obj/Debug
+Source/SurvivalTools/obj
 SurvivalTools.rar
 *.cache
