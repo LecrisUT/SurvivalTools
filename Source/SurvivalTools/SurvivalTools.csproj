@@ -43,7 +43,6 @@
     <Compile Include="DefOfs\ST_ThingCategoryDefOf.cs" />
     <Compile Include="DefOfs\AutoPatch.cs" />
     <Compile Include="ToolAssignments\Dialog_ManageSurvivalToolAssignments.cs" />
-    <Compile Include="Harmony\Patch_MassUtility.cs" />
     <Compile Include="Harmony\Patch_Pawn_InventoryTracker.cs" />
     <Compile Include="Harmony\Patch_RoofUtility_CanHandleBlockingThing.cs" />
     <Compile Include="Harmony\Patch_Toils_Haul_TakeToInventory.cs" />
