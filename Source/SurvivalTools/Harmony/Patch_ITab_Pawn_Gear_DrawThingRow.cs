@@ -41,13 +41,14 @@ namespace SurvivalTools.HarmonyPatches
         {
             if (thing is SurvivalTool tool)
             {
+                // In use
+                if (tool.InUse)
+                    originalLabel = $"{"ToolInUse".Translate()}: " + originalLabel;
+
                 // Forced
                 if (pawn.GetComp<Pawn_SurvivalToolAssignmentTracker>() is Pawn_SurvivalToolAssignmentTracker toolAssignmentTracker && toolAssignmentTracker.forcedHandler.IsForced(tool))
                     originalLabel += $", {"ApparelForcedLower".Translate()}";
 
-                // In use
-                if (tool.InUse)
-                    originalLabel += $", {"ToolInUse".Translate()}";
             }
         }
     }
