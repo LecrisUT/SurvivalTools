@@ -9,6 +9,7 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using Verse.AI;
+using UnityEngine;
 
 namespace SurvivalTools.HarmonyPatches
 {
@@ -37,9 +38,7 @@ namespace SurvivalTools.HarmonyPatches
             var postfixHandleBlockingThingJob = new HarmonyMethod(patchType, nameof(Postfix_HandleBlockingThingJob));
             harmony.Patch(AccessTools.Method(typeof(GenConstruct), nameof(GenConstruct.HandleBlockingThingJob)), postfix: postfixHandleBlockingThingJob);
             harmony.Patch(AccessTools.Method(typeof(RoofUtility), nameof(RoofUtility.HandleBlockingThingJob)), postfix: postfixHandleBlockingThingJob);
-            if (!ModCompatibilityCheck.OtherInventoryModsActive)
-                harmony.Patch(AccessTools.Method(typeof(FloatMenuMakerMap), "AddHumanlikeOrders"), transpiler: new HarmonyMethod(patchType, nameof(Transpile_FloatMenuMakerMad_AddHumanlikeOrders)));
-
+            harmony.Patch(AccessTools.Method(typeof(FloatMenuMakerMap), "AddHumanlikeOrders"), postfix: new HarmonyMethod(patchType, nameof(Postfix_FloatMenuMakerMap_AddHumanlikeOrders)));
             //// Combat Extended
             //if (ModCompatibilityCheck.CombatExtended)
             //{
@@ -239,35 +238,28 @@ namespace SurvivalTools.HarmonyPatches
                     __result = null;
             }
         }
-        public static IEnumerable<CodeInstruction> Transpile_FloatMenuMakerMad_AddHumanlikeOrders(IEnumerable<CodeInstruction> instructions)
+        public static void Postfix_FloatMenuMakerMap_AddHumanlikeOrders(Vector3 clickPos, Pawn pawn, List<FloatMenuOption> opts)
         {
-            MethodInfo playerHome = AccessTools.Property(typeof(Map), nameof(Map.IsPlayerHome)).GetGetMethod();
-            List<CodeInstruction> instructionList = instructions.ToList();
-
-            //instructionList.RemoveRange(instructions.FirstIndexOf(ci => ci.operand == playerHome) - 3, 5);
-            //return instructionList;
-
-            bool patched = false;
-
-            for (int i = 0; i < instructionList.Count; i++)
+            if (!pawn.health.capacities.CapableOf(PawnCapacityDefOf.Manipulation))
+                return;
+            IntVec3 position = IntVec3.FromVector3(clickPos);
+            List<Thing> tools = position.GetThingList(pawn.Map).Where(t => t is SurvivalTool).ToList();
+            foreach (SurvivalTool tool in tools)
             {
-                CodeInstruction instruction = instructionList[i];
-                if (!patched && (instruction.operand as MethodInfo) == playerHome)
-                // if (!patched && (instruction.operand == playerHome) // CE, Pick Up And Haul etc.
-                //if (instructionList[i + 3].opcode == OpCodes.Callvirt && instruction.operand == playerHome)
-                //if (instructionList[i + 3].operand == playerHome)
+                if (!pawn.CanReach(tool, PathEndMode.ClosestTouch, Danger.Deadly))
+                    return;
+                if (!MassUtility.WillBeOverEncumberedAfterPickingUp(pawn, tool, 1))
                 {
+                    opts.Add(FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption("PickUp".Translate(tool.Label, tool) + "AsTool".Translate() + " (" + "ApparelForcedLower".Translate() + ")", delegate
                     {
-                        instruction.opcode = OpCodes.Ldc_I4_0;
-                        instruction.operand = null;
-                        yield return instruction;
-                        patched = true;
-                    }
-                    //    //{ instructionList[i + 5].labels = instruction.labels;}
-                    //    instructionList.RemoveRange(i, 5);
-                    //    patched = true;
+                        tool.SetForbidden(value: false, warnOnFail: false);
+                        Job job9 = JobMaker.MakeJob(JobDefOf.TakeInventory, tool);
+                        tool.toBeForced = true;
+                        job9.count = 1;
+                        job9.checkEncumbrance = true;
+                        pawn.jobs.TryTakeOrderedJob(job9);
+                    }, MenuOptionPriority.High), pawn, tool));
                 }
-                yield return instruction;
             }
         }
         //public static void Postfix_JobDriver_MineQuarry_Mine(JobDriver __instance, Toil __result)

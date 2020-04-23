@@ -9,6 +9,7 @@ namespace SurvivalTools
     public class SurvivalTool : ThingWithComps
     {
         public int workTicksDone = 0;
+        public bool toBeForced = false;
 
         #region Properties
 

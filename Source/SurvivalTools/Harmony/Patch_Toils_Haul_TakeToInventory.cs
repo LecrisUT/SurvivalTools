@@ -19,8 +19,14 @@ namespace SurvivalTools.HarmonyPatches
                 Pawn actor = __result.actor;
                 Thing thing = actor.CurJob.GetTarget(ind).Thing;
                 if (thing is SurvivalTool && actor.CanUseSurvivalTools() && actor.inventory.Contains(thing))
-                    if (actor.CurJob.playerForced)
+                {
+                    SurvivalTool tool = thing as SurvivalTool;
+                    if (actor.CurJob.playerForced && tool.toBeForced)
+                    {
                         actor.GetComp<Pawn_SurvivalToolAssignmentTracker>().forcedHandler.SetForced(thing, true);
+                        tool.toBeForced = false;
+                    }
+                }
             };
         }
     }

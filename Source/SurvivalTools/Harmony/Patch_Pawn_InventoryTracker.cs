@@ -1,8 +1,5 @@
 ﻿using HarmonyLib;
-using RimWorld;
-using System.Linq;
 using Verse;
-using Verse.AI;
 
 namespace SurvivalTools.HarmonyPatches
 {
@@ -29,24 +26,6 @@ namespace SurvivalTools.HarmonyPatches
                     }
                     if (!foundNewThing)
                         __result = default;
-                }
-            }
-        }
-
-        [HarmonyPatch(typeof(Pawn_InventoryTracker), nameof(Pawn_InventoryTracker.InventoryTrackerTickRare))]
-        public static class InventoryTrackerTickRare
-        {
-            public static void Postfix(Pawn_InventoryTracker __instance)
-            {
-                if (SurvivalToolsSettings.toolLimit)
-                {
-                    Pawn pawn = __instance.pawn;
-                    if (pawn.CanUseSurvivalTools() && pawn.GetHeldSurvivalTools().Count() > pawn.GetStatValue(ST_StatDefOf.SurvivalToolCarryCapacity, false) && pawn.CanRemoveExcessSurvivalTools())
-                    {
-                        Thing tool = pawn.GetHeldSurvivalTools().Last();
-                        Job job = pawn.DequipAndTryStoreSurvivalTool(tool);
-                        pawn.jobs.StartJob(job, JobCondition.InterruptForced, cancelBusyStances: false);
-                    }
                 }
             }
         }
