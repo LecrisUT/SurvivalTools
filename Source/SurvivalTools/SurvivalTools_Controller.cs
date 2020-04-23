@@ -63,44 +63,92 @@ namespace SurvivalTools.HarmonyPatches
         public static List<MethodInfo> auxMethods;
         public static List<StatPatchDef> auxPatch = new List<StatPatchDef>();
         public static List<Type> JobDefOfTypes;
+        private static int foundPawnInstruction;
+        private static MethodInfo foundCalledMethod;
         private static MethodInfo TryDegradeTool =>
            AccessTools.Method(typeof(SurvivalToolUtility), nameof(SurvivalToolUtility.TryDegradeTool), new[] { typeof(Pawn), typeof(StatDef) });
         #endregion
         #region AutoPatch_Transpiler_Methods
         private static bool SearchForStat(MethodInfo method)
         {
-            IEnumerable<KeyValuePair<OpCode, object>> instructions = PatchProcessor.ReadMethodBody(method);
-            foreach (KeyValuePair<OpCode, object> instruction in instructions)
+            List<KeyValuePair<OpCode, object>> instructions = PatchProcessor.ReadMethodBody(method).ToList();
+            for (int i = 0; i < instructions.Count; i++)
             {
+                KeyValuePair<OpCode, object> instruction = instructions[i];
+                if (instruction.Key == OpCodes.Ldfld)
+                {
+                    FieldInfo field = instruction.Value as FieldInfo;
+                    if (field == AccessTools.Field(typeof(JobDriver), nameof(JobDriver.pawn)) || field == AccessTools.Field(typeof(Toil), nameof(Toil.actor)))
+                        foundPawnInstruction = i;
+                }
                 if (instruction.Key == OpCodes.Ldsfld)
                 {
                     FieldInfo field = instruction.Value as FieldInfo;
                     if (AutoPatch.StatsToPatch.Exists(t => !t.skip && field == t.oldStatFieldInfo))
-                    {
                         return true;
-                    }
                 }
             }
             return false;
         }
-        private static bool SearchCalledFunction(MethodInfo method)
+        private static bool SearchForPawn(MethodInfo method, bool searchCallFunction)
         {
-            //Log.Message("TEst3.0");
-            IEnumerable<KeyValuePair<OpCode, object>> instructions = PatchProcessor.ReadMethodBody(method);
-            foreach (KeyValuePair<OpCode, object> instruction in instructions)
+            bool foundPawn = false;
+            List<KeyValuePair<OpCode, object>> instructions = PatchProcessor.ReadMethodBody(method).ToList();
+            for (int i = 0; i < instructions.Count; i++)
             {
+                KeyValuePair<OpCode, object> instruction = instructions[i];
+                if (instruction.Key == OpCodes.Ldfld)
+                {
+                    FieldInfo field = instruction.Value as FieldInfo;
+                    if (field == AccessTools.Field(typeof(JobDriver), nameof(JobDriver.pawn)) || field == AccessTools.Field(typeof(Toil), nameof(Toil.actor)))
+                    {
+                        foundPawnInstruction = i;
+                        foundPawn = true;
+                    }
+                }
+                if (instruction.Key == OpCodes.Ldsfld && !searchCallFunction)
+                {
+                    FieldInfo field = instruction.Value as FieldInfo;
+                    if (FoundPatch.Exists(t => field == t.newStatFieldInfo || field == t.oldStatFieldInfo) && !searchCallFunction)
+                        return true;
+                }
+                if (instruction.Key == OpCodes.Call || instruction.Key == OpCodes.Callvirt && searchCallFunction)
+                {
+                    MethodInfo calledMethod = instruction.Value as MethodInfo;
+                    if (calledMethod == foundCalledMethod)
+                        if (foundPawn)
+                            return true;
+                }
+            }
+            return false;
+        }
+        private static MethodInfo SearchCalledFunction(MethodInfo method)
+        {
+            List<KeyValuePair<OpCode, object>> instructions = PatchProcessor.ReadMethodBody(method).ToList();
+            for (int i = 0; i < instructions.Count; i++)
+            {
+                KeyValuePair<OpCode, object> instruction = instructions[i];
                 if (instruction.Key == OpCodes.Call || instruction.Key == OpCodes.Callvirt)
                 {
                     MethodInfo calledMethod = instruction.Value as MethodInfo;
                     if (auxMethods.Contains(calledMethod))
                     {
-                        //Log.Message($"TEst3.1 : {instruction.opcode} : {instruction.operand}");
-                        return true;
+                        foundCalledMethod = calledMethod;
+                        return method;
+                    }
+                }
+                if (instruction.Key == OpCodes.Ldftn)
+                {
+                    KeyValuePair<OpCode, object> nextInstruction = instructions[i + 1];
+                    if (nextInstruction.Key == OpCodes.Newobj && nextInstruction.Value as ConstructorInfo == AccessTools.Constructor(typeof(Action), new[] { typeof(object), typeof(IntPtr) }))
+                    {
+                        MethodInfo calledMethod = instruction.Value as MethodInfo;
+                        if (auxMethods.Contains(calledMethod))
+                            return calledMethod;
                     }
                 }
             }
-            //Log.Message("TEst3.2");
-            return false;
+            return null;
         }
         private static List<StatPatchDef> SearchForJob(MethodInfo method)
         {
@@ -143,29 +191,39 @@ namespace SurvivalTools.HarmonyPatches
         private static IEnumerable<CodeInstruction> Transpile_AddDegrade(IEnumerable<CodeInstruction> instructions)
         {
             List<CodeInstruction> instructionList = instructions.ToList();
-            for (int i = 0; i < instructionList.Count; i++)
+            int i = foundPawnInstruction;
+            CodeInstruction instruction0 = instructionList[i];
+            if (instruction0.opcode == OpCodes.Ldfld)
             {
-                CodeInstruction instruction0 = instructionList[i];
-                if (instruction0.opcode == OpCodes.Ldfld)
+
+                if (instruction0.operand as FieldInfo == AccessTools.Field(typeof(JobDriver), nameof(JobDriver.pawn)) || instruction0.operand as FieldInfo == AccessTools.Field(typeof(Toil), nameof(Toil.actor)))
                 {
-                    if (instruction0.operand as FieldInfo == AccessTools.Field(typeof(JobDriver), nameof(JobDriver.pawn)) || instruction0.operand as FieldInfo == AccessTools.Field(typeof(Toil), nameof(Toil.actor)))
+                    List<CodeInstruction> prevInstructions = new List<CodeInstruction>();
+                    for (int j = 1; j <= i; j++)
                     {
-                        CodeInstruction instruction1 = instructionList[i - 1];
-                        CodeInstruction instruction2 = instructionList[i - 2];
-                        foreach (StatPatchDef patch in FoundPatch)
-                        {
-                            instructionList.Insert(i + 1, instruction0);
-                            instructionList.Insert(i + 1, instruction1);
-                            instructionList.Insert(i + 1, instruction2);
-                            instructionList.Insert(i + 1, new CodeInstruction(OpCodes.Call, TryDegradeTool));
-                            if (patch.newStat is null)
-                                instructionList.Insert(i + 1, new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(StatDefOf), patch.oldStat.defName)));
-                            else
-                                instructionList.Insert(i + 1, new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(ST_StatDefOf), patch.newStat.defName)));
-                        }
-                        break;
+                        CodeInstruction prevInstruction = instructionList[i - j];
+                        prevInstructions.Add(prevInstruction);
+                        if (prevInstruction.opcode == OpCodes.Ldarg_0)
+                            break;
+                    }
+                    CodeInstruction instruction1 = instructionList[i - 1];
+                    CodeInstruction instruction2 = instructionList[i - 2];
+                    foreach (StatPatchDef patch in FoundPatch.Where(t => t.addToolDegrade))
+                    {
+                        instructionList.Insert(i + 1, instruction0);
+                        foreach (CodeInstruction prevInstruction in prevInstructions)
+                            instructionList.Insert(i + 1, prevInstruction);
+                        instructionList.Insert(i + 1, new CodeInstruction(OpCodes.Call, TryDegradeTool));
+                        if (patch.newStat is null)
+                            instructionList.Insert(i + 1, new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(StatDefOf), patch.oldStat.defName)));
+                        else
+                            instructionList.Insert(i + 1, new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(ST_StatDefOf), patch.newStat.defName)));
                     }
                 }
+            }
+            else
+            {
+                Log.Error("Not a pawn instruction to add tool degrade");
             }
             return instructionList.AsEnumerable();
         }
@@ -246,7 +304,7 @@ namespace SurvivalTools.HarmonyPatches
             IEnumerable<Type> AllJobDrivers = GenTypes.AllSubclasses(typeof(JobDriver));
             foreach (Type jobDriver in AllJobDrivers)
             {
-                FoundPatch = new List<StatPatchDef>();
+                auxPatch = new List<StatPatchDef>();
                 // Check which patch can be ignored
                 foreach (StatPatchDef patch in AutoPatch.StatsToPatch)
                     patch.CheckJobDriver(jobDriver);
@@ -254,6 +312,7 @@ namespace SurvivalTools.HarmonyPatches
                 List<MethodInfo> jbMethods = AccessTools.GetDeclaredMethods(jobDriver);
                 foreach (MethodInfo jbMethod in jbMethods)
                 {
+                    FoundPatch = new List<StatPatchDef>();
                     if (jbMethod.IsAbstract)
                         continue;
                     if (SearchForStat(jbMethod))
@@ -270,11 +329,18 @@ namespace SurvivalTools.HarmonyPatches
                             jdpatch.methods.Add(jbMethod);
                             jdpatch.auxmethods.Add(jbMethod);
                             jdpatch.FoundStage1 = true;
+                            if (patch.addToolDegrade && AccessTools.GetReturnedType(jbMethod) == typeof(Action))
+                                jdpatch.FoundStage2 = true;
+                        }
+                        if (FoundPatch.Exists(t => t.addToolDegrade) && AccessTools.GetReturnedType(jbMethod) == typeof(Action))
+                        {
+                            harmony.Patch(jbMethod, transpiler: transpileAddDegrade);
                         }
                     }
+                    foreach (StatPatchDef patch in FoundPatch)
+                        auxPatch.AddDistinct(patch);
                 }
                 // Patch MakeToil: Assumed is in delegated method: add ToolDegrade here
-                auxPatch = FoundPatch;
                 Type[] nestedTypes = jobDriver.GetNestedTypes(BindingFlags.NonPublic | BindingFlags.Instance);
                 foreach (Type nType in nestedTypes)
                 {
@@ -317,11 +383,14 @@ namespace SurvivalTools.HarmonyPatches
                         {
                             if (jbMethod.IsAbstract)
                                 continue;
-                            if (SearchCalledFunction(jbMethod))
+                            MethodInfo foundMethod = SearchCalledFunction(jbMethod);
+                            if (foundMethod != null)
                             {
                                 jdpatch.FoundStage2 = true;
-                                harmony.Patch(jbMethod, transpiler: transpileAddDegrade);
-                                jdpatch.methods.Add(jbMethod);
+                                if (!SearchForPawn(foundMethod, foundMethod == jbMethod))
+                                    Logger.Error($"{foundMethod}: No pawn instruction found to patch tool degrade.");
+                                harmony.Patch(foundMethod, transpiler: transpileAddDegrade);
+                                jdpatch.methods.Add(foundMethod);
                                 break;
                             }
                         }
@@ -353,11 +422,14 @@ namespace SurvivalTools.HarmonyPatches
                             {
                                 if (jbMethod.IsAbstract)
                                     continue;
-                                if (SearchCalledFunction(jbMethod))
+                                MethodInfo foundMethod = SearchCalledFunction(jbMethod);
+                                if (foundMethod != null)
                                 {
                                     jdpatch.FoundStage2 = true;
-                                    harmony.Patch(jbMethod, transpiler: transpileAddDegrade);
-                                    jdpatch.methods.Add(jbMethod);
+                                    if (!SearchForPawn(foundMethod, foundMethod == jbMethod))
+                                        Logger.Error("{foundMethod}: No pawn instruction found to patch tool degrade.");
+                                    harmony.Patch(foundMethod, transpiler: transpileAddDegrade);
+                                    jdpatch.methods.Add(foundMethod);
                                     break;
                                 }
                             }
