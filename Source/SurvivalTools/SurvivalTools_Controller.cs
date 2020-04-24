@@ -62,6 +62,10 @@ namespace SurvivalTools.HarmonyPatches
         public static List<MethodInfo> auxMethods;
         public static List<StatPatchDef> auxPatch = new List<StatPatchDef>();
         public static List<Type> JobDefOfTypes;
+        private static Type currJobDriver0;
+        private static Type currJobDriver;
+        private static Type currNestedType;
+        private static MethodInfo currMethod;
         private static int foundPawnInstruction;
         private static MethodInfo foundCalledMethod;
         private static MethodInfo TryDegradeTool =>
@@ -222,7 +226,7 @@ namespace SurvivalTools.HarmonyPatches
             }
             else
             {
-                Log.Error("Not a pawn instruction to add tool degrade");
+                Log.Error($"Not a pawn instruction to add tool degrade\n{currJobDriver0} : {currJobDriver} : {currNestedType} : {currMethod}\n{i} : {instruction0.opcode} : {instruction0.operand}");
             }
             return instructionList.AsEnumerable();
         }
@@ -296,6 +300,9 @@ namespace SurvivalTools.HarmonyPatches
             IEnumerable<Type> AllJobDrivers = GenTypes.AllSubclasses(typeof(JobDriver));
             foreach (Type jobDriver in AllJobDrivers)
             {
+                currJobDriver0 = jobDriver;
+                currJobDriver = null;
+                currNestedType = null;
                 auxPatch = new List<StatPatchDef>();
                 // Check which patch can be ignored
                 foreach (StatPatchDef patch in AutoPatch.StatsToPatch)
@@ -304,6 +311,7 @@ namespace SurvivalTools.HarmonyPatches
                 List<MethodInfo> jbMethods = AccessTools.GetDeclaredMethods(jobDriver);
                 foreach (MethodInfo jbMethod in jbMethods)
                 {
+                    currMethod = jbMethod;
                     FoundPatch = new List<StatPatchDef>();
                     if (jbMethod.IsAbstract)
                         continue;
@@ -336,9 +344,11 @@ namespace SurvivalTools.HarmonyPatches
                 Type[] nestedTypes = jobDriver.GetNestedTypes(BindingFlags.NonPublic | BindingFlags.Instance);
                 foreach (Type nType in nestedTypes)
                 {
+                    currNestedType = nType;
                     jbMethods = AccessTools.GetDeclaredMethods(nType);
                     foreach (MethodInfo jbMethod in jbMethods)
                     {
+                        currMethod = jbMethod;
                         FoundPatch = new List<StatPatchDef>();
                         if (jbMethod.IsAbstract)
                             continue;
@@ -370,9 +380,11 @@ namespace SurvivalTools.HarmonyPatches
                     FoundPatch = new List<StatPatchDef> { patch };
                     foreach (Type nType in nestedTypes)
                     {
+                        currNestedType = nType;
                         jbMethods = AccessTools.GetDeclaredMethods(nType);
                         foreach (MethodInfo jbMethod in jbMethods)
                         {
+                            currMethod = jbMethod;
                             if (jbMethod.IsAbstract)
                                 continue;
                             MethodInfo foundMethod = SearchCalledFunction(jbMethod);
@@ -380,7 +392,11 @@ namespace SurvivalTools.HarmonyPatches
                             {
                                 jdpatch.FoundStage2 = true;
                                 if (!SearchForPawn(foundMethod, foundMethod == jbMethod))
-                                    Logger.Error($"{foundMethod}: No pawn instruction found to patch tool degrade.");
+                                {
+                                    Logger.Error($"{jobDriver} : {nType} : {foundMethod}: No pawn instruction found to patch tool degrade.\n");
+                                    continue;
+                                }
+                                currMethod = foundMethod;
                                 harmony.Patch(foundMethod, transpiler: transpileAddDegrade);
                                 jdpatch.methods.Add(foundMethod);
                                 break;
@@ -402,6 +418,7 @@ namespace SurvivalTools.HarmonyPatches
                             Logger.Warning($"Couldn't backtrack jobDriver patch: {jobDriver} => {baseType}");
                             break;
                         }
+                        currJobDriver = baseType;
                         auxMethods = new List<MethodInfo>();
                         foreach (MethodInfo method in AccessTools.GetDeclaredMethods(baseType))
                             if (auxMethods2.Exists(t => t.Name == method.Name))
@@ -409,9 +426,11 @@ namespace SurvivalTools.HarmonyPatches
                         Type[] nestedTypes2 = baseType.GetNestedTypes(BindingFlags.NonPublic | BindingFlags.Instance);
                         foreach (Type nType in nestedTypes2)
                         {
+                            currNestedType = nType;
                             jbMethods = AccessTools.GetDeclaredMethods(nType);
                             foreach (MethodInfo jbMethod in jbMethods)
                             {
+                                currMethod = jbMethod;
                                 if (jbMethod.IsAbstract)
                                     continue;
                                 MethodInfo foundMethod = SearchCalledFunction(jbMethod);
@@ -419,7 +438,11 @@ namespace SurvivalTools.HarmonyPatches
                                 {
                                     jdpatch.FoundStage2 = true;
                                     if (!SearchForPawn(foundMethod, foundMethod == jbMethod))
-                                        Logger.Error("{foundMethod}: No pawn instruction found to patch tool degrade.");
+                                    {
+                                        Logger.Error($"{jobDriver} : {baseType} : {nType} : {foundMethod}: No pawn instruction found to patch tool degrade.");
+                                        continue;
+                                    }
+                                    currMethod = foundMethod;
                                     harmony.Patch(foundMethod, transpiler: transpileAddDegrade);
                                     jdpatch.methods.Add(foundMethod);
                                     break;
@@ -437,10 +460,14 @@ namespace SurvivalTools.HarmonyPatches
                 patch.skip = false;
                 foreach (Type jobDriver in patch.OtherTypes)
                 {
+                    currJobDriver0 = jobDriver;
+                    currNestedType = null;
+                    currJobDriver = null;
                     // Patch auxiliary methods: Don't add ToolDegrade here
                     List<MethodInfo> jbMethods = AccessTools.GetDeclaredMethods(jobDriver);
                     foreach (MethodInfo jbMethod in jbMethods)
                     {
+                        currMethod = jbMethod;
                         if (jbMethod.IsAbstract)
                             continue;
                         if (SearchForStat(jbMethod))
@@ -460,9 +487,11 @@ namespace SurvivalTools.HarmonyPatches
                     Type[] nestedTypes = jobDriver.GetNestedTypes(BindingFlags.NonPublic | BindingFlags.Instance);
                     foreach (Type nType in nestedTypes)
                     {
+                        currNestedType = nType;
                         jbMethods = AccessTools.GetDeclaredMethods(nType);
                         foreach (MethodInfo jbMethod in jbMethods)
                         {
+                            currMethod = jbMethod;
                             if (jbMethod.IsAbstract)
                                 continue;
                             if (SearchForStat(jbMethod))
