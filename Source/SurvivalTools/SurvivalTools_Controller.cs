@@ -666,29 +666,55 @@ namespace SurvivalTools.HarmonyPatches
                 if (patch.oldStatType is null)
                 {
                     List<Type> foundTypes = StatDefOfTypes.Where(t => AccessTools.Field(t, patch.oldStat.defName) != null).ToList();
-                    if (foundTypes.Count > 1)
+                    if (foundTypes.Count == 0)
+                        Logger.Error($"AutoPatchInitialize : Did not find StatDefOf: {patch.oldStat}");
+                    else if (foundTypes.Count > 1)
                     {
                         StringBuilder message = new StringBuilder("Please report this back to us: ");
                         message.AppendLine("AutoPatchInitialize : Found more than one stat with the same name");
                         foreach (Type type in foundTypes)
                             message.AppendLine($"Type: {type} | oldStat: {patch.oldStat} | FieldInfo: {AccessTools.Field(type, patch.oldStat.defName)}");
-                        Logger.Error(message.ToString());
+                        if (foundTypes.Contains(typeof(StatDefOf)))
+                        {
+                            message.AppendLine("Vanilla Rimworld StatDefOf found: using Vanilla.");
+                            Logger.Warning(message.ToString());
+                            patch.oldStatType = typeof(StatDefOf);
+                        }
+                        else
+                        {
+                            Logger.Error(message.ToString());
+                            patch.oldStatType = foundTypes[0];
+                        }
                     }
-                    patch.oldStatType = foundTypes[0];
+                    else
+                        patch.oldStatType = foundTypes[0];
                 }
                 patch.oldStatFieldInfo = AccessTools.Field(patch.oldStatType, patch.oldStat.defName);
                 if (patch.newStatType is null && patch.newStat != null)
                 {
                     List<Type> foundTypes = StatDefOfTypes.Where(t => AccessTools.Field(t, patch.newStat.defName) != null).ToList();
-                    if (foundTypes.Count > 1)
+                    if (foundTypes.Count == 0)
+                        Logger.Error($"AutoPatchInitialize : Did not find StatDefOf: {patch.newStat}");
+                    else if (foundTypes.Count > 1)
                     {
                         StringBuilder message = new StringBuilder("Please report this back to us: ");
                         message.AppendLine("AutoPatchInitialize : Found more than one stat with the same name");
                         foreach (Type type in foundTypes)
-                            message.AppendLine($"Type: {type} | oldStat: {patch.newStat} | FieldInfo: {AccessTools.Field(type, patch.newStat.defName)}");
-                        Logger.Error(message.ToString());
+                            message.AppendLine($"Type: {type} | newStat: {patch.newStat} | FieldInfo: {AccessTools.Field(type, patch.newStat.defName)}");
+                        if (foundTypes.Contains(typeof(StatDefOf)))
+                        {
+                            message.AppendLine("Vanilla Rimworld StatDefOf found: using Vanilla.");
+                            Logger.Warning(message.ToString());
+                            patch.newStatType = typeof(StatDefOf);
+                        }
+                        else
+                        {
+                            Logger.Error(message.ToString());
+                            patch.newStatType = foundTypes[0];
+                        }
                     }
-                    patch.newStatType = foundTypes[0];
+                    else
+                        patch.newStatType = foundTypes[0];
                 }
                 if (patch.newStat != null)
                     patch.newStatFieldInfo = AccessTools.Field(patch.newStatType, patch.newStat.defName);
