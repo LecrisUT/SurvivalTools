@@ -14,6 +14,7 @@ namespace SurvivalTools
         public static float ToolDegradationFactor => Mathf.Pow(toolDegradationFactor, (toolDegradationFactor < 1f) ? 1 : 2);
         public static bool ToolDegradation => toolDegradationFactor > 0f;
         public static bool toolOptimization = true;
+        public static bool toolAutoDropExcess = true;
 
         public void DoWindowContents(Rect wrect)
         {
@@ -36,6 +37,8 @@ namespace SurvivalTools
             options.Gap();
             options.AddLabeledSlider("Settings_ToolDegradationRate".Translate(), ref toolDegradationFactor, 0f, 2f,
                 rightAlignedLabel: ToolDegradationFactor.ToStringByStyle(ToStringStyle.FloatTwo, ToStringNumberSense.Factor), roundTo: 0.01f);
+            options.Gap();
+            options.CheckboxLabeled("Settings_toolAutoDropExcess".Translate(), ref toolAutoDropExcess, "Settings_toolAutoDropExcess_Tooltip".Translate());
             options.Gap();
             options.CheckboxLabeled("Settings_ToolOptimization".Translate(), ref toolOptimization, "Settings_ToolOptimization_Tooltip".Translate());
             options.End();

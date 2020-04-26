@@ -1,6 +1,5 @@
 ﻿using RimWorld;
 using System.Collections.Generic;
-using System.Linq;
 using Verse;
 
 namespace SurvivalTools
@@ -44,7 +43,7 @@ namespace SurvivalTools
 
         private static bool HasDamagedTools(Pawn pawn)
         {
-            foreach (SurvivalTool tool in pawn.GetAllUsableSurvivalTools().Where(t => ((SurvivalTool)t).InUse))
+            foreach (SurvivalTool tool in pawn.GetUsedSurvivalTools())
             {
                 float toolLifespan = tool.GetStatValue(ST_StatDefOf.ToolEstimatedLifespan, false);
                 float hitPointsPercentage = (float)tool.HitPoints / tool.MaxHitPoints;

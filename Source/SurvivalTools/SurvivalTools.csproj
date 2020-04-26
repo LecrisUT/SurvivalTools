@@ -35,6 +35,9 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AI\ThingComp_WorkSettings.cs" />
+    <Compile Include="AI\ThinkNode_Conditional_WorkSettingsChange.cs" />
+    <Compile Include="AI\ThinkNode_UseTools.cs" />
     <Compile Include="Alerts\Alert_SurvivalToolNeedsReplacing.cs" />
     <Compile Include="Alerts\Alert_ColonistNeedsSurvivalTool.cs" />
     <Compile Include="DefOfs\MiscDefOf.cs" />
@@ -42,10 +45,11 @@
     <Compile Include="DefOfs\ST_RecipeDefOf.cs" />
     <Compile Include="DefOfs\ST_ThingCategoryDefOf.cs" />
     <Compile Include="DefOfs\AutoPatch.cs" />
+    <Compile Include="Harmony\Patch_Pawn_WorkSettings.cs" />
     <Compile Include="ToolAssignments\Dialog_ManageSurvivalToolAssignments.cs" />
     <Compile Include="Harmony\Patch_Pawn_InventoryTracker.cs" />
     <Compile Include="Harmony\Patch_RoofUtility_CanHandleBlockingThing.cs" />
-    <Compile Include="Harmony\Patch_Toils_Haul_TakeToInventory.cs" />
+    <Compile Include="Harmony\Patch_ThingOwner.cs" />
     <Compile Include="Harmony\Patch_ThingFilter_SetFromPreset.cs" />
     <Compile Include="Harmony\Patch_WorkGiver_GrowerSow_JobOnCell.cs" />
     <Compile Include="Harmony\Patch_WorkGiver_PlantsCut_JobOnThing.cs" />

@@ -11,30 +11,12 @@ namespace SurvivalTools
         {
             Scribe_Collections.Look(ref forcedTools, "forcedTools", LookMode.Reference);
         }
-
-        public bool IsForced(Thing tool)
+        public void Reset()
         {
-            if (tool.Destroyed)
-            {
-                Log.Error($"SurvivalTool was forced while Destroyed: {tool}");
-                if (forcedTools.Contains(tool))
-                    forcedTools.Remove(tool);
-                return false;
-            }
-            return forcedTools.Contains(tool);
+            foreach (SurvivalTool tool in forcedTools)
+                tool.Forced = false;
+            forcedTools.Clear();
         }
-
-        public void SetForced(Thing tool, bool forced)
-        {
-            if (forced && !forcedTools.Contains(tool))
-                forcedTools.Add(tool);
-            else if (!forced && forcedTools.Contains(tool))
-                forcedTools.Remove(tool);
-        }
-
-        public bool AllowedToAutomaticallyDrop(Thing tool) => !IsForced(tool);
-
-        public void Reset() => forcedTools.Clear();
 
         public List<Thing> ForcedTools => forcedTools;
 

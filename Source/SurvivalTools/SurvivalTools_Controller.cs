@@ -35,7 +35,11 @@ namespace SurvivalTools.HarmonyPatches
             // Manual patches
             // Plants that obstruct construction zones
             // erdelf never fails to impress :)
-            var postfixHandleBlockingThingJob = new HarmonyMethod(patchType, nameof(Postfix_HandleBlockingThingJob));
+            Type WorkTabPriorityTracker = AccessTools.TypeByName("WorkTab.PriorityTracker");
+            HarmonyMethod postfixWorkTabSetPriority = new HarmonyMethod(patchType, nameof(Postfix_WorkTab_SetPriority));
+            if (WorkTabPriorityTracker != null)
+                harmony.Patch(AccessTools.Method(WorkTabPriorityTracker, "SetPriority", new Type[] { typeof(WorkGiverDef), typeof(int), typeof(int), typeof(bool) }), postfix: postfixWorkTabSetPriority);
+            HarmonyMethod postfixHandleBlockingThingJob = new HarmonyMethod(patchType, nameof(Postfix_HandleBlockingThingJob));
             harmony.Patch(AccessTools.Method(typeof(GenConstruct), nameof(GenConstruct.HandleBlockingThingJob)), postfix: postfixHandleBlockingThingJob);
             harmony.Patch(AccessTools.Method(typeof(RoofUtility), nameof(RoofUtility.HandleBlockingThingJob)), postfix: postfixHandleBlockingThingJob);
             harmony.Patch(AccessTools.Method(typeof(FloatMenuMakerMap), "AddHumanlikeOrders"), postfix: new HarmonyMethod(patchType, nameof(Postfix_FloatMenuMakerMap_AddHumanlikeOrders)));
@@ -232,6 +236,14 @@ namespace SurvivalTools.HarmonyPatches
         }
         #endregion
         #region ManualPatches
+
+        public static PropertyInfo workTab_Prop = AccessTools.Property(AccessTools.TypeByName("WorkTab.PriorityTracker"), "Pawn");
+        public static void Postfix_WorkTab_SetPriority(object __instance)
+        {
+            Pawn pawn = (Pawn) workTab_Prop.GetValue(__instance);
+            if (pawn?.TryGetComp<ThingComp_WorkSettings>()?.WorkSettingsChanged == false)
+                pawn.GetComp<ThingComp_WorkSettings>().WorkSettingsChanged = true;
+        }
         public static void Postfix_HandleBlockingThingJob(ref Job __result, Pawn worker)
         {
             if (__result?.def == JobDefOf.CutPlant && __result.targetA.Thing.def.plant.IsTree)
@@ -254,7 +266,7 @@ namespace SurvivalTools.HarmonyPatches
                     return;
                 if (!MassUtility.WillBeOverEncumberedAfterPickingUp(pawn, tool, 1))
                 {
-                    opts.Add(FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption("PickUp".Translate(tool.Label, tool) + "AsTool".Translate() + " (" + "ApparelForcedLower".Translate() + ")", delegate
+                    opts.Add(FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption("PickUp".Translate(tool.Label, tool) + "ST_AsTool".Translate() + " (" + "ApparelForcedLower".Translate() + ")", delegate
                     {
                         tool.SetForbidden(value: false, warnOnFail: false);
                         Job job9 = JobMaker.MakeJob(JobDefOf.TakeInventory, tool);

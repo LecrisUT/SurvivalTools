@@ -1,6 +1,7 @@
 ﻿using RimWorld;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Verse;
 using Verse.AI;
 
@@ -16,44 +17,41 @@ namespace SurvivalTools
         // This is a janky mess and a half, but works!
         protected override Job TryGiveJob(Pawn pawn)
         {
-            if (SurvivalToolsSettings.toolOptimization)
-            {
-                Pawn_SurvivalToolAssignmentTracker assignmentTracker = pawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
+            Pawn_SurvivalToolAssignmentTracker assignmentTracker = pawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
 
-                // Pawn can't use tools, lacks a tool assignment tracker or it isn't yet time to re-optimise tools
-                if (!pawn.CanUseSurvivalTools() || assignmentTracker == null || Find.TickManager.TicksGame < assignmentTracker.nextSurvivalToolOptimizeTick)
-                    return null;
+            // Pawn can't use tools, lacks a tool assignment tracker or it isn't yet time to re-optimise tools
+            if (!pawn.CanUseSurvivalTools() || assignmentTracker == null || Find.TickManager.TicksGame < assignmentTracker.nextSurvivalToolOptimizeTick)
+                return null;
+
+            if (SurvivalToolsSettings.toolAutoDropExcess)
+            {
+
+                assignmentTracker.CheckToolsInUse();
 
                 // Check if current tool assignment allows for each tool, auto-removing those that aren't allowed.
                 SurvivalToolAssignment curAssignment = assignmentTracker.CurrentSurvivalToolAssignment;
-                List<Thing> heldTools = pawn.GetHeldSurvivalTools().ToList();
-                foreach (Thing tool in heldTools)
-                    if ((!curAssignment.filter.Allows(tool) || !pawn.NeedsSurvivalTool((SurvivalTool)tool)) && assignmentTracker.forcedHandler.AllowedToAutomaticallyDrop(tool))
-                        return pawn.DequipAndTryStoreSurvivalTool(tool);
+                List<SurvivalTool> heldTools = pawn.GetHeldSurvivalTools();
+                foreach (SurvivalTool tool in heldTools)
+                    if ((!curAssignment.filter.Allows(tool) || !pawn.NeedsSurvivalTool(tool) || !tool.InUse) && !tool.Forced
+                        && StoreUtility.TryFindBestBetterStoreCellFor(tool, pawn, pawn.Map, StoreUtility.CurrentStoragePriorityOf(tool), pawn.Faction, out IntVec3 c))
+                        return pawn.DequipAndTryStoreSurvivalTool(tool, true, c);
 
-                // Drop extra tools
+            }
+            if (SurvivalToolsSettings.toolOptimization)
+            {
+                SurvivalToolAssignment curAssignment = assignmentTracker.CurrentSurvivalToolAssignment;
                 List<StatDef> workRelevantStats = pawn.AssignedToolRelevantWorkGiversStatDefs();
-                //heldTools = pawn.GetHeldSurvivalTools().ToList();
-                if (pawn.GetHeldSurvivalTools().Count() > pawn.GetStatValue(ST_StatDefOf.SurvivalToolCarryCapacity, false) && pawn.CanRemoveExcessSurvivalTools())
-                    foreach (Thing tool in heldTools)
-                    {
-                        if (assignmentTracker.forcedHandler.AllowedToAutomaticallyDrop(tool))
-                            return pawn.DequipAndTryStoreSurvivalTool(tool);
-                    }
-
-                // Look for better alternative tools to what the colonist currently has, based on what stats are relevant to the work types the colonist is assigned to
-                List<Thing> heldUsableTools = heldTools.Where(t => heldTools.IndexOf(t).IsUnderSurvivalToolCarryLimitFor(pawn)).ToList();
                 List<Thing> mapTools = pawn.MapHeld.listerThings.AllThings.Where(t => t is SurvivalTool).ToList();
-                Thing curTool = null;
-                Thing newTool = null;
+
+                SurvivalTool curTool = null;
+                SurvivalTool newTool = null;
                 float optimality = 0f;
                 foreach (StatDef stat in workRelevantStats)
                 {
                     curTool = pawn.GetBestSurvivalTool(stat);
                     optimality = SurvivalToolScore(curTool, workRelevantStats);
-                    foreach (Thing potentialToolThing in mapTools)
+                    foreach (SurvivalTool potentialTool in mapTools)
                     {
-                        SurvivalTool potentialTool = (SurvivalTool)potentialToolThing;
                         if (StatUtility.StatListContains(potentialTool.WorkStatFactors.ToList(), stat) && curAssignment.filter.Allows(potentialTool) && potentialTool.BetterThanWorkingToollessFor(stat) &&
                             pawn.CanUseSurvivalTool(potentialTool.def) && potentialTool.IsInAnyStorage() && !potentialTool.IsForbidden(pawn) && !potentialTool.IsBurning())
                         {
@@ -81,7 +79,7 @@ namespace SurvivalTools
 
                 // Success
                 int heldToolOffset = 0;
-                if (curTool != null && assignmentTracker.forcedHandler.AllowedToAutomaticallyDrop(curTool))
+                if (curTool != null && !curTool.Forced)
                 {
                     pawn.jobs.jobQueue.EnqueueFirst(pawn.DequipAndTryStoreSurvivalTool(curTool, false));
                     heldToolOffset = -1;
@@ -95,30 +93,10 @@ namespace SurvivalTools
                     return pickupJob;
                 }
 
-                // Final failure state
-                SetNextOptimizeTick(pawn);
-            }
-            else
-            {
-                Pawn_SurvivalToolAssignmentTracker assignmentTracker = pawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
-                // Pawn can't use tools, lacks a tool assignment tracker or it isn't yet time to re-optimise tools
-                if (!pawn.CanUseSurvivalTools() || assignmentTracker == null || Find.TickManager.TicksGame < assignmentTracker.nextSurvivalToolOptimizeTick)
-                    return null;
-
-                // Drop extra tools
-                List<StatDef> workRelevantStats = pawn.AssignedToolRelevantWorkGiversStatDefs();
-                List<Thing> heldTools = pawn.GetHeldSurvivalTools().ToList();
-                if (pawn.GetHeldSurvivalTools().Count() > pawn.GetStatValue(ST_StatDefOf.SurvivalToolCarryCapacity, false) && pawn.CanRemoveExcessSurvivalTools())
-                    foreach (Thing tool in heldTools)
-                    {
-                        if (assignmentTracker.forcedHandler.AllowedToAutomaticallyDrop(tool))
-                            return pawn.DequipAndTryStoreSurvivalTool(tool);
-                    }
-
-                SetNextOptimizeTick(pawn);
-                return null;
             }
 
+            // Final failure state
+            SetNextOptimizeTick(pawn);
             return null;
         }
 

@@ -46,7 +46,7 @@ namespace SurvivalTools.HarmonyPatches
                     originalLabel = $"{"ToolInUse".Translate()}: " + originalLabel;
 
                 // Forced
-                if (pawn.GetComp<Pawn_SurvivalToolAssignmentTracker>() is Pawn_SurvivalToolAssignmentTracker toolAssignmentTracker && toolAssignmentTracker.forcedHandler.IsForced(tool))
+                if (tool.Forced)
                     originalLabel += $", {"ApparelForcedLower".Translate()}";
 
             }
