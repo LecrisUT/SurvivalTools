@@ -35,8 +35,8 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AI\ThingComp_WorkSettings.cs" />
-    <Compile Include="AI\ThinkNode_Conditional_WorkSettingsChange.cs" />
+    <Compile Include="ThingComp\ThingComp_WorkSettings.cs" />
+    <Compile Include="AI\ThinkNode_WorkSettingsChange.cs" />
     <Compile Include="AI\ThinkNode_UseTools.cs" />
     <Compile Include="Alerts\Alert_SurvivalToolNeedsReplacing.cs" />
     <Compile Include="Alerts\Alert_ColonistNeedsSurvivalTool.cs" />
@@ -82,7 +82,7 @@
     <Compile Include="ModExtensions\SurvivalToolProperties.cs" />
     <Compile Include="ToolAssignments\SurvivalToolAssignment.cs" />
     <Compile Include="ToolAssignments\SurvivalToolAssignmentDatabase.cs" />
-    <Compile Include="ToolAssignments\Pawn_SurvivalToolAssignmentTracker.cs" />
+    <Compile Include="ThingComp\Pawn_SurvivalToolAssignmentTracker.cs" />
     <Compile Include="SurvivalToolForcedHandler.cs" />
     <Compile Include="StaticConstructorClass.cs" />
     <Compile Include="SurvivalToolsSettings.cs" />
