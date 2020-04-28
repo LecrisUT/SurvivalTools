@@ -341,10 +341,10 @@ namespace SurvivalTools.HarmonyPatches
                             jdpatch.methods.Add(jbMethod);
                             jdpatch.auxmethods.Add(jbMethod);
                             jdpatch.FoundStage1 = true;
-                            if (patch.addToolDegrade && AccessTools.GetReturnedType(jbMethod) == typeof(Action))
+                            if (patch.addToolDegrade && (AccessTools.GetReturnedType(jbMethod) == typeof(Action) || AccessTools.GetReturnedType(jbMethod) == typeof(Toil)))
                                 jdpatch.FoundStage2 = true;
                         }
-                        if (FoundPatch.Exists(t => t.addToolDegrade) && AccessTools.GetReturnedType(jbMethod) == typeof(Action))
+                        if (FoundPatch.Exists(t => t.addToolDegrade) && (AccessTools.GetReturnedType(jbMethod) == typeof(Action) || AccessTools.GetReturnedType(jbMethod) == typeof(Toil)))
                         {
                             harmony.Patch(jbMethod, transpiler: transpileAddDegrade);
                         }
