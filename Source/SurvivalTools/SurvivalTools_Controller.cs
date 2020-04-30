@@ -176,24 +176,33 @@ namespace SurvivalTools.HarmonyPatches
         private static IEnumerable<CodeInstruction> Transpile_Replace_Stat(IEnumerable<CodeInstruction> instructions)
         {
             List<CodeInstruction> instructionList = instructions.ToList();
-            foreach (CodeInstruction instruction in instructionList)
+            for (int i = 0; i < instructionList.Count; i++)
             {
+                CodeInstruction instruction = instructionList[i];
                 if (instruction.opcode == OpCodes.Ldsfld)
                 {
                     foreach (StatPatchDef patch in AutoPatch.StatsToPatch.Where(t => !t.skip))
                     {
-                        if (instruction.operand as FieldInfo == AccessTools.Field(patch.oldStatType, patch.oldStat.defName))
+                        if (instruction.operand as FieldInfo == patch.oldStatFieldInfo)
                         {
                             FoundPatch.AddDistinct(patch);
                             if (patch.newStat != null)
-                                instruction.operand = AccessTools.Field(typeof(ST_StatDefOf), patch.newStat.defName);
+                                instruction.operand = patch.newStatFieldInfo;
+                            if (patch.StatReplacer != null && patch.canPatch)
+                            {
+                                List<CodeInstruction> ReplacementCI = patch.Stat_CodeInstructions;
+                                ReplacementCI.Reverse();
+                                instructionList.RemoveAt(i);
+                                foreach (CodeInstruction CI in ReplacementCI)
+                                    instructionList.Insert(i, CI);
+                            }
                             break;
                         }
                     }
                     //if (FoundWorker) break;
                 }
             }
-            return instructions.AsEnumerable();
+            return instructionList.AsEnumerable();
         }
         private static IEnumerable<CodeInstruction> Transpile_AddDegrade(IEnumerable<CodeInstruction> instructions)
         {
@@ -221,10 +230,17 @@ namespace SurvivalTools.HarmonyPatches
                         foreach (CodeInstruction prevInstruction in prevInstructions)
                             instructionList.Insert(i + 1, prevInstruction);
                         instructionList.Insert(i + 1, new CodeInstruction(OpCodes.Call, TryDegradeTool));
-                        if (patch.newStat is null)
-                            instructionList.Insert(i + 1, new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(StatDefOf), patch.oldStat.defName)));
-                        else
+                        if (patch.newStat != null)
                             instructionList.Insert(i + 1, new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(ST_StatDefOf), patch.newStat.defName)));
+                        else if(patch.StatReplacer !=null)
+                        {
+                            List<CodeInstruction> ReplacementCI = patch.Stat_CodeInstructions;
+                            ReplacementCI.Reverse();
+                            foreach (CodeInstruction CI in ReplacementCI)
+                                instructionList.Insert(i + 1, CI);
+                        }
+                        else
+                            instructionList.Insert(i + 1, new CodeInstruction(OpCodes.Ldsfld, AccessTools.Field(typeof(StatDefOf), patch.oldStat.defName)));
                     }
                 }
             }
@@ -248,9 +264,7 @@ namespace SurvivalTools.HarmonyPatches
         {
             if (__result?.def == JobDefOf.CutPlant && __result.targetA.Thing.def.plant.IsTree)
             {
-                if (worker.MeetsWorkGiverStatRequirements(ST_WorkGiverDefOf.FellTrees.GetModExtension<WorkGiverExtension>().requiredStats))
-                    __result = new Job(ST_JobDefOf.FellTree, __result.targetA);
-                else
+                if (!worker.MeetsWorkGiverStatRequirements(ST_WorkGiverDefOf.FellTrees.GetModExtension<WorkGiverExtension>().requiredStats))
                     __result = null;
             }
         }
@@ -318,7 +332,11 @@ namespace SurvivalTools.HarmonyPatches
                 auxPatch = new List<StatPatchDef>();
                 // Check which patch can be ignored
                 foreach (StatPatchDef patch in AutoPatch.StatsToPatch)
+                {
                     patch.CheckJobDriver(jobDriver);
+                    if (!patch.skip && patch.StatReplacer != null)
+                        patch.Initialize_StatReplacer(jobDriver);
+                }
                 // Patch auxiliary methods: Don't add ToolDegrade here
                 List<MethodInfo> jbMethods = AccessTools.GetDeclaredMethods(jobDriver);
                 foreach (MethodInfo jbMethod in jbMethods)
@@ -357,6 +375,8 @@ namespace SurvivalTools.HarmonyPatches
                 foreach (Type nType in nestedTypes)
                 {
                     currNestedType = nType;
+                    foreach (StatPatchDef patch in AutoPatch.StatsToPatch.Where(t => !t.skip && t.StatReplacer != null))
+                        patch.Initialize_StatReplacer(jobDriver, nType);
                     jbMethods = AccessTools.GetDeclaredMethods(nType);
                     foreach (MethodInfo jbMethod in jbMethods)
                     {
@@ -656,7 +676,12 @@ namespace SurvivalTools.HarmonyPatches
                             workGiverDef.modExtensions.Add(extension);
                         else
                             extension = workGiverDef.GetModExtension<WorkGiverExtension>();
-                        extension.requiredStats.Add(patch.newStat is null ? patch.oldStat : patch.newStat);
+                        if (patch.newStat != null)
+                            extension.requiredStats.Add(patch.newStat);
+                        else if (patch.StatReplacer != null)
+                            extension.requiredStats.AddRange(patch.potentialStats);
+                        else
+                            extension.requiredStats.Add(patch.oldStat);
                     }
         }
         #endregion
@@ -672,72 +697,15 @@ namespace SurvivalTools.HarmonyPatches
                 }
             List<Type> allDefsOfs = GenTypes.AllTypesWithAttribute<DefOf>().ToList();
             JobDefOfTypes = allDefsOfs.Where(t => t.GetFields().Where(tt => tt.FieldType == typeof(JobDef)).Count() > 0).ToList();
-            List<Type> StatDefOfTypes = allDefsOfs.Where(t => t.GetFields().Where(tt => tt.FieldType == typeof(StatDef)).Count() > 0).ToList();
             foreach (StatPatchDef patch in AutoPatch.StatsToPatch)
-            {
-                if (patch.oldStatType is null)
-                {
-                    List<Type> foundTypes = StatDefOfTypes.Where(t => AccessTools.Field(t, patch.oldStat.defName) != null).ToList();
-                    if (foundTypes.Count == 0)
-                        Logger.Error($"AutoPatchInitialize : Did not find StatDefOf: {patch.oldStat}");
-                    else if (foundTypes.Count > 1)
-                    {
-                        StringBuilder message = new StringBuilder("Please report this back to us: ");
-                        message.AppendLine("AutoPatchInitialize : Found more than one stat with the same name");
-                        foreach (Type type in foundTypes)
-                            message.AppendLine($"Type: {type} | oldStat: {patch.oldStat} | FieldInfo: {AccessTools.Field(type, patch.oldStat.defName)}");
-                        if (foundTypes.Contains(typeof(StatDefOf)))
-                        {
-                            message.AppendLine("Vanilla Rimworld StatDefOf found: using Vanilla.");
-                            Logger.Warning(message.ToString());
-                            patch.oldStatType = typeof(StatDefOf);
-                        }
-                        else
-                        {
-                            Logger.Error(message.ToString());
-                            patch.oldStatType = foundTypes[0];
-                        }
-                    }
-                    else
-                        patch.oldStatType = foundTypes[0];
-                }
-                patch.oldStatFieldInfo = AccessTools.Field(patch.oldStatType, patch.oldStat.defName);
-                if (patch.newStatType is null && patch.newStat != null)
-                {
-                    List<Type> foundTypes = StatDefOfTypes.Where(t => AccessTools.Field(t, patch.newStat.defName) != null).ToList();
-                    if (foundTypes.Count == 0)
-                        Logger.Error($"AutoPatchInitialize : Did not find StatDefOf: {patch.newStat}");
-                    else if (foundTypes.Count > 1)
-                    {
-                        StringBuilder message = new StringBuilder("Please report this back to us: ");
-                        message.AppendLine("AutoPatchInitialize : Found more than one stat with the same name");
-                        foreach (Type type in foundTypes)
-                            message.AppendLine($"Type: {type} | newStat: {patch.newStat} | FieldInfo: {AccessTools.Field(type, patch.newStat.defName)}");
-                        if (foundTypes.Contains(typeof(StatDefOf)))
-                        {
-                            message.AppendLine("Vanilla Rimworld StatDefOf found: using Vanilla.");
-                            Logger.Warning(message.ToString());
-                            patch.newStatType = typeof(StatDefOf);
-                        }
-                        else
-                        {
-                            Logger.Error(message.ToString());
-                            patch.newStatType = foundTypes[0];
-                        }
-                    }
-                    else
-                        patch.newStatType = foundTypes[0];
-                }
-                if (patch.newStat != null)
-                    patch.newStatFieldInfo = AccessTools.Field(patch.newStatType, patch.newStat.defName);
-            }
+                patch.Initialize();
         }
         private void PrintPatchDebug()
         {
             StringBuilder debugString = new StringBuilder($"Stats auto patched:\n");
             foreach (StatPatchDef patch in AutoPatch.StatsToPatch)
             {
-                debugString.AppendLine($"\nPatch : {patch.oldStat} => {patch.newStat}");
+                debugString.AppendLine($"\nPatch : {patch.oldStat} => {patch.newStat} | {patch.StatReplacer}");
                 debugString.AppendLine($"JobDrivers:");
                 foreach (JobDriverPatch jdPatch in patch.FoundJobDrivers)
                 {

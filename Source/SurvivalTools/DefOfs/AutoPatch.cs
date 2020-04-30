@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Text;
+using System.Linq;
+using System.Reflection;
 using System.Collections.Generic;
 using RimWorld;
 using Verse;
-using System.Reflection;
+using HarmonyLib;
+using UnityEngine;
 
 namespace SurvivalTools
 {
@@ -13,12 +17,22 @@ namespace SurvivalTools
     }
     public class StatPatchDef : Def
     {
+        #region Fields and Properties
+        // Patched stat definition
         public StatDef oldStat;
         public StatDef newStat;
+        public Type StatReplacer;
+        public List<StatDef> potentialStats = new List<StatDef>();
+        // Stat patching utility
         public FieldInfo oldStatFieldInfo;
         public FieldInfo newStatFieldInfo;
-        public Type oldStatType;
-        public Type newStatType;
+        private Type oldStatType;
+        private Type newStatType;
+        public List<CodeInstruction> Stat_CodeInstructions
+            => (List<CodeInstruction>) StatReplacer_CodeInstructions.GetValue(null);
+        private MethodInfo StatReplacer_Initialize;
+        private PropertyInfo StatReplacer_CodeInstructions;
+        public bool canPatch;
         // Patch jobDrivers to use ST stats
         private bool patchAllJobDrivers = true;
         private List<Type> JobDriverExemption = new List<Type>();
@@ -33,6 +47,80 @@ namespace SurvivalTools
         public List<JobDefPatch> FoundJobDef = new List<JobDefPatch>();
         public bool skip;
         public bool addToolDegrade = true;
+        #endregion
+        #region Methods
+        public void Initialize()
+        {
+            List<Type> StatDefOfTypes = GenTypes.AllTypesWithAttribute<DefOf>().
+                Where(t => t.GetFields().FirstOrDefault(tt => tt.FieldType == typeof(StatDef)) != null).ToList();
+            StringBuilder BaseMessage = new StringBuilder("[SurivalTools.AutoPatcher] : ");
+            // Initialize oldStat FieldInfo
+            if (oldStatType is null)
+            {
+                List<Type> foundTypes = StatDefOfTypes.Where(t => AccessTools.Field(t, oldStat.defName) != null).ToList();
+                if (foundTypes.Count == 0)
+                    Log.Error(BaseMessage.ToString() + $"Did not find StatDefOf: {oldStat}");
+                else if (foundTypes.Count > 1)
+                {
+                    StringBuilder message = new StringBuilder(BaseMessage.ToString() + "Found more than one oldStat with the same name\n");
+                    foreach (Type type in foundTypes)
+                        message.AppendLine($"Type: {type} | oldStat: {oldStat} | FieldInfo: {AccessTools.Field(type, oldStat.defName)}");
+                    if (foundTypes.Contains(typeof(StatDefOf)))
+                    {
+                        message.AppendLine("Vanilla Rimworld StatDefOf found: using Vanilla.");
+                        Log.Warning(message.ToString());
+                        oldStatType = typeof(StatDefOf);
+                    }
+                    else
+                    {
+                        Log.Error(message.ToString());
+                        oldStatType = foundTypes[0];
+                    }
+                }
+                else
+                    oldStatType = foundTypes[0];
+            }
+            oldStatFieldInfo = AccessTools.Field(oldStatType, oldStat.defName);
+            // Initialize newStat FieldInfo
+            if (newStatType is null && newStat != null)
+            {
+                List<Type> foundTypes = StatDefOfTypes.Where(t => AccessTools.Field(t, newStat.defName) != null).ToList();
+                if (foundTypes.Count == 0)
+                    Log.Error(BaseMessage.ToString() + $"Did not find StatDefOf: {oldStat}");
+                else if (foundTypes.Count > 1)
+                {
+                    StringBuilder message = new StringBuilder(BaseMessage.ToString() + "Found more than one newStat with the same name\n");
+                    foreach (Type type in foundTypes)
+                        message.AppendLine($"Type: {type} | newStat: {newStat} | FieldInfo: {AccessTools.Field(type, newStat.defName)}");
+                    if (foundTypes.Contains(typeof(StatDefOf)))
+                    {
+                        message.AppendLine("Vanilla Rimworld StatDefOf found: using Vanilla.");
+                        Log.Warning(message.ToString());
+                        newStatType = typeof(StatDefOf);
+                    }
+                    else
+                    {
+                        Log.Error(message.ToString());
+                        newStatType = foundTypes[0];
+                    }
+                }
+                else
+                    newStatType = foundTypes[0];
+            }
+            if (newStat != null)
+                newStatFieldInfo = AccessTools.Field(newStatType, newStat.defName);
+            // Find StatReplacer.Initialize()
+            if (StatReplacer != null)
+            {
+                StatReplacer_Initialize = AccessTools.Method(StatReplacer, "Initialize");
+                StatReplacer_CodeInstructions = AccessTools.Property(StatReplacer, "CodeInstructions");
+            }
+        }
+        public void Initialize_StatReplacer(Type jobDriver, Type nestedClass = null)
+        {
+            canPatch = (bool)StatReplacer_Initialize.Invoke(null, new object[] { jobDriver, nestedClass });
+        }
+           
         public void CheckJobDriver(Type jd)
         {
             if (patchAllJobDrivers)
@@ -55,6 +143,7 @@ namespace SurvivalTools
                 return false;
             return true;
         }
+        #endregion
     }
     public class JobDriverPatch
     {
