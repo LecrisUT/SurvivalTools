@@ -59,11 +59,6 @@
     <Compile Include="Harmony\Patch_SymbolResolver_AncientRuins_Resolve.cs" />
     <Compile Include="Harmony\Patch_ITab_Pawn_Gear_DrawThingRow.cs" />
     <Compile Include="SurvivalTools_Controller.cs" />
-    <Compile Include="AI\JobDriver_HarvestTree_Designated.cs" />
-    <Compile Include="AI\JobDriver_HarvestTree.cs" />
-    <Compile Include="AI\JobDriver_FellTree_Designated.cs" />
-    <Compile Include="AI\JobDriver_FellTree.cs" />
-    <Compile Include="AI\JobDriver_PlantWork.cs" />
     <Compile Include="AI\JobDriver_DropSurvivalTool.cs" />
     <Compile Include="AI\JobGiver_OptimizeSurvivalTools.cs" />
     <Compile Include="ModCompatibilityCheck.cs" />
