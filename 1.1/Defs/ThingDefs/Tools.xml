@@ -207,6 +207,7 @@
                 </disallowedThingDefs>
             </defaultIngredientFilter>
             <unfinishedThingDef>UnfinishedWeapon</unfinishedThingDef>
+            <researchPrerequisite>MedievalToolsResearch</researchPrerequisite>
         </recipeMaker>
         <thingCategories>
             <li>SurvivalToolsMedieval</li>
