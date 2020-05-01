@@ -67,7 +67,11 @@
     <Compile Include="AI\JobGiver_OptimizeSurvivalTools.cs" />
     <Compile Include="ModCompatibilityCheck.cs" />
     <Compile Include="ToolAssignments\PawnColumnWorker_SurvivalToolAssignment.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AssemblyInfo.tt</DependentUpon>
+    </Compile>
     <Compile Include="SpecialThingFilterWorker_NonSmeltableTools.cs" />
     <Compile Include="Stats\StatPart_SurvivalTool.cs" />
     <Compile Include="Stats\StatWorker_EstimatedLifespan.cs" />
