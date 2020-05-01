@@ -59,23 +59,16 @@ namespace SurvivalTools
             {
                 List<Type> foundTypes = StatDefOfTypes.Where(t => AccessTools.Field(t, oldStat.defName) != null).ToList();
                 if (foundTypes.Count == 0)
-                    Log.Error(BaseMessage.ToString() + $"Did not find StatDefOf: {oldStat}");
+                    Log.Error(BaseMessage.ToString() + $"Did not find StatDefOf: [{oldStat}] : Please include it somewhere.");
                 else if (foundTypes.Count > 1)
                 {
-                    StringBuilder message = new StringBuilder(BaseMessage.ToString() + "Found more than one oldStat with the same name\n");
-                    foreach (Type type in foundTypes)
-                        message.AppendLine($"Type: {type} | oldStat: {oldStat} | FieldInfo: {AccessTools.Field(type, oldStat.defName)}");
+                    // This has no effect, I just want to prefer vanilla
                     if (foundTypes.Contains(typeof(StatDefOf)))
-                    {
-                        message.AppendLine("Vanilla Rimworld StatDefOf found: using Vanilla.");
-                        Log.Warning(message.ToString());
                         oldStatType = typeof(StatDefOf);
-                    }
+                    else if (foundTypes.Contains(typeof(ST_StatDefOf)))
+                        oldStatType = typeof(ST_StatDefOf);
                     else
-                    {
-                        Log.Error(message.ToString());
                         oldStatType = foundTypes[0];
-                    }
                 }
                 else
                     oldStatType = foundTypes[0];
@@ -86,23 +79,15 @@ namespace SurvivalTools
             {
                 List<Type> foundTypes = StatDefOfTypes.Where(t => AccessTools.Field(t, newStat.defName) != null).ToList();
                 if (foundTypes.Count == 0)
-                    Log.Error(BaseMessage.ToString() + $"Did not find StatDefOf: {oldStat}");
+                    Log.Error(BaseMessage.ToString() + $"Did not find StatDefOf: [{newStat}] : Please include it somewhere.");
                 else if (foundTypes.Count > 1)
                 {
-                    StringBuilder message = new StringBuilder(BaseMessage.ToString() + "Found more than one newStat with the same name\n");
-                    foreach (Type type in foundTypes)
-                        message.AppendLine($"Type: {type} | newStat: {newStat} | FieldInfo: {AccessTools.Field(type, newStat.defName)}");
                     if (foundTypes.Contains(typeof(StatDefOf)))
-                    {
-                        message.AppendLine("Vanilla Rimworld StatDefOf found: using Vanilla.");
-                        Log.Warning(message.ToString());
                         newStatType = typeof(StatDefOf);
-                    }
+                    else if (foundTypes.Contains(typeof(ST_StatDefOf)))
+                        newStatType = typeof(ST_StatDefOf);
                     else
-                    {
-                        Log.Error(message.ToString());
                         newStatType = foundTypes[0];
-                    }
                 }
                 else
                     newStatType = foundTypes[0];
