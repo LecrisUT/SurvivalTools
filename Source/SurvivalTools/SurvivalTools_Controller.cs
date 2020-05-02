@@ -10,6 +10,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Verse.AI;
 using UnityEngine;
+using RimWorld.SketchGen;
 
 namespace SurvivalTools.HarmonyPatches
 {
@@ -467,10 +468,6 @@ namespace SurvivalTools.HarmonyPatches
                 }
             }
         }
-        //public static void Postfix_JobDriver_MineQuarry_Mine(JobDriver __instance, Toil __result)
-        //{
-        //    __result.defaultDuration = (int)Mathf.Clamp(3000f / pawn.GetStatValue(ST_StatDefOf.DiggingSpeed, false), 500f, 10000f);
-        //}
         public static void Postfix_CombatExtended_Utility_HoldTracker_GetExcessThing(ref bool __result, Thing dropThing)
         {
             // If there's an excess thing to be dropped for automatic loadout fixing and that thing is a tool, don't treat it as an excess thing

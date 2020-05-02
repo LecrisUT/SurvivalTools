@@ -1,4 +1,5 @@
 ﻿using RimWorld;
+using SurvivalTools.HarmonyPatches;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,9 +12,24 @@ namespace SurvivalTools
     {
         static StaticConstructorClass()
         {
-            // Add validator to ThingSetMakerDef
-            ST_ThingSetMakerDefOf.MapGen_AncientRuinsSurvivalTools.root.fixedParams.validator = (ThingDef t) =>
-            t.IsWithinCategory(ST_ThingCategoryDefOf.SurvivalToolsNeolithic);
+            Patch_SketchResolver_Monument_TryPlaceFurniture.availableTools = ST_ThingCategoryDefOf.SurvivalTools.DescendantThingDefs.Where(t => t.techLevel <= TechLevel.Medieval).ToList();
+            foreach (ThingDef tool in Patch_SketchResolver_Monument_TryPlaceFurniture.availableTools)
+            {
+                float offset = 1;
+                switch (tool.techLevel)
+                {
+                    case TechLevel.Neolithic:
+                        offset = 8;
+                        break;
+                    case TechLevel.Medieval:
+                        offset = 1;
+                        break;
+                    default:
+                        offset = 0;
+                        break;
+                }
+                Patch_SketchResolver_Monument_TryPlaceFurniture.ToolsWeightOffset.Add(tool, offset);
+            }
 
             if (ModCompatibilityCheck.MendAndRecycle)
                 ResolveMendAndRecycleRecipes();

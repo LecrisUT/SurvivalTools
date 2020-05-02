@@ -60,7 +60,7 @@
     <Compile Include="Harmony\Patch_WorkGiver_PlantsCut_JobOnThing.cs" />
     <Compile Include="Harmony\Patch_ThingDef_SpecialDisplayStats.cs" />
     <Compile Include="Harmony\Patch_WorkGiver_MissingRequiredCapacity.cs" />
-    <Compile Include="Harmony\Patch_SymbolResolver_AncientRuins_Resolve.cs" />
+    <Compile Include="Harmony\Patch_SketchResolver_Monument_TryPlaceFurniture.cs" />
     <Compile Include="Harmony\Patch_ITab_Pawn_Gear_DrawThingRow.cs" />
     <Compile Include="SurvivalTools_Controller.cs" />
     <Compile Include="AI\JobDriver_DropSurvivalTool.cs" />
@@ -80,7 +80,6 @@
     <Compile Include="DefOfs\ST_StatCategoryDefOf.cs" />
     <Compile Include="DefOfs\ST_StatDefOf.cs" />
     <Compile Include="DefOfs\ST_ThingDefOf.cs" />
-    <Compile Include="DefOfs\ST_ThingSetMakerDefOf.cs" />
     <Compile Include="DefOfs\ST_WorkGiverDefOf.cs" />
     <Compile Include="SurvivalTool.cs" />
     <Compile Include="ModExtensions\SurvivalToolProperties.cs" />
