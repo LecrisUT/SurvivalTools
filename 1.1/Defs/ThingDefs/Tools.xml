@@ -109,6 +109,7 @@
                     <ConstructionSpeed_Tool>0.7</ConstructionSpeed_Tool>
                 </baseWorkStatFactors>
                 <defaultSurvivalToolAssignmentTags>
+                    <li>Constructor</li>
                     <li>Miner</li>
                 </defaultSurvivalToolAssignmentTags>
             </li>
@@ -207,6 +208,7 @@
                 </disallowedThingDefs>
             </defaultIngredientFilter>
             <unfinishedThingDef>UnfinishedWeapon</unfinishedThingDef>
+            <researchPrerequisite>MedievalToolsResearch</researchPrerequisite>
         </recipeMaker>
         <thingCategories>
             <li>SurvivalToolsMedieval</li>
@@ -553,7 +555,6 @@
 	<ThingDef ParentName="SurvivalToolIndustrial">
         <defName>SurvivalTools_Shovel</defName>
         <label>Shovel</label>
-		<techLevel>Medieval</techLevel>
         <description>Effective at digging out plants. Effective as melee weapon. Empreror approves.</description>
         <graphicData>
             <texPath>Things/Item/Equipment/Tool/Shovel</texPath>

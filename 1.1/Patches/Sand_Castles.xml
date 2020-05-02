@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Patch>
+    <Operation Class="PatchOperationFindMod">
+        <mods>
+            <li>Sand Castles</li>
+        </mods>
+        <match Class="PatchOperationSequence">
+            <success>Always</success>
+            <operations>
+                <li Class="PatchOperationConditional">
+                    <xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchConstruction"]/JobDriverExemption</xpath>
+                    <nomatch Class="PatchOperationAdd">
+                        <xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchConstruction"]</xpath>
+                        <value>
+                            <JobDriverExemption>
+                                <li>SandCastleMod.JobDriver_BuildSandCastle</li>
+                            </JobDriverExemption>
+                        </value>
+                    </nomatch>
+                    <match Class="PatchOperationAdd">
+                        <xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchConstruction"]/JobDriverExemption</xpath>
+                        <value>
+                            <li>SandCastleMod.JobDriver_BuildSandCastle</li>
+                        </value>
+                    </match>
+                </li>
+            </operations>
+        </match>
+    </Operation>
+</Patch>

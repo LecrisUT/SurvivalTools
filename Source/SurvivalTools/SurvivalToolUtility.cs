@@ -46,17 +46,18 @@ namespace SurvivalTools
         public static bool IsUnderSurvivalToolCarryLimitFor(this int count, Pawn pawn) =>
             !SurvivalToolsSettings.toolLimit || count < pawn.GetStatValue(ST_StatDefOf.SurvivalToolCarryCapacity, false);
 
-        public static IEnumerable<Thing> GetHeldSurvivalTools(this Pawn pawn) =>
-            pawn.inventory?.innerContainer.Where(t => t.def.IsSurvivalTool());
-
-        public static IEnumerable<Thing> GetUsableHeldSurvivalTools(this Pawn pawn)
+        public static List<SurvivalTool> GetHeldSurvivalTools(this Pawn pawn)
         {
-            List<Thing> heldSurvivalTools = pawn.GetHeldSurvivalTools().ToList();
-            return heldSurvivalTools.Where(t => heldSurvivalTools.IndexOf(t).IsUnderSurvivalToolCarryLimitFor(pawn));
+            List<SurvivalTool> HeldTools = new List<SurvivalTool>();
+            HeldTools.AddRange(pawn.equipment?.GetDirectlyHeldThings().Where(t => t.def.IsSurvivalTool()).Cast<SurvivalTool>());
+            HeldTools.AddRange(pawn.inventory?.innerContainer.Where(t => t.def.IsSurvivalTool()).Cast<SurvivalTool>());
+            return HeldTools;
         }
 
-        public static IEnumerable<Thing> GetAllUsableSurvivalTools(this Pawn pawn) =>
-            pawn.equipment?.GetDirectlyHeldThings().Where(t => t.def.IsSurvivalTool()).Concat(pawn.GetUsableHeldSurvivalTools());
+        public static IEnumerable<SurvivalTool> GetUsedSurvivalTools(this Pawn pawn) =>
+            pawn.GetHeldSurvivalTools().Where(t => t.InUse);
+        public static IEnumerable<SurvivalTool> GetUnusedSurvivalTools(this Pawn pawn) =>
+            pawn.GetHeldSurvivalTools().Where(t => !t.InUse);
 
         public static bool CanUseSurvivalTool(this Pawn pawn, ThingDef def)
         {
@@ -115,7 +116,7 @@ namespace SurvivalTools
             SurvivalTool tool = null;
             float statFactor = stat.GetStatPart<StatPart_SurvivalTool>().NoToolStatFactor;
 
-            List<Thing> usableTools = pawn.GetAllUsableSurvivalTools().ToList();
+            List<SurvivalTool> usableTools = pawn.GetHeldSurvivalTools();
             foreach (SurvivalTool curTool in usableTools)
                 foreach (StatModifier modifier in curTool.WorkStatFactors)
                     if (modifier.stat == stat && modifier.value > statFactor)
@@ -257,21 +258,30 @@ namespace SurvivalTools
             return StatUtility.GetStatValueFromList(tool.WorkStatFactors.ToList(), stat, 0f) > statPart.NoToolStatFactor;
         }
 
-        public static Job DequipAndTryStoreSurvivalTool(this Pawn pawn, Thing tool, bool enqueueCurrent = true)
+        public static Job DequipAndTryStoreSurvivalTool(this Pawn pawn, Thing tool, bool enqueueCurrent = true, IntVec3? c = null)
         {
             if (pawn.CurJob != null && enqueueCurrent)
                 pawn.jobs.jobQueue.EnqueueFirst(pawn.CurJob);
-
-            Zone_Stockpile pawnPosStockpile = Find.CurrentMap.zoneManager.ZoneAt(pawn.PositionHeld) as Zone_Stockpile;
-            if ((pawnPosStockpile == null || !pawnPosStockpile.settings.filter.Allows(tool)) &&
-                StoreUtility.TryFindBestBetterStoreCellFor(tool, pawn, pawn.Map, StoreUtility.CurrentStoragePriorityOf(tool), pawn.Faction, out IntVec3 c))
+            if (c == null)
+                if (StoreUtility.TryFindBestBetterStoreCellFor(tool, pawn, pawn.Map, StoreUtility.CurrentStoragePriorityOf(tool), pawn.Faction, out IntVec3 pos))
+                {
+                    Job haulJob = new Job(JobDefOf.HaulToCell, tool, pos)
+                    {
+                        count = 1
+                    };
+                    pawn.jobs.jobQueue.EnqueueFirst(haulJob);
+                }
+            else
             {
-                Job haulJob = new Job(JobDefOf.HaulToCell, tool, c)
+                Job haulJob = new Job(JobDefOf.HaulToCell, tool, (IntVec3) c)
                 {
                     count = 1
                 };
                 pawn.jobs.jobQueue.EnqueueFirst(haulJob);
             }
+            //Zone_Stockpile pawnPosStockpile = Find.CurrentMap.zoneManager.ZoneAt(pawn.PositionHeld) as Zone_Stockpile;
+            //if ((pawnPosStockpile == null || !pawnPosStockpile.settings.filter.Allows(tool)) &&
+                //StoreUtility.TryFindBestBetterStoreCellFor(tool, pawn, pawn.Map, StoreUtility.CurrentStoragePriorityOf(tool), pawn.Faction, out IntVec3 c))
 
             return new Job(ST_JobDefOf.DropSurvivalTool, tool);
         }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Verse;
 using Verse.AI;
+using RimWorld;
 
 namespace SurvivalTools
 {
@@ -26,8 +27,13 @@ namespace SurvivalTools
             {
                 initAction = () =>
                 {
-                    if (!pawn.inventory.innerContainer.TryDrop(TargetThingA, pawn.Position, pawn.MapHeld, ThingPlaceMode.Near, out Thing tool))
+                    if (TargetThingA == null || !pawn.inventory.innerContainer.Contains(TargetThingA))
                         EndJobWith(JobCondition.Incompletable);
+                    else
+                    {
+                        pawn.inventory.innerContainer.TryDrop(TargetThingA, pawn.Position, pawn.Map, ThingPlaceMode.Near, out Thing tool);
+                        EndJobWith(JobCondition.Succeeded);
+                    }
                 }
             };
         }

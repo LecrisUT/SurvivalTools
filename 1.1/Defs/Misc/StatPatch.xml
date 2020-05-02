@@ -33,7 +33,11 @@
     <SurvivalTools.StatPatchDef>
         <defName>PatchPlantHarvesting</defName>
         <oldStat>PlantWorkSpeed</oldStat>
-        <newStat>PlantWorkSpeed_Harvesting_Tool</newStat>
+        <StatReplacer>SurvivalTools.AutoPatcher.PlantWork_AutoPatch</StatReplacer>
+        <potentialStats>
+            <!--li>PlantWorkSpeed_Felling_Tool</li-->
+            <li>PlantWorkSpeed_Harvesting_Tool</li>
+        </potentialStats>
         <patchAllJobDrivers>false</patchAllJobDrivers>
         <patchAllWorkGivers>true</patchAllWorkGivers>
         <JobDriverList>
@@ -41,6 +45,7 @@
         </JobDriverList>
         <WorkGiverExemption>
             <li>WorkGiver_GrowerSow</li>
+            <li>SurvivalTools.WorkGiver_FellTrees</li>
         </WorkGiverExemption>
     </SurvivalTools.StatPatchDef>
 </Defs>

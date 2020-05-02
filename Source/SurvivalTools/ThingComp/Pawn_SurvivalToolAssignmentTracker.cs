@@ -1,4 +1,7 @@
-﻿using Verse;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Verse;
 
 namespace SurvivalTools
 {
@@ -45,5 +48,15 @@ namespace SurvivalTools
         public int nextSurvivalToolOptimizeTick = -99999;
         public SurvivalToolForcedHandler forcedHandler;
         private SurvivalToolAssignment curSurvivalToolAssignment;
+        public List<SurvivalTool> ToolsInUse = new List<SurvivalTool>();
+        public void CheckToolsInUse()
+        {
+            foreach (SurvivalTool tool in ToolsInUse)
+                tool.CheckIfUsed(this);
+            ToolsInUse.RemoveAll(t => !t.InUse);
+            foreach (SurvivalTool tool in Pawn.GetUnusedSurvivalTools())
+                tool.CheckIfUsed(this);
+            ToolsInUse = Pawn.GetUsedSurvivalTools().ToList();
+        }
     }
 }

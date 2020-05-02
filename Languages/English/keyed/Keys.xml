@@ -17,6 +17,8 @@
 
     <Settings_ToolDegradationRate>Tool degradation rate</Settings_ToolDegradationRate>
 
+    <Settings_toolAutoDropExcess>Automatically drop excess tools</Settings_toolAutoDropExcess>
+    <Settings_toolAutoDropExcess_Tooltip>Store any excess unused and unforced tolls.</Settings_toolAutoDropExcess_Tooltip>
     <Settings_ToolOptimization>Tool optimization</Settings_ToolOptimization>
     <Settings_ToolOptimization_Tooltip>Whether or not colonists will attempt to automatically optimize their inventory tools. Disabling may improve performance and fix any oddities with some modded materials.</Settings_ToolOptimization_Tooltip>
 
@@ -40,5 +42,8 @@
     <SurvivalToolAssignmentInUse>Tool assignment is in use by {0}</SurvivalToolAssignmentInUse>
     <NoSurvivalToolAssignmentSelected>No tool assignment selected</NoSurvivalToolAssignmentSelected>
     <ForcedSurvivalTools>Forced tools</ForcedSurvivalTools>
+
+    <!-- Other keys-->
+    <ST_AsTool>as a tool</ST_AsTool>
 
 </LanguageData>

@@ -63,11 +63,11 @@ namespace SurvivalTools
                     {
                         return null;
                     }
-                    return new Job(ST_JobDefOf.HarvestTreeDesignated, t);
+                    return new Job(JobDefOf.CutPlant, t);
                 }
                 if (designation.def == DesignationDefOf.CutPlant)
                 {
-                    return new Job(ST_JobDefOf.FellTreeDesignated, t);
+                    return new Job(JobDefOf.CutPlantDesignated, t);
                 }
             }
             return null;
