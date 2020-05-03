@@ -1,10 +1,10 @@
 <Manifest>
     <identifier>SurvivalTools</identifier>
-    <version>1.1.10</version>
+    <version>2.3.0502</version>
     <loadAfter>
-        <li>TurretExtensions</li>
-        <li>ExpandedWoodworkingVGP</li>
+		<li>brrainz.harmony</li>
+		<li>UnlimitedHugs.HugsLib</li>
     </loadAfter>
-    <manifestUri>https://rawgit.com/XeoNovaDan/SurvivalTools/master/About/Manifest.xml</manifestUri>
-    <downloadUri>https://github.com/XeoNovaDan/SurvivalTools/releases</downloadUri>
+    <manifestUri>https://raw.githubusercontent.com/LecrisUT/SurvivalTools/master/About/Manifest.xml</manifestUri>
+    <downloadUri>https://github.com/LecrisUT/SurvivalTools/releases</downloadUri>
 </Manifest>

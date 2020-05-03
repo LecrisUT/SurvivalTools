@@ -4,5 +4,6 @@
     <exclude>C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\SurvivalTools\.git</exclude>
     <exclude>C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\SurvivalTools\README.md</exclude>
     <exclude>C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\SurvivalTools\Source</exclude>
+    <exclude>C:\Program Files (x86)\Steam\steamapps\common\RimWorld\Mods\SurvivalTools\SteamDescription</exclude>
   </Excluded>
 </Configuration>
