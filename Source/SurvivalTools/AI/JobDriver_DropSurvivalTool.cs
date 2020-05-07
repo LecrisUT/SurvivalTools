@@ -33,10 +33,7 @@ namespace SurvivalTools
                     else
                     {
                         if (SS_dropSidearm != null)
-                        {
-                            Log.Message("Test 1");
                             SS_dropSidearm.Invoke(null, new object[] { pawn, TargetThingA, true });
-                        }
                         else
                         {
                             if (pawn.inventory.innerContainer.Contains(TargetThingA))
