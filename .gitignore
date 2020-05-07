@@ -9,6 +9,7 @@ Source/SurvivalTools/.vs
 Source/SurvivalTools/SurvivalTools.code-workspace
 Source/SurvivalTools/SurvivalTools.csproj.user
 Source/SurvivalTools/obj
+Source/SurvivalTools/Properties/AssemblyInfo.cs
 SurvivalTools.rar
 *.cache
 1.1/Assemblies/SurvivalTools.pdb

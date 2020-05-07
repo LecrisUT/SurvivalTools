@@ -2,6 +2,7 @@
 using Verse;
 using Verse.AI;
 using RimWorld;
+using System.Reflection;
 
 namespace SurvivalTools
 {
@@ -27,15 +28,35 @@ namespace SurvivalTools
             {
                 initAction = () =>
                 {
-                    if (TargetThingA == null || !pawn.inventory.innerContainer.Contains(TargetThingA))
+                    if (TargetThingA == null)
                         EndJobWith(JobCondition.Incompletable);
                     else
                     {
-                        pawn.inventory.innerContainer.TryDrop(TargetThingA, pawn.Position, pawn.Map, ThingPlaceMode.Near, out Thing tool);
-                        EndJobWith(JobCondition.Succeeded);
+                        if (SS_dropSidearm != null)
+                        {
+                            Log.Message("Test 1");
+                            SS_dropSidearm.Invoke(null, new object[] { pawn, TargetThingA, true });
+                        }
+                        else
+                        {
+                            if (pawn.inventory.innerContainer.Contains(TargetThingA))
+                            {
+                                pawn.inventory.innerContainer.TryDrop(TargetThingA, pawn.Position, pawn.Map, ThingPlaceMode.Near, out Thing tool);
+                                EndJobWith(JobCondition.Succeeded);
+                            }
+                            else if (pawn.equipment.Contains(TargetThingA))
+                            {
+                                pawn.equipment.TryDropEquipment((ThingWithComps)TargetThingA, out ThingWithComps tool, pawn.Position, false);
+                                EndJobWith(JobCondition.Succeeded);
+
+                            }
+                            else
+                                EndJobWith(JobCondition.Incompletable);
+                        }
                     }
                 }
             };
         }
+        public static MethodInfo SS_dropSidearm = null;
     }
 }

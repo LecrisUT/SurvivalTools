@@ -10,7 +10,6 @@ using System.Reflection;
 using System.Reflection.Emit;
 using Verse.AI;
 using UnityEngine;
-using RimWorld.SketchGen;
 
 namespace SurvivalTools.HarmonyPatches
 {
@@ -45,6 +44,9 @@ namespace SurvivalTools.HarmonyPatches
             harmony.Patch(AccessTools.Method(typeof(GenConstruct), nameof(GenConstruct.HandleBlockingThingJob)), postfix: postfixHandleBlockingThingJob);
             harmony.Patch(AccessTools.Method(typeof(RoofUtility), nameof(RoofUtility.HandleBlockingThingJob)), postfix: postfixHandleBlockingThingJob);
             harmony.Patch(AccessTools.Method(typeof(FloatMenuMakerMap), "AddHumanlikeOrders"), postfix: new HarmonyMethod(patchType, nameof(Postfix_FloatMenuMakerMap_AddHumanlikeOrders)));
+            Type SS_WeaponAssingment = AccessTools.TypeByName("SimpleSidearms.utilities.WeaponAssingment");
+            if (SS_WeaponAssingment != null)
+                JobDriver_DropSurvivalTool.SS_dropSidearm = AccessTools.Method(SS_WeaponAssingment, "dropSidearm");
             //// Combat Extended
             //if (ModCompatibilityCheck.CombatExtended)
             //{
@@ -55,13 +57,13 @@ namespace SurvivalTools.HarmonyPatches
             //    else
             //        Log.Error("Survival Tools - Could not find CombatExtended.Utility_HoldTracker type to patch");
 
-            //    // Prevent pawns from picking up excess tools with Combat Extended's CompInventory
-            //    var combatExtendedCompInventory = GenTypes.GetTypeInAnyAssembly("CombatExtended.CompInventory", null);
-            //    if (combatExtendedCompInventory != null)
-            //        harmony.Patch(AccessTools.Method(combatExtendedCompInventory, "CanFitInInventory"), postfix: new HarmonyMethod(patchType, nameof(Postfix_CombatExtended_CompInventory_CanFitInInventory)));
-            //    else
-            //        Log.Error("Survival Tools - Could not find CombatExtended.CompInventory type to patch");
-            //}
+                //    // Prevent pawns from picking up excess tools with Combat Extended's CompInventory
+                //    var combatExtendedCompInventory = GenTypes.GetTypeInAnyAssembly("CombatExtended.CompInventory", null);
+                //    if (combatExtendedCompInventory != null)
+                //        harmony.Patch(AccessTools.Method(combatExtendedCompInventory, "CanFitInInventory"), postfix: new HarmonyMethod(patchType, nameof(Postfix_CombatExtended_CompInventory_CanFitInInventory)));
+                //    else
+                //        Log.Error("Survival Tools - Could not find CombatExtended.CompInventory type to patch");
+                //}
         }
         #region AutoPatch_Fields
         public static List<StatPatchDef> FoundPatch = new List<StatPatchDef>();

@@ -258,8 +258,11 @@ namespace SurvivalTools
             return StatUtility.GetStatValueFromList(tool.WorkStatFactors.ToList(), stat, 0f) > statPart.NoToolStatFactor;
         }
 
+        public static JobDef jobDef_AwesomeInventory_Unload = DefDatabase<JobDef>.GetNamedSilentFail("AwesomeInventory_Unload");
         public static Job DequipAndTryStoreSurvivalTool(this Pawn pawn, Thing tool, bool enqueueCurrent = true, IntVec3? c = null)
         {
+            if (jobDef_AwesomeInventory_Unload != null)
+                return new Job(jobDef_AwesomeInventory_Unload, tool);
             if (pawn.CurJob != null && enqueueCurrent)
                 pawn.jobs.jobQueue.EnqueueFirst(pawn.CurJob);
             if (c == null)
@@ -279,10 +282,6 @@ namespace SurvivalTools
                 };
                 pawn.jobs.jobQueue.EnqueueFirst(haulJob);
             }
-            //Zone_Stockpile pawnPosStockpile = Find.CurrentMap.zoneManager.ZoneAt(pawn.PositionHeld) as Zone_Stockpile;
-            //if ((pawnPosStockpile == null || !pawnPosStockpile.settings.filter.Allows(tool)) &&
-                //StoreUtility.TryFindBestBetterStoreCellFor(tool, pawn, pawn.Map, StoreUtility.CurrentStoragePriorityOf(tool), pawn.Faction, out IntVec3 c))
-
             return new Job(ST_JobDefOf.DropSurvivalTool, tool);
         }
 
