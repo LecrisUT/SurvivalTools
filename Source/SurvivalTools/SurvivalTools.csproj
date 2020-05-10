@@ -35,11 +35,13 @@
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="AI\JobDriver_PickSurvivalTool.cs" />
     <Compile Include="AutoPatcher\PlantWork_AutoPatch.cs" />
     <Content Include="Properties\AssemblyInfo.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssemblyInfo.cs</LastGenOutput>
     </Content>
+    <Compile Include="SurvivalToolUsedHandler.cs" />
     <Compile Include="ThingComp\ThingComp_WorkSettings.cs" />
     <Compile Include="AI\ThinkNode_WorkSettingsChange.cs" />
     <Compile Include="AI\ThinkNode_UseTools.cs" />
@@ -51,6 +53,7 @@
     <Compile Include="DefOfs\ST_ThingCategoryDefOf.cs" />
     <Compile Include="DefOfs\AutoPatch.cs" />
     <Compile Include="Harmony\Patch_Pawn_WorkSettings.cs" />
+    <Compile Include="ToolAssignments\PawnColumnWorker_SurvivalToolAssignment2.cs" />
     <Compile Include="ToolAssignments\Dialog_ManageSurvivalToolAssignments.cs" />
     <Compile Include="Harmony\Patch_Pawn_InventoryTracker.cs" />
     <Compile Include="Harmony\Patch_RoofUtility_CanHandleBlockingThing.cs" />

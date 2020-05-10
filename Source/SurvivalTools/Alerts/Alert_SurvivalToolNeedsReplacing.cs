@@ -43,12 +43,16 @@ namespace SurvivalTools
 
         private static bool HasDamagedTools(Pawn pawn)
         {
-            foreach (SurvivalTool tool in pawn.GetUsedSurvivalTools())
+            Pawn_SurvivalToolAssignmentTracker assignmentTracker = pawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
+            if (assignmentTracker != null)
             {
-                float toolLifespan = tool.GetStatValue(ST_StatDefOf.ToolEstimatedLifespan, false);
-                float hitPointsPercentage = (float)tool.HitPoints / tool.MaxHitPoints;
-                if (toolLifespan * hitPointsPercentage <= DamagedToolRemainingLifespanThreshold)
-                    return true;
+                foreach (SurvivalTool tool in assignmentTracker.usedHandler.UsedTools)
+                {
+                    float toolLifespan = tool.GetStatValue(ST_StatDefOf.ToolEstimatedLifespan, false);
+                    float hitPointsPercentage = (float)tool.HitPoints / tool.MaxHitPoints;
+                    if (toolLifespan * hitPointsPercentage <= DamagedToolRemainingLifespanThreshold)
+                        return true;
+                }
             }
             return false;
         }

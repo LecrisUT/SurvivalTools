@@ -7,7 +7,7 @@ namespace SurvivalTools
     {
         public override ThinkResult TryIssueJobPackage(Pawn pawn, JobIssueParams jobParams)
         {
-            pawn?.TryGetComp<Pawn_SurvivalToolAssignmentTracker>()?.CheckToolsInUse();
+            pawn?.TryGetComp<Pawn_SurvivalToolAssignmentTracker>()?.usedHandler.CheckToolsInUse();
             return ThinkResult.NoJob;
         }
     }

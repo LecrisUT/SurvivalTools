@@ -461,8 +461,7 @@ namespace SurvivalTools.HarmonyPatches
                     opts.Add(FloatMenuUtility.DecoratePrioritizedTask(new FloatMenuOption("PickUp".Translate(tool.Label, tool) + "ST_AsTool".Translate() + " (" + "ApparelForcedLower".Translate() + ")", delegate
                     {
                         tool.SetForbidden(value: false, warnOnFail: false);
-                        Job job9 = JobMaker.MakeJob(JobDefOf.TakeInventory, tool);
-                        tool.toBeForced = true;
+                        Job job9 = JobMaker.MakeJob(ST_JobDefOf.PickSurvivalTool, tool);
                         job9.count = 1;
                         job9.checkEncumbrance = true;
                         pawn.jobs.TryTakeOrderedJob(job9);

@@ -26,13 +26,13 @@ namespace SurvivalTools
             if (SurvivalToolsSettings.toolAutoDropExcess)
             {
 
-                assignmentTracker.CheckToolsInUse();
+                assignmentTracker.usedHandler.CheckToolsInUse();
 
                 // Check if current tool assignment allows for each tool, auto-removing those that aren't allowed.
                 SurvivalToolAssignment curAssignment = assignmentTracker.CurrentSurvivalToolAssignment;
                 List<SurvivalTool> heldTools = pawn.GetHeldSurvivalTools();
                 foreach (SurvivalTool tool in heldTools)
-                    if ((!curAssignment.filter.Allows(tool) || !pawn.NeedsSurvivalTool(tool) || !tool.InUse) && !tool.Forced
+                    if (!assignmentTracker.usedHandler.IsUsed(tool) && !assignmentTracker.forcedHandler.IsForced(tool)
                         && StoreUtility.TryFindBestBetterStoreCellFor(tool, pawn, pawn.Map, StoreUtility.CurrentStoragePriorityOf(tool), pawn.Faction, out IntVec3 c))
                         return pawn.DequipAndTryStoreSurvivalTool(tool, true, c);
 
@@ -79,7 +79,7 @@ namespace SurvivalTools
 
                 // Success
                 int heldToolOffset = 0;
-                if (curTool != null && !curTool.Forced)
+                if (curTool != null && !assignmentTracker.forcedHandler.IsForced(curTool))
                 {
                     pawn.jobs.jobQueue.EnqueueFirst(pawn.DequipAndTryStoreSurvivalTool(curTool, false));
                     heldToolOffset = -1;
@@ -100,9 +100,8 @@ namespace SurvivalTools
             return null;
         }
 
-        private static float SurvivalToolScore(Thing toolThing, List<StatDef> workRelevantStats)
+        private static float SurvivalToolScore(SurvivalTool tool, List<StatDef> workRelevantStats)
         {
-            SurvivalTool tool = toolThing as SurvivalTool;
             if (tool == null)
                 return 0f;
 

@@ -17,7 +17,7 @@ namespace SurvivalTools
                 Find.WindowStack.Add(new Dialog_ManageSurvivalToolAssignments(null));
             }
         }
-
+            
         public override void DoCell(Rect rect, Pawn pawn, PawnTable table)
         {
             Pawn_SurvivalToolAssignmentTracker toolAssignmentTracker = pawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
@@ -26,7 +26,7 @@ namespace SurvivalTools
             int num = Mathf.FloorToInt((rect.width - 4f) * 0.714285731f);
             int num2 = Mathf.FloorToInt((rect.width - 4f) * 0.2857143f);
             float num3 = rect.x;
-            bool somethingIsForced = toolAssignmentTracker.forcedHandler.SomethingForced;
+            bool somethingIsForced = toolAssignmentTracker.forcedHandler.SomethingIsForced;
             Rect rect2 = new Rect(num3, rect.y + 2f, (float)num, rect.height - 4f);
             if (somethingIsForced)
             {

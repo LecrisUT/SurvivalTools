@@ -7,5 +7,6 @@ namespace SurvivalTools
     public static class ST_JobDefOf
     {
         public static JobDef DropSurvivalTool;
+        public static JobDef PickSurvivalTool;
     }
 }

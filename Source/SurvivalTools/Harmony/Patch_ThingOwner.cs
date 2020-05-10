@@ -20,15 +20,9 @@ namespace SurvivalTools.HarmonyPatches
                     pawn = inv.pawn;
                 if (pawn?.CanUseSurvivalTools() == true)
                 {
-                    Pawn_SurvivalToolAssignmentTracker tracker = pawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
-                    if (pawn.CurJob?.playerForced == true && tool.toBeForced)
-                        tool.Forced = true;
-                    if (tracker != null)
-                    {
-                        if (tool.Forced)
-                            tracker.forcedHandler.ForcedTools.AddDistinct(tool);
-                        tool.CheckIfUsed(tracker, true);
-                    }
+                    Pawn_SurvivalToolAssignmentTracker assignmentTracker = pawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
+                    if (assignmentTracker != null)
+                        assignmentTracker.usedHandler.CheckIsUsed(tool);
                 }
             }
         }
@@ -49,17 +43,63 @@ namespace SurvivalTools.HarmonyPatches
                     pawn = eq.pawn;
                 if (__instance.Owner is Pawn_InventoryTracker inv)
                     pawn = inv.pawn;
+                if (__instance.Owner is Pawn_CarryTracker carry)
+                    pawn = carry.pawn;
                 if (pawn?.CanUseSurvivalTools() == true)
                 {
-                    tool.Forced = false;
-                    tool.InUse = false;
-                    Pawn_SurvivalToolAssignmentTracker tracker = pawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
-                    if (tracker != null)
+                    Pawn_SurvivalToolAssignmentTracker assignmentTracker = pawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
+                    if (assignmentTracker != null)
                     {
-                        if (tracker.ToolsInUse?.Contains(tool) == true)
-                            tracker.ToolsInUse.Remove(tool);
-                        if (tracker.forcedHandler?.ForcedTools?.Contains(tool) == true)
-                            tracker.forcedHandler.ForcedTools.Remove(tool);
+                        assignmentTracker.usedHandler.SetUsed(tool, false);
+                        assignmentTracker.forcedHandler.SetForced(tool, false);
+                        assignmentTracker.usedHandler.CheckToolsInUse();
+                    }
+                }
+            }
+        }
+    }
+
+    [HarmonyPatch(typeof(ThingOwner))]
+    [HarmonyPatch(nameof(ThingOwner.TryTransferToContainer))]
+    [HarmonyPatch(new Type[] { typeof(Thing), typeof(ThingOwner), typeof(int), typeof(Thing), typeof(bool) },
+        new ArgumentType[] { ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Out, ArgumentType.Normal })]
+    public static class Patch_ThingOwner_TryTransferToContainer
+    {
+        public static void Postfix(ThingOwner __instance, int __result, Thing item, ThingOwner otherContainer)
+        {
+            if (__result >0 && item is SurvivalTool tool && item != null)
+            {
+                Pawn pawn = null;
+                if (__instance.Owner is Pawn_EquipmentTracker eq)
+                    pawn = eq.pawn;
+                if (__instance.Owner is Pawn_InventoryTracker inv)
+                    pawn = inv.pawn;
+                if (__instance.Owner is Pawn_CarryTracker carry)
+                    pawn = carry.pawn;
+                if (pawn?.CanUseSurvivalTools() == true)
+                {
+                    Pawn_SurvivalToolAssignmentTracker assignmentTracker = pawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
+                    if (assignmentTracker != null)
+                    {
+                        assignmentTracker.usedHandler.SetUsed(tool, false);
+                        assignmentTracker.forcedHandler.SetForced(tool, false);
+                        assignmentTracker.usedHandler.CheckToolsInUse();
+                    }
+                }
+                if (otherContainer.Owner is Pawn_EquipmentTracker || otherContainer.Owner is Pawn_InventoryTracker)
+                {
+                    Pawn otherPawn = null;
+                    if (otherContainer.Owner is Pawn_EquipmentTracker otherEq)
+                        otherPawn = otherEq.pawn;
+                    if (otherContainer.Owner is Pawn_InventoryTracker otherInv)
+                        otherPawn = otherInv.pawn;
+                    if (pawn?.CanUseSurvivalTools() == true)
+                    {
+                        Pawn_SurvivalToolAssignmentTracker assignmentTracker = otherPawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
+                        if (assignmentTracker != null)
+                        {
+                            assignmentTracker.usedHandler.CheckIsUsed(tool);
+                        }
                     }
                 }
             }

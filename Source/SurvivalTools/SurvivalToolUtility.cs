@@ -54,11 +54,6 @@ namespace SurvivalTools
             return HeldTools;
         }
 
-        public static IEnumerable<SurvivalTool> GetUsedSurvivalTools(this Pawn pawn) =>
-            pawn.GetHeldSurvivalTools().Where(t => t.InUse);
-        public static IEnumerable<SurvivalTool> GetUnusedSurvivalTools(this Pawn pawn) =>
-            pawn.GetHeldSurvivalTools().Where(t => !t.InUse);
-
         public static bool CanUseSurvivalTool(this Pawn pawn, ThingDef def)
         {
             SurvivalToolProperties props = def.GetModExtension<SurvivalToolProperties>();

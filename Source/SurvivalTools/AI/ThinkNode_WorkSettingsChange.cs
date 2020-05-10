@@ -8,7 +8,7 @@ namespace SurvivalTools
     {
         protected override bool Satisfied(Pawn pawn)
         {
-            if (pawn.Faction == Faction.OfPlayer)
+            if (pawn?.Faction == Faction.OfPlayer)
             {
                 if (pawn?.TryGetComp<ThingComp_WorkSettings>()?.WorkSettingsChanged == true)
                 {

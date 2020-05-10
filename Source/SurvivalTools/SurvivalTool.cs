@@ -9,7 +9,6 @@ namespace SurvivalTools
     public class SurvivalTool : ThingWithComps
     {
         public int workTicksDone = 0;
-        public bool toBeForced = false;
 
         #region Properties
 
@@ -24,9 +23,6 @@ namespace SurvivalTools
                 return null;
             }
         }
-
-        public bool InUse = false;
-        public bool Forced = false;
 
         public int WorkTicksToDegrade => Mathf.FloorToInt(
                 (this.GetStatValue(ST_StatDefOf.ToolEstimatedLifespan) * GenDate.TicksPerDay) / this.MaxHitPoints);
@@ -58,13 +54,14 @@ namespace SurvivalTools
             get
             {
                 string label = base.LabelNoCount;
-
-                if (InUse)
-                    label = $"{"ToolInUse".Translate()}: " + label;
-
-                if (Forced)
-                    label += $", {"ApparelForcedLower".Translate()}";
-
+                Pawn_SurvivalToolAssignmentTracker assignmentTracker = HoldingPawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
+                if (assignmentTracker != null)
+                {
+                    if (assignmentTracker.usedHandler.IsUsed(this))
+                        label = $"{"ToolInUse".Translate()}: " + label;
+                    if (assignmentTracker.forcedHandler.IsForced(this))
+                        label += $", {"ApparelForcedLower".Translate()}";
+                }
                 return label;
             }
         }
@@ -72,32 +69,6 @@ namespace SurvivalTools
         #endregion Properties
 
         #region Methods
-        public void CheckIfUsed(Pawn_SurvivalToolAssignmentTracker assignmentTracker, bool changeList = false)
-        {
-            if (HoldingPawn == null || HoldingPawn?.NeedsSurvivalTool(this) == false
-                || HoldingPawn?.CanUseSurvivalTools() == false || HoldingPawn?.CanUseSurvivalTool(def) == false)
-            {
-                InUse = false;
-                if (changeList && HoldingPawn?.TryGetComp<Pawn_SurvivalToolAssignmentTracker>()?.ToolsInUse.Contains(this) == true)
-                    HoldingPawn?.TryGetComp<Pawn_SurvivalToolAssignmentTracker>()?.ToolsInUse.Remove(this);
-                return;
-            }
-            float maxTools = HoldingPawn.GetStatValue(ST_StatDefOf.SurvivalToolCarryCapacity, false);
-            if (SurvivalToolUtility.BestSurvivalToolsFor(HoldingPawn).Contains(this) &&
-                (assignmentTracker?.ToolsInUse.Count < maxTools || assignmentTracker?.ToolsInUse.Contains(this) == true))
-            {
-                InUse = true;
-                if (changeList)
-                    HoldingPawn?.TryGetComp<Pawn_SurvivalToolAssignmentTracker>()?.ToolsInUse.AddDistinct(this);
-            }
-            else
-            {
-                InUse = false;
-                if (changeList && HoldingPawn?.TryGetComp<Pawn_SurvivalToolAssignmentTracker>()?.ToolsInUse.Contains(this) == true)
-                    HoldingPawn?.TryGetComp<Pawn_SurvivalToolAssignmentTracker>()?.ToolsInUse.Remove(this);
-            }
-        }
-
         public override IEnumerable<StatDrawEntry> SpecialDisplayStats()
         {
             /*

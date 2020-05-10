@@ -3,7 +3,14 @@
     <JobDef>
         <defName>DropSurvivalTool</defName>
         <driverClass>SurvivalTools.JobDriver_DropSurvivalTool</driverClass>
-        <reportString>dropping TargetA.</reportString>
+        <reportString>dropping tool: TargetA.</reportString>
+        <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
+    </JobDef>
+
+    <JobDef>
+        <defName>PickSurvivalTool</defName>
+        <driverClass>SurvivalTools.JobDriver_PickSurvivalTool</driverClass>
+        <reportString>taking tool: TargetA.</reportString>
         <allowOpportunisticPrefix>true</allowOpportunisticPrefix>
     </JobDef>
 

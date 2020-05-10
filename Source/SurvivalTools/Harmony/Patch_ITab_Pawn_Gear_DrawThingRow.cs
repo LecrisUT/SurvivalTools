@@ -39,14 +39,15 @@ namespace SurvivalTools.HarmonyPatches
 
         public static void AdjustDisplayedLabel(ref string originalLabel, Thing thing, Pawn pawn)
         {
-            if (thing is SurvivalTool tool)
+            Pawn_SurvivalToolAssignmentTracker assignmentTracker = pawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
+            if (thing is SurvivalTool tool && assignmentTracker != null)
             {
                 // In use
-                if (tool.InUse)
+                if (assignmentTracker.usedHandler.IsUsed(tool))
                     originalLabel = $"{"ToolInUse".Translate()}: " + originalLabel;
 
                 // Forced
-                if (tool.Forced)
+                if (assignmentTracker.forcedHandler.IsForced(tool))
                     originalLabel += $", {"ApparelForcedLower".Translate()}";
 
             }
