@@ -1,0 +1,27 @@
+<Patch>
+    <Operation Class="PatchOperationSequence">
+        <success>Always</success>
+        <operations>
+            <li Class="PatchOperationReplace">
+                <xpath>/Defs/StatDef[defName="MiningSpeed" or defName="MiningYield" or defName="PlantWorkSpeed" or defName="ConstructionSpeed"]/minValue</xpath>
+                <value>
+                    <minValue>0</minValue>
+                </value>
+            </li>
+            <!--li Class="PatchOperationAdd">
+                <xpath>/Defs/StatDef[(defName="MiningSpeed" or defName="MiningYield" or defName="PlantWorkSpeed" or defName="ConstructionSpeed") and not(parts)]</xpath>
+                <value>
+                    <parts/>
+                </value>
+            </li>
+            <li Class="PatchOperationAdd">
+                <xpath>/Defs/StatDef[defName="MiningSpeed" or defName="MiningYield" or defName="PlantWorkSpeed" or defName="ConstructionSpeed"]/parts</xpath>
+                <value>
+                    <li Class="SurvivalTools.StatPart_SurvivalTool">
+                        <noToolStatFactorHardcore>0</noToolStatFactorHardcore>
+                    </li>
+                </value>
+            </li-->
+        </operations>
+    </Operation>
+</Patch> 

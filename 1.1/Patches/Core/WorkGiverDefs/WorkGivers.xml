@@ -1,0 +1,19 @@
+<Patch>
+    <Operation Class="PatchOperationSequence">
+        <success>Always</success>
+        <operations>
+            <li Class="PatchOperationReplace">
+                <xpath>/Defs/WorkGiverDef[defName="PlantsCut"]/giverClass</xpath>
+                <value>
+                    <giverClass>SurvivalTools.WorkGiver_PlantsCut_NoTrees</giverClass>
+                </value>
+            </li>
+            <li Class="PatchOperationReplace">
+                <xpath>/Defs/WorkGiverDef[defName="GrowerHarvest"]/giverClass</xpath>
+                <value>
+                    <giverClass>SurvivalTools.WorkGiver_GrowerHarvest_NoTrees</giverClass>
+                </value>
+            </li>
+        </operations>
+    </Operation>
+</Patch> 

@@ -4,19 +4,20 @@ using Verse.AI;
 
 namespace SurvivalTools
 {
-    public class ThinkNode_WorkSettingsChange : ThinkNode_Conditional
+    /*public class ThinkNode_WorkSettingsChange : ThinkNode_Conditional
     {
         protected override bool Satisfied(Pawn pawn)
         {
             if (pawn?.Faction == Faction.OfPlayer)
             {
-                if (pawn?.TryGetComp<ThingComp_WorkSettings>()?.WorkSettingsChanged == true)
+                if (pawn.TryGetComp<ThingComp_WorkSettings>()?.WorkSettingsChanged == true)
                 {
-                    pawn.TryGetComp<ThingComp_WorkSettings>().WorkSettingsChanged = false;
+                    pawn.GetComp<ThingComp_WorkSettings>().WorkSettingsChanged = false;
+                    pawn.GetToolTracker().dirtyCache = true;
                     return true;
                 }
             }
             return false;
         }
-    }
+    }*/
 }

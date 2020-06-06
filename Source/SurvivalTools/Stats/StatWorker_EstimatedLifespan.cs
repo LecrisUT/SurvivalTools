@@ -42,8 +42,9 @@ namespace SurvivalTools
             }
 
             // For thing
-            StuffPropsTool stuffProps = tool.Stuff?.GetModExtension<StuffPropsTool>() ?? StuffPropsTool.defaultValues;
-            float wearFactor = tool.def.GetModExtension<SurvivalToolProperties>().toolWearFactor * (stuffProps.wearFactorMultiplier);
+            // StuffPropsTool stuffProps = tool.Stuff?.GetModExtension<StuffPropsTool>() ?? StuffPropsTool.defaultValues;
+            //float wearFactor = tool.def.GetModExtension<SurvivalToolProperties>().toolWearFactor * (stuffProps.wearFactorMultiplier);
+            float wearFactor = tool.def.GetModExtension<SurvivalToolProperties>().toolWearFactor;
             {
                 return GenDate.TicksToDays(Mathf.RoundToInt((BaseWearInterval * tool.MaxHitPoints) / wearFactor));
             }

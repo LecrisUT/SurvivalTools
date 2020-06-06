@@ -13,11 +13,34 @@
         </requiredCapacities>
         <modExtensions>
             <li Class="SurvivalTools.WorkGiverExtension">
-                <requiredStats>
-                    <li>PlantWorkSpeed_Felling_Tool</li>
-                </requiredStats>
+                <relevantJobs>
+                    <li>FellTree</li>
+                    <li>FellTreeDesignated</li>
+                </relevantJobs>
             </li>
         </modExtensions>
     </WorkGiverDef>
 
+    <WorkGiverDef>
+        <defName>HarvestTrees</defName>
+        <label>harvest trees</label>
+        <giverClass>SurvivalTools.WorkGiver_HarvestTrees</giverClass>
+        <workType>Growing</workType>
+        <priorityInType>100</priorityInType>
+        <verb>chop</verb>
+        <gerund>chopping</gerund>
+        <scanThings>false</scanThings>
+        <scanCells>true</scanCells>
+        <requiredCapacities>
+            <li>Manipulation</li>
+        </requiredCapacities>
+        <modExtensions>
+            <li Class="SurvivalTools.WorkGiverExtension">
+                <relevantJobs>
+                    <li>HarvestTree</li>
+                    <li>HarvestTreeDesignated</li>
+                </relevantJobs>
+            </li>
+        </modExtensions>
+    </WorkGiverDef>
 </Defs>

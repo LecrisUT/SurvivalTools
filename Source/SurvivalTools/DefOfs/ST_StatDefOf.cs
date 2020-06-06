@@ -8,15 +8,13 @@ namespace SurvivalTools
         // Pawn
         public static StatDef SurvivalToolCarryCapacity;
 
-        public static StatDef MiningSpeed_Tool;
-        public static StatDef MiningYield_Tool;
-        public static StatDef ConstructionSpeed_Tool;
-        public static StatDef PlantWorkSpeed_Harvesting_Tool;
-        public static StatDef PlantWorkSpeed_Felling_Tool;
-
         // Thing
         public static StatDef ToolEstimatedLifespan;
-
+        public static StatDef ToolWearFactor;
         public static StatDef ToolEffectivenessFactor;
+
+        // Stuff
+        public static StatDef ST_Hardness;
+        public static StatDef ST_Sharpness;
     }
 }

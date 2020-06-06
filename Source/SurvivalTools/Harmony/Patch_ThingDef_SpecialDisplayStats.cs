@@ -12,30 +12,30 @@ namespace SurvivalTools.HarmonyPatches
         public static void Postfix(ThingDef __instance, ref IEnumerable<StatDrawEntry> __result, StatRequest req)
         {
             // Tool def
-            if (req.Thing == null && __instance.IsSurvivalTool(out SurvivalToolProperties tProps))
+            /*if (req.Thing == null && __instance.IsSurvivalTool(out SurvivalToolProperties tProps))
             {
-                foreach (StatModifier modifier in tProps.baseWorkStatFactors)
+                foreach (SurvivalToolTypeModifier modifier in tProps.GetToolTypesValue())
                     __result = __result.AddItem(new StatDrawEntry(ST_StatCategoryDefOf.SurvivalTool,
-                    modifier.stat.LabelCap,
+                    modifier.toolType.LabelCap,
                     modifier.value.ToStringByStyle(ToStringStyle.PercentZero, ToStringNumberSense.Factor),
-                    reportText: modifier.stat.description,
+                    reportText: modifier.toolType.description,
                     displayPriorityWithinCategory: 99999,
-                    //overrideReportTitle: SurvivalToolUtility.GetSurvivalToolOverrideReportText(this, modifier.stat),
+                    overrideReportTitle: SurvivalToolUtility.GetSurvivalToolOverrideReportText(this, modifier.stat),
                     hyperlinks: null,
                     forceUnfinalizedMode: false
                           ));
             }
 
             // Stuff
-            if (__instance.IsStuff && __instance.GetModExtension<StuffPropsTool>() is StuffPropsTool sPropsTool)
+            /*if (__instance.IsStuff && __instance.GetModExtension<StuffPropsTool>() is StuffPropsTool sPropsTool)
             {
-                foreach (StatModifier modifier in sPropsTool.toolStatFactors)
+                foreach (SurvivalToolTypeModifier modifier in sPropsTool.toolTypeFactors)
                     __result = __result.AddItem(new StatDrawEntry(ST_StatCategoryDefOf.SurvivalToolMaterial,
-                        modifier.stat.LabelCap,
+                        modifier.toolType.LabelCap,
                         modifier.value.ToStringByStyle(ToStringStyle.PercentZero, ToStringNumberSense.Factor),
-                        reportText: modifier.stat.description,
+                        reportText: modifier.toolType.description,
                         displayPriorityWithinCategory: 99999));
-            }
+            }*/
         }
     }
 }

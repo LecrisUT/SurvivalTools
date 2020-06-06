@@ -9,7 +9,7 @@ namespace SurvivalTools
     {
         public Alert_ColonistNeedsSurvivalTool()
         {
-            defaultPriority = AlertPriority.High;
+            defaultPriority = AlertPriority.Medium;
         }
 
         private List<Pawn> culpritsResult = new List<Pawn>();
@@ -32,24 +32,22 @@ namespace SurvivalTools
 
         private static bool WorkingToolless(Pawn pawn)
         {
-            foreach (StatDef stat in pawn.AssignedToolRelevantWorkGiversStatDefs())
-            {
-                if (!pawn.HasSurvivalToolFor(stat))
-                    return true;
-            }
+            Pawn_SurvivalToolAssignmentTracker tracker = pawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
+            if (tracker != null)
+                foreach (SurvivalToolType toolType in tracker.RequiredToolTypes)
+                    if (!tracker.usedHandler.HasSurvivalTool(toolType))
+                        return true;
             return false;
         }
 
         private static string ToollessWorkTypesString(Pawn pawn)
         {
             List<string> types = new List<string>();
-            foreach (WorkGiver giver in pawn.AssignedToolRelevantWorkGivers())
-                foreach (StatDef stat in giver.def.GetModExtension<WorkGiverExtension>().requiredStats)
-                {
-                    string gerundLabel = giver.def.workType.gerundLabel;
-                    if (!pawn.HasSurvivalToolFor(stat) && !types.Contains(gerundLabel))
-                        types.Add(gerundLabel);
-                }
+            Pawn_SurvivalToolAssignmentTracker tracker = pawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
+            if (tracker != null)
+                foreach (SurvivalToolType toolType in tracker.RequiredToolTypes)
+                    if (!tracker.usedHandler.HasSurvivalTool(toolType))
+                        types.Add(toolType.label);
             return GenText.ToCommaList(types).CapitalizeFirst();
         }
 

@@ -5,14 +5,14 @@
 			<li>SeedsPlease</li>
 		</mods>
 		<match Class="PatchOperationConditional">
-			<xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchPlantHarvesting"]</xpath>
+			<xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchPlantWork"]</xpath>
 			<match Class="PatchOperationSequence">
 				<success>Always</success>
 				<operations>
 					<li Class="PatchOperationConditional">
-						<xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchPlantHarvesting"]/JobDriverList</xpath>
+						<xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchPlantWork"]/JobDriverList</xpath>
 						<nomatch Class="PatchOperationAdd">
-							<xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchPlantHarvesting"]</xpath>
+							<xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchPlantWork"]</xpath>
 							<value>
 								<JobDriverList>
 									<li>SeedsPlease.JobDriver_PlantWorkWithSeeds</li>
@@ -20,16 +20,16 @@
 							</value>
 						</nomatch>
 						<match Class="PatchOperationAdd">
-							<xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchPlantHarvesting"]/JobDriverList</xpath>
+							<xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchPlantWork"]/JobDriverList</xpath>
 							<value>
 								<li>SeedsPlease.JobDriver_PlantWorkWithSeeds</li>
 							</value>
 						</match>
 					</li>
 					<li Class="PatchOperationConditional">
-						<xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchPlantHarvesting"]/WorkGiverExemption</xpath>
+						<xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchPlantWork"]/WorkGiverExemption</xpath>
 						<nomatch Class="PatchOperationAdd">
-							<xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchPlantHarvesting"]</xpath>
+							<xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchPlantWork"]</xpath>
 							<value>
 								<WorkGiverExemption>
 									<li>SeedsPlease.WorkGiver_GrowerSowWithSeeds</li>
@@ -37,7 +37,7 @@
 							</value>
 						</nomatch>
 						<match Class="PatchOperationAdd">
-							<xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchPlantHarvesting"]/WorkGiverExemption</xpath>
+							<xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchPlantWork"]/WorkGiverExemption</xpath>
 							<value>
 								<li>SeedsPlease.WorkGiver_GrowerSowWithSeeds</li>
 							</value>

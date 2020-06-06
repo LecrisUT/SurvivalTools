@@ -1,4 +1,5 @@
 ﻿using RimWorld;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,18 +21,14 @@ namespace SurvivalTools
             Pawn_SurvivalToolAssignmentTracker assignmentTracker = pawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
 
             // Pawn can't use tools, lacks a tool assignment tracker or it isn't yet time to re-optimise tools
-            if (!pawn.CanUseSurvivalTools() || assignmentTracker == null || Find.TickManager.TicksGame < assignmentTracker.nextSurvivalToolOptimizeTick)
+            if (assignmentTracker == null || !pawn.CanUseSurvivalTools() || Find.TickManager.TicksGame < assignmentTracker.nextSurvivalToolOptimizeTick)
                 return null;
 
+            assignmentTracker.usedHandler.Update();
             if (SurvivalToolsSettings.toolAutoDropExcess)
             {
-
-                assignmentTracker.usedHandler.CheckToolsInUse();
-
                 // Check if current tool assignment allows for each tool, auto-removing those that aren't allowed.
-                SurvivalToolAssignment curAssignment = assignmentTracker.CurrentSurvivalToolAssignment;
-                List<SurvivalTool> heldTools = pawn.GetHeldSurvivalTools();
-                foreach (SurvivalTool tool in heldTools)
+                foreach (SurvivalTool tool in pawn.GetHeldSurvivalTools())
                     if (!assignmentTracker.usedHandler.IsUsed(tool) && !assignmentTracker.forcedHandler.IsForced(tool)
                         && StoreUtility.TryFindBestBetterStoreCellFor(tool, pawn, pawn.Map, StoreUtility.CurrentStoragePriorityOf(tool), pawn.Faction, out IntVec3 c))
                         return pawn.DequipAndTryStoreSurvivalTool(tool, true, c);
@@ -39,37 +36,8 @@ namespace SurvivalTools
             }
             if (SurvivalToolsSettings.toolOptimization)
             {
-                SurvivalToolAssignment curAssignment = assignmentTracker.CurrentSurvivalToolAssignment;
-                List<StatDef> workRelevantStats = pawn.AssignedToolRelevantWorkGiversStatDefs();
-                List<Thing> mapTools = pawn.MapHeld.listerThings.AllThings.Where(t => t is SurvivalTool).ToList();
-
-                SurvivalTool curTool = null;
-                SurvivalTool newTool = null;
-                float optimality = 0f;
-                foreach (StatDef stat in workRelevantStats)
-                {
-                    curTool = pawn.GetBestSurvivalTool(stat);
-                    optimality = SurvivalToolScore(curTool, workRelevantStats);
-                    foreach (SurvivalTool potentialTool in mapTools)
-                    {
-                        if (StatUtility.StatListContains(potentialTool.WorkStatFactors.ToList(), stat) && curAssignment.filter.Allows(potentialTool) && potentialTool.BetterThanWorkingToollessFor(stat) &&
-                            pawn.CanUseSurvivalTool(potentialTool.def) && potentialTool.IsInAnyStorage() && !potentialTool.IsForbidden(pawn) && !potentialTool.IsBurning())
-                        {
-                            float potentialOptimality = SurvivalToolScore(potentialTool, workRelevantStats);
-                            float delta = potentialOptimality - optimality;
-                            if (delta > 0f && pawn.CanReserveAndReach(potentialTool, PathEndMode.OnCell, pawn.NormalMaxDanger()))
-                            {
-                                newTool = potentialTool;
-                                optimality = potentialOptimality;
-                            }
-                        }
-                    }
-                    if (newTool != null)
-                        break;
-                }
-
                 // Return a job based on whether or not a better tool was located
-
+                (SurvivalTool oldTool, SurvivalTool newTool) = SearchForBetterTools(pawn, assignmentTracker).FirstOrFallback();
                 // Failure
                 if (newTool == null)
                 {
@@ -78,20 +46,13 @@ namespace SurvivalTools
                 }
 
                 // Success
-                int heldToolOffset = 0;
-                if (curTool != null && !assignmentTracker.forcedHandler.IsForced(curTool))
+                if (oldTool != null && !assignmentTracker.forcedHandler.IsForced(oldTool))
+                    pawn.jobs.jobQueue.EnqueueFirst(pawn.DequipAndTryStoreSurvivalTool(oldTool, false));
+                Job pickupJob = new Job(JobDefOf.TakeInventory, newTool)
                 {
-                    pawn.jobs.jobQueue.EnqueueFirst(pawn.DequipAndTryStoreSurvivalTool(curTool, false));
-                    heldToolOffset = -1;
-                }
-                if (pawn.CanCarryAnyMoreSurvivalTools(heldToolOffset))
-                {
-                    Job pickupJob = new Job(JobDefOf.TakeInventory, newTool)
-                    {
-                        count = 1
-                    };
-                    return pickupJob;
-                }
+                    count = 1
+                };
+                return pickupJob;
 
             }
 
@@ -99,22 +60,69 @@ namespace SurvivalTools
             SetNextOptimizeTick(pawn);
             return null;
         }
+        private static IEnumerable<(SurvivalTool oldTool, SurvivalTool newTool)> SearchForBetterTools(Pawn pawn, Pawn_SurvivalToolAssignmentTracker assignmentTracker)
+        {
 
-        private static float SurvivalToolScore(SurvivalTool tool, List<StatDef> workRelevantStats)
+            SurvivalToolAssignment toolAssignment = assignmentTracker.CurrentSurvivalToolAssignment;
+            List<SurvivalToolType> requiredToolTypes = assignmentTracker.RequiredToolTypes;
+            // Tick rare update the list
+            List<Thing> mapTools = pawn.MapHeld.listerThings.AllThings.Where(t => t is SurvivalTool).ToList();
+
+            Dictionary<SurvivalToolType, (float score, SurvivalTool oldTool, SurvivalTool newTool)> curTools
+                = new Dictionary<SurvivalToolType, (float, SurvivalTool, SurvivalTool)>(requiredToolTypes.Select(
+                t => BestSurvivalToolScore(assignmentTracker.usedHandler.UsedTools, t, requiredToolTypes)));
+            float potentialScore;
+            foreach (SurvivalTool potentialTool in mapTools)
+            {
+                if (potentialTool == null || !toolAssignment.filter.Allows(potentialTool) || !potentialTool.BetterThanWorkingToolless() ||
+                    potentialTool.IsForbidden(pawn) || potentialTool.IsBurning() || !potentialTool.IsInAnyStorage())
+                    continue;
+                foreach (SurvivalToolType toolType in potentialTool.def.GetModExtension<SurvivalToolProperties>().toolTypes)
+                {
+                    if (curTools.TryGetValue(toolType, out (float score, SurvivalTool oldTool, SurvivalTool newTool) value))
+                    {
+                        if (value.score < (potentialScore = SurvivalToolScore(potentialTool, requiredToolTypes)))
+                        {
+                            curTools[toolType] = (potentialScore, value.oldTool, potentialTool);
+                        }
+                    }
+                }
+            }
+            foreach ((SurvivalTool oldTool, SurvivalTool newTool) tools in curTools.Values.Select(t => (t.oldTool, t.newTool)))
+                if (tools.newTool != null)
+                    yield return tools;
+        }
+
+        private static float SurvivalToolScore(SurvivalTool tool, List<SurvivalToolType> requiredToolTypes)
         {
             if (tool == null)
                 return 0f;
-
             float optimality = 0f;
-            foreach (StatDef stat in workRelevantStats)
-                optimality += StatUtility.GetStatValueFromList(tool.WorkStatFactors.ToList(), stat, 0f);
-
+            foreach (SurvivalToolType toolType in requiredToolTypes)
+                if (tool.TryGetTypeValue(toolType, out float val))
+                    optimality += val;
             if (tool.def.useHitPoints)
             {
                 float lifespanRemaining = tool.GetStatValue(ST_StatDefOf.ToolEstimatedLifespan, true) * ((float)tool.HitPoints * tool.MaxHitPoints);
                 optimality *= LifespanDaysToOptimalityMultiplierCurve.Evaluate(lifespanRemaining);
             }
             return optimality;
+        }
+
+        private static KeyValuePair<SurvivalToolType, (float score, SurvivalTool oldTool, SurvivalTool newTool)> BestSurvivalToolScore(List<SurvivalTool> toolList, SurvivalToolType toolType, List<SurvivalToolType> requiredToolTypes)
+        {
+            SurvivalTool tool = null;
+            float val = 0f;
+            foreach (SurvivalTool currTool in toolList)
+            {
+                float currVal = SurvivalToolScore(currTool, requiredToolTypes);
+                if (currVal > val)
+                {
+                    tool = currTool;
+                    val = currVal;
+                }
+            }
+            return new KeyValuePair<SurvivalToolType, (float, SurvivalTool, SurvivalTool)>(toolType, (val, tool, null));
         }
 
         private static readonly SimpleCurve LifespanDaysToOptimalityMultiplierCurve = new SimpleCurve

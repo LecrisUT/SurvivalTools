@@ -2,18 +2,25 @@
     <SurvivalTools.StatPatchDef>
         <defName>PatchMiningSpeed</defName>
         <oldStat>MiningSpeed</oldStat>
-        <newStat>MiningSpeed_Tool</newStat>
+        <StatReplacer>SurvivalTools.AutoPatcher.JobDriver_StatReplace</StatReplacer>
+        <ToilChanger>SurvivalTools.AutoPatcher.JobDriver_AddToolDegrade</ToilChanger>
         <patchAllJobDrivers>true</patchAllJobDrivers>
+        <toolTypes>
+            <li>ST_PickaxeType</li>
+        </toolTypes>
         <patchAllWorkGivers>true</patchAllWorkGivers>
     </SurvivalTools.StatPatchDef>
     
     <SurvivalTools.StatPatchDef>
         <defName>PatchMiningYield</defName>
         <oldStat>MiningYield</oldStat>
-        <newStat>MiningYield_Tool</newStat>
+        <StatReplacer>SurvivalTools.AutoPatcher.JobDriver_StatReplace</StatReplacer>
         <addToolDegrade>false</addToolDegrade>
         <patchAllJobDrivers>false</patchAllJobDrivers>
         <patchAllWorkGivers>false</patchAllWorkGivers>
+        <toolTypes>
+            <li>ST_PickaxeType</li>
+        </toolTypes>
         <OtherTypes>
             <li>Mineable</li>
         </OtherTypes>
@@ -22,29 +29,33 @@
     <SurvivalTools.StatPatchDef>
         <defName>PatchConstruction</defName>
         <oldStat>ConstructionSpeed</oldStat>
-        <newStat>ConstructionSpeed_Tool</newStat>
+        <StatReplacer>SurvivalTools.AutoPatcher.JobDriver_StatReplace</StatReplacer>
+        <ToilChanger>SurvivalTools.AutoPatcher.JobDriver_AddToolDegrade</ToilChanger>
         <patchAllJobDrivers>true</patchAllJobDrivers>
-        <patchAllWorkGivers>true</patchAllWorkGivers>
         <JobDriverExemption>
             <li>JobDriver_BuildSnowman</li>
         </JobDriverExemption>
+        <toolTypes>
+            <li>ST_HammerType</li>
+        </toolTypes>
+        <patchAllWorkGivers>true</patchAllWorkGivers>
     </SurvivalTools.StatPatchDef>
 
     <SurvivalTools.StatPatchDef>
-        <defName>PatchPlantHarvesting</defName>
+        <defName>PatchPlantWork</defName>
         <oldStat>PlantWorkSpeed</oldStat>
-        <StatReplacer>SurvivalTools.AutoPatcher.PlantWork_AutoPatch</StatReplacer>
-        <potentialStats>
-            <!--li>PlantWorkSpeed_Felling_Tool</li-->
-            <li>PlantWorkSpeed_Harvesting_Tool</li>
-        </potentialStats>
+        <StatReplacer>SurvivalTools.AutoPatcher.JobDriver_StatReplace</StatReplacer>
+        <ToilChanger>SurvivalTools.AutoPatcher.JobDriver_AddToolDegrade</ToilChanger>
         <patchAllJobDrivers>false</patchAllJobDrivers>
-        <patchAllWorkGivers>true</patchAllWorkGivers>
         <JobDriverList>
             <li>JobDriver_PlantWork</li>
         </JobDriverList>
+        <toolTypes>
+            <li>ST_AxeType</li>
+            <li>ST_SickleType</li>
+        </toolTypes>
+        <patchAllWorkGivers>true</patchAllWorkGivers>
         <WorkGiverExemption>
-            <li>WorkGiver_GrowerSow</li>
             <li>SurvivalTools.WorkGiver_FellTrees</li>
         </WorkGiverExemption>
     </SurvivalTools.StatPatchDef>

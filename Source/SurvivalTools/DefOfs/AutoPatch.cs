@@ -28,11 +28,14 @@ namespace SurvivalTools
         public FieldInfo newStatFieldInfo;
         private Type oldStatType;
         private Type newStatType;
-        public List<CodeInstruction> Stat_CodeInstructions
-            => (List<CodeInstruction>) StatReplacer_CodeInstructions.GetValue(null);
-        private MethodInfo StatReplacer_Initialize;
-        private PropertyInfo StatReplacer_CodeInstructions;
+        private MethodInfo statReplacer_Initialize;
+        private MethodInfo statReplacer_Transpile;
         public bool canPatch;
+        // Toil changer
+        public Type ToilChanger;
+        private MethodInfo toilChanger_Initialize;
+        public MethodInfo toilChanger_ChangeToil;
+        public List<Type> toilChanger_PatchedJd=new List<Type>();
         // Patch jobDrivers to use ST stats
         private bool patchAllJobDrivers = true;
         private List<Type> JobDriverExemption = new List<Type>();
@@ -45,8 +48,11 @@ namespace SurvivalTools
         public List<JobDriverPatch> FoundJobDrivers = new List<JobDriverPatch>();
         public List<WorkGiverPatch> FoundWorkGivers = new List<WorkGiverPatch>();
         public List<JobDefPatch> FoundJobDef = new List<JobDefPatch>();
+        public List<MethodInfo> FoundStatMethods = new List<MethodInfo>();
+        public List<MethodInfo> FoundStatActions = new List<MethodInfo>();
         public bool skip;
         public bool addToolDegrade = true;
+        public List<SurvivalToolType> toolTypes = new List<SurvivalToolType>();
         #endregion
         #region Methods
         public void Initialize()
@@ -97,34 +103,50 @@ namespace SurvivalTools
             // Find StatReplacer.Initialize()
             if (StatReplacer != null)
             {
-                StatReplacer_Initialize = AccessTools.Method(StatReplacer, "Initialize");
-                StatReplacer_CodeInstructions = AccessTools.Property(StatReplacer, "CodeInstructions");
+                statReplacer_Initialize = AccessTools.Method(StatReplacer, "Initialize");
+                statReplacer_Transpile = AccessTools.Method(StatReplacer, "Transpile");
+            }
+            if (ToilChanger != null)
+            {
+                toilChanger_Initialize = AccessTools.Method(ToilChanger, "Initialize");
+                toilChanger_ChangeToil = AccessTools.Method(ToilChanger, "ChangeToil");
             }
         }
-        public void Initialize_StatReplacer(Type jobDriver, Type nestedClass = null)
-        {
-            canPatch = (bool)StatReplacer_Initialize.Invoke(null, new object[] { jobDriver, nestedClass });
-        }
-           
+        public void StatReplacer_Initialize(Type jobDriver, Type nestedClass = null)
+            => canPatch = (bool)statReplacer_Initialize.Invoke(null, new object[] { this, jobDriver, nestedClass });
+        public bool StatReplacer_Transpile(ref List<CodeInstruction> instructions, int pos)
+            => (bool)statReplacer_Transpile.Invoke(null, new object[] { instructions, pos });
+        public void ToilChanger_Initialize(Type jobDriver)
+            => canPatch = (bool)toilChanger_Initialize.Invoke(null, new object[] { this, jobDriver });
+        //public bool ToilChanger_ChangeToil(ref List<CodeInstruction> instructions, int pos)
+        //    => (bool)toilChanger_ChangeToil.Invoke(null, new object[] { instructions, pos });
+
         public void CheckJobDriver(Type jd)
         {
             if (patchAllJobDrivers)
-                skip = JobDriverExemption.Contains(jd) ? true : false;
-            else
-                skip = JobDriverList.Contains(jd) ? false : true;
+            {
+                skip = JobDriverExemption.Contains(jd);
+                return;
+            }
+            if (JobDriverList.NullOrEmpty())
+            {
+                skip = true;
+                return;
+            }
+            skip = !JobDriverList.Contains(jd);
         }
         public void CheckWorkGiver(Type wg)
         {
             if (patchAllWorkGivers)
-                skip = WorkGiverExemption.Contains(wg) ? true : false;
-            else
-                skip = true;
+            {
+                skip = WorkGiverExemption.Contains(wg);
+                return;
+            }
+            skip = true;
         }
         public bool CheckIfValidPatch()
         {
             if (oldStat is null)
-                return false;
-            if (!patchAllJobDrivers && (JobDriverList.Count == 0) && (OtherTypes.Count == 0))
                 return false;
             return true;
         }

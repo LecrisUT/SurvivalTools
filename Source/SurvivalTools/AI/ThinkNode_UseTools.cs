@@ -3,13 +3,17 @@ using Verse.AI;
 
 namespace SurvivalTools
 {
-    public class ThinkNode_UseTools : ThinkNode
+    /*public class ThinkNode_UseTools : ThinkNode
     {
         public override ThinkResult TryIssueJobPackage(Pawn pawn, JobIssueParams jobParams)
         {
-            pawn?.TryGetComp<Pawn_SurvivalToolAssignmentTracker>()?.usedHandler.CheckToolsInUse();
+            Pawn_SurvivalToolAssignmentTracker tracker = pawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
+            if (tracker != null)
+            {
+                tracker.dirtyCache = true;
+            }
             return ThinkResult.NoJob;
         }
-    }
+    }*/
 
 }

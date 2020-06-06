@@ -6,7 +6,7 @@ using Verse;
 
 namespace SurvivalTools.HarmonyPatches
 {
-    [HarmonyPatch(typeof(SketchResolver_Monument))]
+    /*[HarmonyPatch(typeof(SketchResolver_Monument))]
     [HarmonyPatch("TryPlaceFurniture")]
     public static class Patch_SketchResolver_Monument_TryPlaceFurniture
     {
@@ -32,5 +32,5 @@ namespace SurvivalTools.HarmonyPatches
         }
         public static Dictionary<ThingDef, float> ToolsWeightOffset = new Dictionary<ThingDef, float>();
         public static List<ThingDef> availableTools;
-    }
+    }*/
 }

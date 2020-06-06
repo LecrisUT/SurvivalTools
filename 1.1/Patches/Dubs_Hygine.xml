@@ -24,23 +24,6 @@
                         </value>
                     </match>
                 </li>
-                <li Class="PatchOperationConditional">
-                    <xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchConstruction"]/WorkGiverExemption</xpath>
-                    <nomatch Class="PatchOperationAdd">
-                        <xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchConstruction"]</xpath>
-                        <value>
-                            <WorkGiverExemption>
-                                <li>DubsBadHygiene.WorkGiver_RemoveSewage</li>
-                            </WorkGiverExemption>
-                        </value>
-                    </nomatch>
-                    <match Class="PatchOperationAdd">
-                        <xpath>/Defs/SurvivalTools.StatPatchDef[defName="PatchConstruction"]/WorkGiverExemption</xpath>
-                        <value>
-                            <li>DubsBadHygiene.WorkGiver_RemoveSewage</li>
-                        </value>
-                    </match>
-                </li>
             </operations>
         </match>
     </Operation>

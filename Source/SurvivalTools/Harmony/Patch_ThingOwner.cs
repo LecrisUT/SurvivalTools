@@ -20,9 +20,12 @@ namespace SurvivalTools.HarmonyPatches
                     pawn = inv.pawn;
                 if (pawn?.CanUseSurvivalTools() == true)
                 {
-                    Pawn_SurvivalToolAssignmentTracker assignmentTracker = pawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
+                    Pawn_SurvivalToolAssignmentTracker assignmentTracker = pawn.GetToolTracker();
                     if (assignmentTracker != null)
-                        assignmentTracker.usedHandler.CheckIsUsed(tool);
+                    {
+                        assignmentTracker.usedHandler.dirtyCache = true;
+                        // assignmentTracker.usedHandler.Update();
+                    }
                 }
             }
         }
@@ -52,7 +55,8 @@ namespace SurvivalTools.HarmonyPatches
                     {
                         assignmentTracker.usedHandler.SetUsed(tool, false);
                         assignmentTracker.forcedHandler.SetForced(tool, false);
-                        assignmentTracker.usedHandler.CheckToolsInUse();
+                        assignmentTracker.usedHandler.dirtyCache = true;
+                        // assignmentTracker.usedHandler.Update();
                     }
                 }
             }
@@ -83,7 +87,8 @@ namespace SurvivalTools.HarmonyPatches
                     {
                         assignmentTracker.usedHandler.SetUsed(tool, false);
                         assignmentTracker.forcedHandler.SetForced(tool, false);
-                        assignmentTracker.usedHandler.CheckToolsInUse();
+                        assignmentTracker.usedHandler.dirtyCache = true;
+                        // assignmentTracker.usedHandler.Update();
                     }
                 }
                 if (otherContainer.Owner is Pawn_EquipmentTracker || otherContainer.Owner is Pawn_InventoryTracker)
@@ -98,7 +103,8 @@ namespace SurvivalTools.HarmonyPatches
                         Pawn_SurvivalToolAssignmentTracker assignmentTracker = otherPawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
                         if (assignmentTracker != null)
                         {
-                            assignmentTracker.usedHandler.CheckIsUsed(tool);
+                            assignmentTracker.usedHandler.dirtyCache = true;
+                            // assignmentTracker.usedHandler.Update();
                         }
                     }
                 }

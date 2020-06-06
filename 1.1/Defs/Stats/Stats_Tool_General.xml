@@ -46,4 +46,26 @@
         </parts>
     </StatDef>
 
+    <StatDef>
+        <defName>ToolWearFactor</defName>
+        <label>estimated tool lifespan</label>
+        <description>(empty)</description>
+        <category>SurvivalTool</category>
+        <displayPriorityInCategory>30</displayPriorityInCategory>
+        <defaultBaseValue>1</defaultBaseValue>
+        <minValue>0.5</minValue>
+        <toStringStyle>PercentZero</toStringStyle>
+        <parts>
+            <li Class="StatPart_Quality">
+                <factorAwful>0.8</factorAwful>
+                <factorPoor>0.9</factorPoor>
+                <factorNormal>1</factorNormal>
+                <factorGood>1.1</factorGood>
+                <factorExcellent>1.2</factorExcellent>
+                <factorMasterwork>1.35</factorMasterwork>
+                <factorLegendary>1.6</factorLegendary>
+            </li>
+        </parts>
+    </StatDef>
+
 </Defs>

@@ -10,8 +10,7 @@ namespace SurvivalTools.HarmonyPatches
     {
         public static void Postfix(Pawn ___pawn)
         {
-            if (___pawn?.TryGetComp<ThingComp_WorkSettings>()?.WorkSettingsChanged == false)
-                ___pawn.GetComp<ThingComp_WorkSettings>().WorkSettingsChanged = true;
+            ___pawn.GetToolTracker().dirtyCache = true;
         }
     }
 }

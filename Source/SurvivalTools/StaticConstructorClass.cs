@@ -12,7 +12,7 @@ namespace SurvivalTools
     {
         static StaticConstructorClass()
         {
-            Patch_SketchResolver_Monument_TryPlaceFurniture.availableTools = ST_ThingCategoryDefOf.SurvivalTools.DescendantThingDefs.Where(t => t.techLevel <= TechLevel.Medieval).ToList();
+            /*Patch_SketchResolver_Monument_TryPlaceFurniture.availableTools = ST_ThingCategoryDefOf.SurvivalTools.DescendantThingDefs.Where(t => t.techLevel <= TechLevel.Medieval).ToList();
             foreach (ThingDef tool in Patch_SketchResolver_Monument_TryPlaceFurniture.availableTools)
             {
                 float offset = 1;
@@ -29,12 +29,11 @@ namespace SurvivalTools
                         break;
                 }
                 Patch_SketchResolver_Monument_TryPlaceFurniture.ToolsWeightOffset.Add(tool, offset);
-            }
+            }*/
 
             if (ModCompatibilityCheck.MendAndRecycle)
                 ResolveMendAndRecycleRecipes();
             ResolveSmeltingRecipeUsers();
-            CheckStuffForStuffPropsTool();
 
             // Add SurvivalToolAssignmentTracker to all appropriate pawns
             foreach (ThingDef tDef in DefDatabase<ThingDef>.AllDefs.Where(t => t.race?.Humanlike == true))
@@ -75,50 +74,6 @@ namespace SurvivalTools
                     if (benchDef.recipes.Contains(ST_RecipeDefOf.DestroyWeapon))
                         benchDef.recipes.Add(ST_RecipeDefOf.DestroySurvivalTool);
                 }
-        }
-
-        private static void CheckStuffForStuffPropsTool()
-        {
-            StringBuilder stuffBuilder = new StringBuilder();
-            stuffBuilder.AppendLine("Checking all stuff for StuffPropsTool modExtension...");
-            stuffBuilder.AppendLine();
-            StringBuilder hasPropsBuilder = new StringBuilder("Has props:\n");
-            StringBuilder noPropsBuilder = new StringBuilder("Doesn't have props:\n");
-
-            List<StuffCategoryDef> toolCats = new List<StuffCategoryDef>();
-            foreach (ThingDef tool in DefDatabase<ThingDef>.AllDefsListForReading.Where(t => t.IsSurvivalTool()))
-                if (!tool.stuffCategories.NullOrEmpty())
-                    foreach (StuffCategoryDef category in tool.stuffCategories)
-                        if (!toolCats.Contains(category))
-                            toolCats.Add(category);
-
-            foreach (ThingDef stuff in DefDatabase<ThingDef>.AllDefsListForReading.Where(
-                (ThingDef t) =>
-                {
-                    if (!t.IsStuff)
-                        return false;
-                    bool retVal = false;
-                    foreach (StuffCategoryDef stuffCat in t.stuffProps.categories)
-                        if (toolCats.Contains(stuffCat))
-                        {
-                            retVal = true;
-                            break;
-                        }
-                    return retVal;
-                }))
-            {
-                if (stuff.modContentPack == null) continue;
-                string newLine = $"{stuff} ({stuff.modContentPack.Name})";
-                if (stuff.HasModExtension<StuffPropsTool>())
-                    hasPropsBuilder.AppendLine(newLine);
-                else
-                    noPropsBuilder.AppendLine(newLine);
-            }
-
-            stuffBuilder.Append(hasPropsBuilder);
-            stuffBuilder.AppendLine();
-            stuffBuilder.Append(noPropsBuilder);
-            Log.Message(stuffBuilder.ToString(), false);
         }
     }
 }

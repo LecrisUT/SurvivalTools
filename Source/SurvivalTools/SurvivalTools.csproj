@@ -36,11 +36,20 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="AI\JobDriver_PickSurvivalTool.cs" />
-    <Compile Include="AutoPatcher\PlantWork_AutoPatch.cs" />
     <Content Include="Properties\AssemblyInfo.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssemblyInfo.cs</LastGenOutput>
     </Content>
+    <Compile Include="AI\WorkGiver_GrowerHarvest_Original.cs" />
+    <Compile Include="AI\WorkGiver_HarvestTrees.cs" />
+    <Compile Include="AI\WorkGiver_GrowerHarvest_NoTrees.cs" />
+    <Compile Include="AI\WorkGiver_PlantCut_Original.cs" />
+    <Compile Include="AI\WorkGiver_PlantCut_NoTrees.cs" />
+    <Compile Include="AutoPatcher\JobDriver_Utility.cs" />
+    <Compile Include="Harmony\Patch_WorkGiver_GrowerHarvest.cs" />
+    <Compile Include="SurvivalToolStuffStatInjector.cs" />
+    <Compile Include="SurvivalToolTypeModifier.cs" />
+    <Compile Include="Defs\SurvivalToolType.cs" />
     <Compile Include="SurvivalToolUsedHandler.cs" />
     <Compile Include="ThingComp\ThingComp_WorkSettings.cs" />
     <Compile Include="AI\ThinkNode_WorkSettingsChange.cs" />
@@ -53,14 +62,13 @@
     <Compile Include="DefOfs\ST_ThingCategoryDefOf.cs" />
     <Compile Include="DefOfs\AutoPatch.cs" />
     <Compile Include="Harmony\Patch_Pawn_WorkSettings.cs" />
-    <Compile Include="ToolAssignments\PawnColumnWorker_SurvivalToolAssignment2.cs" />
     <Compile Include="ToolAssignments\Dialog_ManageSurvivalToolAssignments.cs" />
     <Compile Include="Harmony\Patch_Pawn_InventoryTracker.cs" />
     <Compile Include="Harmony\Patch_RoofUtility_CanHandleBlockingThing.cs" />
     <Compile Include="Harmony\Patch_ThingOwner.cs" />
     <Compile Include="Harmony\Patch_ThingFilter_SetFromPreset.cs" />
-    <Compile Include="Harmony\Patch_WorkGiver_GrowerSow_JobOnCell.cs" />
-    <Compile Include="Harmony\Patch_WorkGiver_PlantsCut_JobOnThing.cs" />
+    <Compile Include="Harmony\Patch_WorkGiver_GrowerSow.cs" />
+    <Compile Include="Harmony\Patch_WorkGiver_PlantsCut.cs" />
     <Compile Include="Harmony\Patch_ThingDef_SpecialDisplayStats.cs" />
     <Compile Include="Harmony\Patch_WorkGiver_MissingRequiredCapacity.cs" />
     <Compile Include="Harmony\Patch_SketchResolver_Monument_TryPlaceFurniture.cs" />
@@ -78,7 +86,6 @@
     <Compile Include="SpecialThingFilterWorker_NonSmeltableTools.cs" />
     <Compile Include="Stats\StatPart_SurvivalTool.cs" />
     <Compile Include="Stats\StatWorker_EstimatedLifespan.cs" />
-    <Compile Include="ModExtensions\StuffPropsTool.cs" />
     <Compile Include="DefOfs\ST_JobDefOf.cs" />
     <Compile Include="DefOfs\ST_StatCategoryDefOf.cs" />
     <Compile Include="DefOfs\ST_StatDefOf.cs" />
@@ -107,16 +114,23 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Krafs.Rimworld.Ref">
-      <Version>1.1.2624</Version>
+      <Version>1.1.2647</Version>
+    </PackageReference>
+    <PackageReference Include="Lib.Harmony">
+      <Version>2.0.1</Version>
+      <ExcludeAssets>runtime</ExcludeAssets>
+      <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="UnlimitedHugs.Rimworld.HugsLib">
-      <Version>7.1.4</Version>
+      <Version>7.2.1</Version>
       <ExcludeAssets>runtime</ExcludeAssets>
+      <IncludeAssets>compile; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="TransformOnBuild" BeforeTargets="BeforeBuild">
     <PropertyGroup>

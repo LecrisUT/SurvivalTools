@@ -1,0 +1,25 @@
+<Defs>
+    <!-- Sharpness -->
+    <StatDef>
+        <defName>ST_Sharpness</defName>
+        <label>sharpness</label>
+        <description>(empty)</description>
+        <category>StuffStatFactors</category>
+        <displayPriorityInCategory>100</displayPriorityInCategory>
+        <defaultBaseValue>1</defaultBaseValue>
+        <minValue>0</minValue>
+        <showIfUndefined>false</showIfUndefined>
+    </StatDef>
+    
+    <!-- Hardness -->
+    <StatDef>
+        <defName>ST_Hardness</defName>
+        <label>hardness</label>
+        <description>(empty)</description>
+        <category>StuffStatFactors</category>
+        <displayPriorityInCategory>100</displayPriorityInCategory>
+        <defaultBaseValue>1</defaultBaseValue>
+        <minValue>0</minValue>
+        <showIfUndefined>false</showIfUndefined>
+    </StatDef>
+</Defs>

@@ -4,7 +4,7 @@
         <xpath>Defs/TraderKindDef[defName="Base_Outlander_Standard"]/stockGenerators</xpath>
         <value>
             <li Class="StockGenerator_Category">
-                <categoryDef>SurvivalToolsNeolithic</categoryDef>
+                <categoryDef>SurvivalToolsMedieval</categoryDef>
                 <countRange>
                     <min>3</min>
                     <max>6</max>

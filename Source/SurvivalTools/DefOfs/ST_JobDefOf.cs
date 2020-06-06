@@ -8,5 +8,10 @@ namespace SurvivalTools
     {
         public static JobDef DropSurvivalTool;
         public static JobDef PickSurvivalTool;
+        public static JobDef Mine;
+        public static JobDef FellTree;
+        public static JobDef FellTreeDesignated;
+        public static JobDef HarvestTree;
+        public static JobDef HarvestTreeDesignated;
     }
 }

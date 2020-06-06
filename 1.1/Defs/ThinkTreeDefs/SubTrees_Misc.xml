@@ -1,6 +1,6 @@
 <Defs>
 
-    <ThinkTreeDef>
+    <!--ThinkTreeDef>
         <defName>UpdateToolUse</defName>
         <insertTag>Humanlike_PreMain</insertTag>
         <insertPriority>249</insertPriority>
@@ -9,7 +9,7 @@
                 <li Class="SurvivalTools.ThinkNode_UseTools"/>
             </subNodes>
         </thinkRoot>
-    </ThinkTreeDef>
+    </ThinkTreeDef-->
 
     <ThinkTreeDef>
         <defName>OptimizeSurvivalTools</defName>

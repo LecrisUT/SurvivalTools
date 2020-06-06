@@ -1,6 +1,5 @@
 ﻿using RimWorld;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Verse;
 
@@ -27,34 +26,39 @@ namespace SurvivalTools
         public int WorkTicksToDegrade => Mathf.FloorToInt(
                 (this.GetStatValue(ST_StatDefOf.ToolEstimatedLifespan) * GenDate.TicksPerDay) / this.MaxHitPoints);
 
-        public IEnumerable<StatModifier> WorkStatFactors
+        public IEnumerable<SurvivalToolTypeModifier> toolTypeModifiers
         {
             get
             {
-                foreach (StatModifier modifier in def.GetModExtension<SurvivalToolProperties>().baseWorkStatFactors)
-                {
-                    float newFactor = modifier.value * this.GetStatValue(ST_StatDefOf.ToolEffectivenessFactor, false);
-
-                    if (Stuff?.GetModExtension<StuffPropsTool>()?.toolStatFactors.NullOrEmpty() == false)
-                        foreach (StatModifier modifier2 in Stuff?.GetModExtension<StuffPropsTool>()?.toolStatFactors)
-                            if (modifier2.stat == modifier.stat)
-                                newFactor *= modifier2.value;
-
-                    yield return new StatModifier
+                foreach(SurvivalToolTypeModifier modifier in this.GetToolProperties().GetToolTypesValue(Stuff))
+                    yield return new SurvivalToolTypeModifier()
                     {
-                        stat = modifier.stat,
-                        value = newFactor
+                        toolType = modifier.toolType,
+                        value = modifier.value * this.GetStatValue(ST_StatDefOf.ToolEffectivenessFactor, false)
                     };
-                }
             }
         }
+        public bool TryGetJobValue(JobDef job, StatDef stat, out float value)
+            => this.GetToolProperties().GetValue_Job(job, stat, this, out value, out _);
+        public bool TryGetJobValue(JobDef job, out float value)
+            => this.GetToolProperties().GetValue_Job(job, this, out value, out _);
+        public bool TryGetTypeValue(SurvivalToolType toolType, out float value)
+            => this.GetToolProperties().GetValue_Type(toolType, this, out value);
+        public bool TryGetTypeStatValue(SurvivalToolType toolType, StatDef stat, out float value)
+            => this.GetToolProperties().GetValue_Stat(toolType, stat, this, out value);
+        public List<JobDef> GetJobList()
+            => this.GetToolProperties().jobList;
+        public List<JobDef> GetBonusJobList()
+            => this.GetToolProperties().jobBonusList;
+        public List<StatDef> GetStatList()
+            => this.GetToolProperties().stats;
 
         public override string LabelNoCount
         {
             get
             {
                 string label = base.LabelNoCount;
-                Pawn_SurvivalToolAssignmentTracker assignmentTracker = HoldingPawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
+                Pawn_SurvivalToolAssignmentTracker assignmentTracker = HoldingPawn?.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
                 if (assignmentTracker != null)
                 {
                     if (assignmentTracker.usedHandler.IsUsed(this))
@@ -71,28 +75,17 @@ namespace SurvivalTools
         #region Methods
         public override IEnumerable<StatDrawEntry> SpecialDisplayStats()
         {
-            /*
-            public StatDrawEntry(StatCategoryDef category,
-            string label,
-            string valueString,
-            string reportText,
-            int displayPriorityWithinCategory,
-            string overrideReportTitle = null,
-            IEnumerable<Dialog_InfoCard.Hyperlink> hyperlinks = null,
-            bool forceUnfinalizedMode = false)
-            */
-            foreach (StatModifier modifier in WorkStatFactors)
+            foreach (SurvivalToolTypeModifier modifier in toolTypeModifiers)
                 yield return new
                     StatDrawEntry(ST_StatCategoryDefOf.SurvivalTool, //calling StatDraw Entry and Category
-                    modifier.stat.LabelCap, //Capatalize the Label?
+                    modifier.toolType.LabelCap, //Capatalize the Label?
                     modifier.value.ToStringByStyle(ToStringStyle.PercentZero, ToStringNumberSense.Factor), //Dunno what this does, I think show the value?
-                    reportText: modifier.stat.description, // Desc of the stat?
+                    reportText: modifier.toolType.description, // Desc of the stat?
                     displayPriorityWithinCategory: 99999,  // Priority of the display?
-                    overrideReportTitle: SurvivalToolUtility.GetSurvivalToolOverrideReportText(this, modifier.stat), //show me somethin.
+                    overrideReportTitle: SurvivalToolUtility.GetSurvivalToolOverrideReportText(this, modifier), //show me somethin.
                     hyperlinks: null, // ingame hyperlinks in description
                     forceUnfinalizedMode: false //Dunno what this is, so lets set it to false and find out if it breaks shit.
-
-                    );
+                );
         }
 
         public override void ExposeData()

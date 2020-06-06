@@ -12,17 +12,6 @@ namespace SurvivalTools
         {
             defaultPriority = AlertPriority.Medium;
         }
-
-        /*    private IEnumerable<Pawn> WorkersDamagedTools
-            {
-                get
-                {
-                    foreach (Pawn pawn in PawnsFinder.AllMaps_FreeColonistsSpawned)
-                        if (HasDamagedTools(pawn))
-                            yield return pawn;
-                }
-            }
-            */
         private List<Pawn> culpritsResult = new List<Pawn>();
 
         private List<Pawn> WorkersDamagedTools
@@ -43,7 +32,7 @@ namespace SurvivalTools
 
         private static bool HasDamagedTools(Pawn pawn)
         {
-            Pawn_SurvivalToolAssignmentTracker assignmentTracker = pawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>();
+            Pawn_SurvivalToolAssignmentTracker assignmentTracker = pawn.GetToolTracker();
             if (assignmentTracker != null)
             {
                 foreach (SurvivalTool tool in assignmentTracker.usedHandler.UsedTools)

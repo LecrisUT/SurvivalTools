@@ -1,0 +1,88 @@
+<Defs>
+    <!-- Axe -->
+    <SurvivalTools.SurvivalToolType>
+        <defName>ST_AxeType</defName>
+        <label>axe type</label>
+        <baseWorkStatFactors>
+            <PlantWorkSpeed>1.0</PlantWorkSpeed>
+        </baseWorkStatFactors>
+        <efficiencyModifiers>
+            <ST_Sharpness>0.7</ST_Sharpness>
+            <ST_Hardness>0.3</ST_Hardness>
+        </efficiencyModifiers>
+        <defaultSurvivalToolAssignmentTags>
+            <li>PlantWorker</li>
+        </defaultSurvivalToolAssignmentTags>
+        <jobSpecific>
+            <li>FellTree</li>
+            <li>FellTreeDesignated</li>
+            <li>HarvestTree</li>
+            <li>HarvestTreeDesignated</li>
+        </jobSpecific>
+    </SurvivalTools.SurvivalToolType>
+
+    <!-- Pickaxe -->
+    <SurvivalTools.SurvivalToolType>
+        <defName>ST_PickaxeType</defName>
+        <label>pickaxe type</label>
+        <baseWorkStatFactors>
+            <MiningSpeed>1.0</MiningSpeed>
+            <MiningYield>1.0</MiningYield>
+        </baseWorkStatFactors>
+        <efficiencyModifiers>
+            <ST_Sharpness>0.3</ST_Sharpness>
+            <ST_Hardness>0.7</ST_Hardness>
+        </efficiencyModifiers>
+        <defaultSurvivalToolAssignmentTags>
+            <li>Constructor</li>
+            <li>Miner</li>
+            <li>PlantWorker</li>
+        </defaultSurvivalToolAssignmentTags>
+        <jobList>
+            <li>Mine</li>
+        </jobList>
+    </SurvivalTools.SurvivalToolType>
+
+    <!-- Hammer -->
+    <SurvivalTools.SurvivalToolType>
+        <defName>ST_HammerType</defName>
+        <label>hammer type</label>
+        <baseWorkStatFactors>
+            <ConstructionSpeed>1.0</ConstructionSpeed>
+        </baseWorkStatFactors>
+        <efficiencyModifiers>
+            <ST_Hardness>1.0</ST_Hardness>
+        </efficiencyModifiers>
+        <defaultSurvivalToolAssignmentTags>
+            <li>Constructor</li>
+        </defaultSurvivalToolAssignmentTags>
+        <jobDriverException>
+            <li>JobDriver_BuildSnowman</li>
+        </jobDriverException>
+    </SurvivalTools.SurvivalToolType>
+
+    <!-- Sickle -->
+    <SurvivalTools.SurvivalToolType>
+        <defName>ST_SickleType</defName>
+        <label>sickle type</label>
+        <baseWorkStatFactors>
+            <PlantWorkSpeed>1.0</PlantWorkSpeed>
+        </baseWorkStatFactors>
+        <efficiencyModifiers>
+            <ST_Sharpness>0.7</ST_Sharpness>
+            <ST_Hardness>0.3</ST_Hardness>
+        </efficiencyModifiers>
+        <defaultSurvivalToolAssignmentTags>
+            <li>PlantWorker</li>
+        </defaultSurvivalToolAssignmentTags>
+        <jobDriverSpecific>
+            <li>JobDriver_PlantWork</li>
+        </jobDriverSpecific>
+        <jobException>
+            <li>FellTree</li>
+            <li>FellTreeDesignated</li>
+            <li>HarvestTree</li>
+            <li>HarvestTreeDesignated</li>
+        </jobException>
+    </SurvivalTools.SurvivalToolType>
+</Defs>

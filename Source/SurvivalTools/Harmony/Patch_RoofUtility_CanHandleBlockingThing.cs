@@ -9,7 +9,7 @@ namespace SurvivalTools.HarmonyPatches
     {
         public static void Postfix(ref bool __result, Thing blocker, Pawn worker)
         {
-            if (blocker?.def.plant?.IsTree == true && !worker.MeetsWorkGiverStatRequirements(ST_WorkGiverDefOf.FellTrees.GetModExtension<WorkGiverExtension>().requiredStats))
+            if (blocker?.def.plant?.IsTree == true && !ST_WorkGiverDefOf.FellTrees.GetModExtension<WorkGiverExtension>().MeetsRequirementJobs(worker))
                 __result = false;
         }
     }

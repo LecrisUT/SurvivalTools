@@ -14,12 +14,13 @@ namespace SurvivalTools
             if (req.Thing is Pawn pawn && pawn.CanUseSurvivalTools())
             {
                 StringBuilder info = new StringBuilder("Available relevant tools:\n");
-                List<SurvivalTool> heldRelevantTools = pawn.GetHeldSurvivalTools().Where(t => t.GetToolProperties().toolTypes.Any(tt => relevantToolTypes.Contains(tt))).ToList();
-                List<SurvivalTool> usedTools = pawn.GetToolTracker().usedHandler.UsedTools;
+                SurvivalToolUsedHandler handler = pawn.GetToolTracker().usedHandler;
+                List<SurvivalTool> heldRelevantTools = handler.heldTools.Where(t=>t.GetToolProperties().toolTypes.Intersect(relevantToolTypes).Any()).ToList();
+                List<SurvivalTool> usedTools = handler.UsedTools;
                 if (heldRelevantTools.NullOrEmpty())
                     info.AppendLine("\tEmpty");
                 else
-                    foreach (SurvivalTool tool in heldRelevantTools) 
+                    foreach (SurvivalTool tool in heldRelevantTools)
                     {
                         info.Append(tool.LabelCapNoCount + ":");
                         foreach (SurvivalToolType toolType in relevantToolTypes)
@@ -28,15 +29,14 @@ namespace SurvivalTools
                         info.AppendLine();
                     }
                 info.AppendLine("\nAffected WorkTypes:");
-                foreach(SurvivalToolType toolType in relevantToolTypes)
+                foreach (SurvivalToolType toolType in relevantToolTypes)
                 {
                     info.Append(toolType.LabelCap);
-                    SurvivalTool bestTool = usedTools.BestSurvivalTool(toolType);
-                    if (bestTool == null)
+                    if (!handler.BestTool_Type.TryGetValue(toolType, out SurvivalTool bestTool))
                         info.AppendLine(": " + "NoTool".Translate() + ": x" + toolType.noToolStatFactors.GetStatFactorFromList(parentStat).ToStringPercent() + ":");
                     else
                     {
-                        bestTool.toolTypeModifiers.TryGetValue(toolType, out float val);
+                        bestTool.TryGetTypeStatValue(toolType, parentStat, out float val);
                         info.AppendLine(": " + bestTool.LabelCapNoCount + ": x" + val.ToStringPercent() + ":");
                     }
                     foreach (WorkGiverDef wg in toolType.relevantWorkGivers)
@@ -44,7 +44,7 @@ namespace SurvivalTools
                     info.AppendLine();
                 }
                 info.AppendLine("Not affected:");
-                foreach(WorkGiverDef wg in unaffectedWorkGivers)
+                foreach (WorkGiverDef wg in unaffectedWorkGivers)
                     info.AppendWithComma(wg.LabelCap);
                 return info.ToString();
             }
@@ -52,32 +52,15 @@ namespace SurvivalTools
         }
 
         public override void TransformValue(StatRequest req, ref float val) { }
-
-        public StatPart_SurvivalTool()
-        {
-            foreach (SurvivalToolType toolType in SurvivalToolType.allDefs)
-                if (toolType.stats.Contains(parentStat))
-                    relevantToolTypes.Add(toolType);
-        }
-
-        private bool transformAllJobs = true;
-        private List<JobDef> jobExceptions = new List<JobDef>();
-        private List<JobDef> jobList = new List<JobDef>();
         private readonly List<SurvivalToolType> relevantToolTypes = new List<SurvivalToolType>();
         public List<WorkGiverDef> unaffectedWorkGivers;
         public List<WorkGiverDef> relevantWorkGivers;
 
-        public bool useTool(JobDef job)
+        public void Initialize()
         {
-            if (transformAllJobs)
-            {
-                if (jobExceptions.Contains(job))
-                    return false;
-                return true;
-            }
-            else if (jobList.Contains(job))
-                return true;
-            return false;
+            foreach (SurvivalToolType toolType in SurvivalToolType.allDefs)
+                if (toolType.stats.Contains(parentStat))
+                    relevantToolTypes.Add(toolType);
         }
     }
 }

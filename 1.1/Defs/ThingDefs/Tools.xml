@@ -58,12 +58,9 @@
         </statBases>
         <modExtensions>
             <li Class="SurvivalTools.SurvivalToolProperties">
-                <baseWorkStatFactors>
-                    <PlantWorkSpeed_Felling_Tool>0.7</PlantWorkSpeed_Felling_Tool>
-                </baseWorkStatFactors>
-                <defaultSurvivalToolAssignmentTags>
-                    <li>PlantWorker</li>
-                </defaultSurvivalToolAssignmentTags>
+                <toolTypesValue>
+                    <ST_AxeType>0.7</ST_AxeType>
+                </toolTypesValue>
             </li>
         </modExtensions>
         <tools>
@@ -103,15 +100,10 @@
         </graphicData>
         <modExtensions>
             <li Class="SurvivalTools.SurvivalToolProperties">
-                <baseWorkStatFactors>
-                    <MiningSpeed_Tool>0.7</MiningSpeed_Tool>
-                    <MiningYield_Tool>0.7</MiningYield_Tool>
-                    <ConstructionSpeed_Tool>0.7</ConstructionSpeed_Tool>
-                </baseWorkStatFactors>
-                <defaultSurvivalToolAssignmentTags>
-                    <li>Constructor</li>
-                    <li>Miner</li>
-                </defaultSurvivalToolAssignmentTags>
+                <toolTypesValue>
+                    <ST_PickaxeType>0.7</ST_PickaxeType>
+                    <ST_HammerType>0.7</ST_HammerType>
+                </toolTypesValue>
             </li>
         </modExtensions>
         <tools>
@@ -150,12 +142,9 @@
         </graphicData>
         <modExtensions>
             <li Class="SurvivalTools.SurvivalToolProperties">
-                <baseWorkStatFactors>
-                    <PlantWorkSpeed_Harvesting_Tool>0.7</PlantWorkSpeed_Harvesting_Tool>
-                </baseWorkStatFactors>
-                <defaultSurvivalToolAssignmentTags>
-                    <li>PlantWorker</li>
-                </defaultSurvivalToolAssignmentTags>
+                <toolTypesValue>
+                    <ST_SickleType>0.7</ST_SickleType>
+                </toolTypesValue>
             </li>
         </modExtensions>
         <tools>
@@ -236,12 +225,9 @@
         </statBases>
         <modExtensions>
             <li Class="SurvivalTools.SurvivalToolProperties">
-                <baseWorkStatFactors>
-                    <PlantWorkSpeed_Felling_Tool>1</PlantWorkSpeed_Felling_Tool>
-                </baseWorkStatFactors>
-                <defaultSurvivalToolAssignmentTags>
-                    <li>PlantWorker</li>
-                </defaultSurvivalToolAssignmentTags>
+                <toolTypesValue>
+                    <ST_AxeType>1.0</ST_AxeType>
+                </toolTypesValue>
             </li>
         </modExtensions>
         <tools>
@@ -280,13 +266,9 @@
         </graphicData>
         <modExtensions>
             <li Class="SurvivalTools.SurvivalToolProperties">
-                <baseWorkStatFactors>
-                    <MiningSpeed_Tool>1</MiningSpeed_Tool>
-                    <MiningYield_Tool>1</MiningYield_Tool>
-                </baseWorkStatFactors>
-                <defaultSurvivalToolAssignmentTags>
-                    <li>Miner</li>
-                </defaultSurvivalToolAssignmentTags>
+                <toolTypesValue>
+                    <ST_PickaxeType>1.0</ST_PickaxeType>
+                </toolTypesValue>
             </li>
         </modExtensions>
         <tools>
@@ -324,12 +306,9 @@
         </graphicData>
         <modExtensions>
             <li Class="SurvivalTools.SurvivalToolProperties">
-                <baseWorkStatFactors>
-                    <ConstructionSpeed_Tool>1</ConstructionSpeed_Tool>
-                </baseWorkStatFactors>
-                <defaultSurvivalToolAssignmentTags>
-                    <li>Constructor</li>
-                </defaultSurvivalToolAssignmentTags>
+                <toolTypesValue>
+                    <ST_HammerType>1.0</ST_HammerType>
+                </toolTypesValue>
             </li>
         </modExtensions>
         <tools>
@@ -367,12 +346,9 @@
         </graphicData>
         <modExtensions>
             <li Class="SurvivalTools.SurvivalToolProperties">
-                <baseWorkStatFactors>
-                    <PlantWorkSpeed_Harvesting_Tool>1</PlantWorkSpeed_Harvesting_Tool>
-                </baseWorkStatFactors>
-                <defaultSurvivalToolAssignmentTags>
-                    <li>PlantWorker</li>
-                </defaultSurvivalToolAssignmentTags>
+                <toolTypesValue>
+                    <ST_SickleType>1.0</ST_SickleType>
+                </toolTypesValue>
             </li>
         </modExtensions>
         <tools>
@@ -458,12 +434,9 @@
         </equippedStatOffsets>
         <modExtensions>
             <li Class="SurvivalTools.SurvivalToolProperties">
-                <baseWorkStatFactors>
-                    <PlantWorkSpeed_Felling_Tool>1.5</PlantWorkSpeed_Felling_Tool>
-                </baseWorkStatFactors>
-                <defaultSurvivalToolAssignmentTags>
-                    <li>PlantWorker</li>
-                </defaultSurvivalToolAssignmentTags>
+                <toolTypesValue>
+                    <ST_AxeType>1.2</ST_AxeType>
+                </toolTypesValue>
             </li>
         </modExtensions>
         <tools>
@@ -515,13 +488,9 @@
         </equippedStatOffsets>
         <modExtensions>
             <li Class="SurvivalTools.SurvivalToolProperties">
-                <baseWorkStatFactors>
-                    <MiningSpeed_Tool>1.5</MiningSpeed_Tool>
-                    <MiningYield_Tool>1.3</MiningYield_Tool>
-                </baseWorkStatFactors>
-                <defaultSurvivalToolAssignmentTags>
-                    <li>Miner</li>
-                </defaultSurvivalToolAssignmentTags>
+                <toolTypesValue>
+                    <ST_PickaxeType>1.2</ST_PickaxeType>
+                </toolTypesValue>
             </li>
         </modExtensions>
         <tools>
@@ -576,12 +545,9 @@
         </equippedStatOffsets>
         <modExtensions>
             <li Class="SurvivalTools.SurvivalToolProperties">
-             <baseWorkStatFactors>
-                    <PlantWorkSpeed_Harvesting_Tool>1.3</PlantWorkSpeed_Harvesting_Tool>
-                </baseWorkStatFactors>
-                <defaultSurvivalToolAssignmentTags>
-                    <li>PlantWorker</li>
-                </defaultSurvivalToolAssignmentTags>
+                <toolTypesValue>
+                    <ST_SickleType>1.2</ST_SickleType>
+                </toolTypesValue>
             </li>
         </modExtensions>
         <tools>
@@ -636,12 +602,9 @@
         </equippedStatOffsets>
         <modExtensions>
             <li Class="SurvivalTools.SurvivalToolProperties">
-               <baseWorkStatFactors>
-                    <ConstructionSpeed_Tool>1.67</ConstructionSpeed_Tool>
-                </baseWorkStatFactors>
-                <defaultSurvivalToolAssignmentTags>
-                    <li>Constructor</li>
-                </defaultSurvivalToolAssignmentTags>
+                <toolTypesValue>
+                    <ST_HammerType>1.2</ST_HammerType>
+                </toolTypesValue>
             </li>
         </modExtensions>
         <tools>
@@ -695,18 +658,12 @@
         </graphicData>
         <modExtensions>
             <li Class="SurvivalTools.SurvivalToolProperties">
-                <baseWorkStatFactors>
-                    <PlantWorkSpeed_Felling_Tool>1.3</PlantWorkSpeed_Felling_Tool>
-                    <MiningSpeed_Tool>1.3</MiningSpeed_Tool>
-                    <MiningYield_Tool>1.1</MiningYield_Tool>
-                    <ConstructionSpeed_Tool>1.3</ConstructionSpeed_Tool>
-                    <PlantWorkSpeed_Harvesting_Tool>1.3</PlantWorkSpeed_Harvesting_Tool>
-                </baseWorkStatFactors>
-                <defaultSurvivalToolAssignmentTags>
-                    <li>Constructor</li>
-                    <li>Miner</li>
-                    <li>PlantWorker</li>
-                </defaultSurvivalToolAssignmentTags>
+                <toolTypesValue>
+                    <ST_AxeType>1.4</ST_AxeType>
+                    <ST_PickaxeType>1.4</ST_PickaxeType>
+                    <ST_HammerType>1.4</ST_HammerType>
+                    <ST_SickleType>1.4</ST_SickleType>
+                </toolTypesValue>
                 <toolWearFactor>0.15</toolWearFactor>
             </li>
         </modExtensions>

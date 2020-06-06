@@ -78,11 +78,11 @@ namespace SurvivalTools
                     continue;
                 else
                 {
-                    if (toolProps.defaultSurvivalToolAssignmentTags.Contains("Constructor"))
+                    if (toolProps.toolTypes.Any(t=>t.defaultSurvivalToolAssignmentTags.Contains("Constructor")))
                         staConstructor.filter.SetAllow(tDef, true);
-                    if (toolProps.defaultSurvivalToolAssignmentTags.Contains("Miner"))
+                    if (toolProps.toolTypes.Any(t => t.defaultSurvivalToolAssignmentTags.Contains("Miner")))
                         staMiner.filter.SetAllow(tDef, true);
-                    if (toolProps.defaultSurvivalToolAssignmentTags.Contains("PlantWorker"))
+                    if (toolProps.toolTypes.Any(t => t.defaultSurvivalToolAssignmentTags.Contains("PlantWorker")))
                         staPlantWorker.filter.SetAllow(tDef, true);
                 }
             }

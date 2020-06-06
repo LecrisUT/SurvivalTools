@@ -8,7 +8,7 @@ namespace SurvivalTools
     public class SurvivalToolsSettings : ModSettings
     {
         public static bool hardcoreMode = false;
-        public static bool toolMapGen = true;
+        //public static bool toolMapGen = true;
         public static bool toolLimit = true;
         private static float toolDegradationFactor = 1f;
         public static float ToolDegradationFactor => Mathf.Pow(toolDegradationFactor, (toolDegradationFactor < 1f) ? 1 : 2);
@@ -31,8 +31,8 @@ namespace SurvivalTools
             options.CheckboxLabeled("Settings_HardcoreMode".Translate(), ref hardcoreMode, "Settings_HardcoreMode_Tooltip".Translate());
             GUI.color = defaultColor;
             options.Gap();
-            options.CheckboxLabeled("Settings_ToolMapGen".Translate(), ref toolMapGen, "Settings_ToolMapGen_Tooltip".Translate());
-            options.Gap();
+            //options.CheckboxLabeled("Settings_ToolMapGen".Translate(), ref toolMapGen, "Settings_ToolMapGen_Tooltip".Translate());
+            //options.Gap();
             options.CheckboxLabeled("Settings_ToolLimit".Translate(), ref toolLimit, "Settings_ToolLimit_Tooltip".Translate());
             options.Gap();
             options.AddLabeledSlider("Settings_ToolDegradationRate".Translate(), ref toolDegradationFactor, 0f, 2f,
@@ -49,10 +49,11 @@ namespace SurvivalTools
         public override void ExposeData()
         {
             Scribe_Values.Look(ref hardcoreMode, "hardcoreMode", false);
-            Scribe_Values.Look(ref toolMapGen, "toolMapGen", true);
+            //Scribe_Values.Look(ref toolMapGen, "toolMapGen", true);
             Scribe_Values.Look(ref toolLimit, "toolLimit", true);
             Scribe_Values.Look(ref toolDegradationFactor, "toolDegradationFactor", 1f);
             Scribe_Values.Look(ref toolOptimization, "toolOptimization", true);
+            Scribe_Values.Look(ref toolAutoDropExcess, "toolAutoDropExcess", true);
         }
     }
 

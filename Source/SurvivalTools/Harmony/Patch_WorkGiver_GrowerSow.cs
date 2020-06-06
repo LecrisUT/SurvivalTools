@@ -13,7 +13,9 @@ namespace SurvivalTools.HarmonyPatches
         {
             if (__result?.def == JobDefOf.CutPlant && __result.targetA.Thing.def.plant.IsTree)
             {
-                if (!pawn.MeetsWorkGiverStatRequirements(ST_WorkGiverDefOf.FellTrees.GetModExtension<WorkGiverExtension>().requiredStats))
+                if (ST_WorkGiverDefOf.FellTrees.GetModExtension<WorkGiverExtension>().MeetsRequirementJobs(pawn))
+                    __result = JobMaker.MakeJob(ST_JobDefOf.FellTree, __result.targetA);
+                else
                     __result = null;
             }
         }
