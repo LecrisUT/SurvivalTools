@@ -21,20 +21,40 @@ namespace SurvivalTools
 
         private static float Calculate_Sharpness(ThingDef def)
         {
+            float sharpness = 1f;
+            // 
             if (def.statBases.StatListContains(StatDefOf.SharpDamageMultiplier))
-                return def.statBases.GetStatFactorFromList(StatDefOf.SharpDamageMultiplier);
-            if (def.statBases.StatListContains(StatDefOf.ArmorRating_Sharp))
-                return def.statBases.GetStatFactorFromList(StatDefOf.ArmorRating_Sharp);
-            return def.statBases.GetStatFactorFromList(StatDefOf.StuffPower_Armor_Sharp);
+                sharpness = def.statBases.GetStatFactorFromList(StatDefOf.SharpDamageMultiplier);
+            else if (def.statBases.StatListContains(StatDefOf.ArmorRating_Sharp))
+                sharpness = 0.1f + def.statBases.GetStatFactorFromList(StatDefOf.ArmorRating_Sharp);
+            else if (def.statBases.StatListContains(StatDefOf.StuffPower_Armor_Sharp))
+                sharpness = 0.1f + def.statBases.GetStatFactorFromList(StatDefOf.StuffPower_Armor_Sharp);
+            // Increase effect
+            if (def.stuffProps.categories.Contains(StuffCategoryDefOf.Metallic))
+                sharpness = 1f + (sharpness - 1.0f) * 2f;
+            else if (def.stuffProps.categories.Contains(StuffCategoryDefOf.Stony))
+                sharpness = 0.8f + (sharpness - 0.6f) * 2f;
+            else if (def.stuffProps.categories.Contains(StuffCategoryDefOf.Woody))
+                sharpness = 0.8f + (sharpness - 0.4f) * 2f;
+            return sharpness;
         }
 
         private static float Calculate_Hardness(ThingDef def)
         {
+            float hardness = 1f;
             if (def.statBases.StatListContains(StatDefOf.BluntDamageMultiplier))
-                return def.statBases.GetStatFactorFromList(StatDefOf.BluntDamageMultiplier);
-            if (def.statBases.StatListContains(StatDefOf.ArmorRating_Blunt))
-                return def.statBases.GetStatFactorFromList(StatDefOf.ArmorRating_Blunt);
-            return def.statBases.GetStatFactorFromList(StatDefOf.StuffPower_Armor_Blunt);
+                hardness = def.statBases.GetStatFactorFromList(StatDefOf.BluntDamageMultiplier);
+            else if (def.statBases.StatListContains(StatDefOf.ArmorRating_Blunt))
+                hardness = 0.1f + 2 * def.statBases.GetStatFactorFromList(StatDefOf.ArmorRating_Blunt);
+            else if (def.statBases.StatListContains(StatDefOf.StuffPower_Armor_Blunt))
+                hardness = 0.1f + 2 * def.statBases.GetStatFactorFromList(StatDefOf.StuffPower_Armor_Blunt);
+            if (def.stuffProps.categories.Contains(StuffCategoryDefOf.Metallic))
+                hardness = 1f + (hardness - 1.0f) * 2f;
+            else if (def.stuffProps.categories.Contains(StuffCategoryDefOf.Stony))
+                hardness = 0.9f + (hardness - 1.0f) * 2f;
+            else if (def.stuffProps.categories.Contains(StuffCategoryDefOf.Woody))
+                hardness = 0.7f + (hardness - 0.9f) * 2f;
+            return hardness;
         }
 
         private static float ValueFactor(ThingDef def)
@@ -46,17 +66,24 @@ namespace SurvivalTools
 
         private static void InjectStatBase(IEnumerable<ThingDef> list)
         {
-            StringBuilder stringBuilder = new StringBuilder("[SurvivalTools] Added stats to: ");
+            StringBuilder stringBuilder = new StringBuilder("[[LC]SurvivalTools] Added stuff stats to the following items:\n");
             foreach (ThingDef thingDef in list)
             {
-                StatModifier Sharpness = new StatModifier();
-                Sharpness.stat = ST_StatDefOf.ST_Sharpness;
-                Sharpness.value = Calculate_Sharpness(thingDef);
-                thingDef.stuffProps.statFactors.Add(Sharpness);
-                StatModifier Hardness = new StatModifier();
-                Hardness.stat = ST_StatDefOf.ST_Hardness;
-                Hardness.value = Calculate_Hardness(thingDef);
-                thingDef.stuffProps.statFactors.Add(Hardness);
+                StatModifier Sharpness, Hardness;
+                if (!thingDef.stuffProps.statFactors.StatListContains(ST_StatDefOf.ST_Sharpness))
+                {
+                    Sharpness = new StatModifier() { stat = ST_StatDefOf.ST_Sharpness, value = Calculate_Sharpness(thingDef) };
+                    thingDef.stuffProps.statFactors.Add(Sharpness);
+                }
+                else
+                    Sharpness = thingDef.stuffProps.statFactors.First(t => t.stat == ST_StatDefOf.ST_Sharpness);
+                if (!thingDef.stuffProps.statFactors.StatListContains(ST_StatDefOf.ST_Hardness))
+                {
+                    Hardness = new StatModifier() { stat = ST_StatDefOf.ST_Hardness, value = Calculate_Hardness(thingDef) };
+                    thingDef.stuffProps.statFactors.Add(Hardness);
+                }
+                else
+                    Hardness = thingDef.stuffProps.statFactors.First(t => t.stat == ST_StatDefOf.ST_Hardness);
                 stringBuilder.Append(thingDef.defName + " (" + Sharpness.value + ":" + Hardness.value + "), ");
             }
             Log.Message(stringBuilder.ToString().TrimEnd(new char[] { ' ', ',' }), false);

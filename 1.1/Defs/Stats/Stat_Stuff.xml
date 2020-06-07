@@ -3,7 +3,7 @@
     <StatDef>
         <defName>ST_Sharpness</defName>
         <label>sharpness</label>
-        <description>(empty)</description>
+        <description>Determines how sharp tools are amplified when built from this.</description>
         <category>StuffStatFactors</category>
         <displayPriorityInCategory>100</displayPriorityInCategory>
         <defaultBaseValue>1</defaultBaseValue>
@@ -15,7 +15,7 @@
     <StatDef>
         <defName>ST_Hardness</defName>
         <label>hardness</label>
-        <description>(empty)</description>
+        <description>Determines how blunt tools are amplified when built from this.</description>
         <category>StuffStatFactors</category>
         <displayPriorityInCategory>100</displayPriorityInCategory>
         <defaultBaseValue>1</defaultBaseValue>
