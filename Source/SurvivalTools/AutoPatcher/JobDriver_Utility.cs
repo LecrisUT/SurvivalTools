@@ -118,17 +118,50 @@ namespace SurvivalTools.AutoPatcher
                 Log.Error($"[SurvivalTools] Pawn not found: {toil} : {driver.job.def} : {driver} : {stat}");
                 return;
             }
-            toil.AddPreTickAction(delegate
+            Pawn_SurvivalToolAssignmentTracker tracker = pawn.GetToolTracker();
+            if (tracker != null)
             {
-                pawn.TryDegradeTool(stat, driver.job.def);
-            });
+                JobDef job = driver.job.def;
+                if (tracker.usedHandler.BestTool.TryGetValue(job, out SurvivalTool tool) && tool.GetStatList().Contains(stat))
+                {
+                    toil.AddPreInitAction(delegate
+                    {
+                        // Thing primary = 
+                        tracker.memoryEquipment = pawn.equipment.Primary;
+                        if (tracker.memoryEquipment != tool)
+                        {
+                            if (pawn.equipment.Primary != null)
+                                pawn.equipment.TryTransferEquipmentToContainer(pawn.equipment.Primary, pawn.inventory.innerContainer);
+                            pawn.inventory.innerContainer.TryTransferToContainer(tool, pawn.equipment.GetDirectlyHeldThings());
+                        }
+                        tracker.drawTool = true;
+                    });
+                    if (tool.def.useHitPoints)
+                    {
+                        LessonAutoActivator.TeachOpportunity(ST_ConceptDefOf.SurvivalToolDegradation, OpportunityType.GoodToKnow);
+                        toil.AddPreTickAction(delegate
+                        {
+                            pawn.TryDegradeTool(tool);
+                        });
+                    }
+                    toil.AddFinishAction(delegate
+                    {
+                        tracker.drawTool = false;
+                        if (tracker.memoryEquipment != tool)
+                        {
+                            pawn.equipment.TryTransferEquipmentToContainer(pawn.equipment.Primary, pawn.inventory.innerContainer);
+                            if (tracker.memoryEquipment != null)
+                                pawn.inventory.innerContainer.TryTransferToContainer(tracker.memoryEquipment, pawn.equipment.GetDirectlyHeldThings());
+                        }
+                        tracker.memoryEquipment = null;
+                    });
+                }
+            }
         }
-        public static void TryDegradeTool(this Pawn pawn, StatDef stat, JobDef job)
+        public static void TryDegradeTool(this Pawn pawn, SurvivalTool tool)
         {
-            if (SurvivalToolsSettings.ToolDegradation && pawn.GetToolTracker() is Pawn_SurvivalToolAssignmentTracker tracker &&
-                tracker.usedHandler.BestTool.TryGetValue(job, out SurvivalTool tool) && tool.GetStatList().Contains(stat) && tool.def.useHitPoints)
+            if (tool.def.useHitPoints)
             {
-                LessonAutoActivator.TeachOpportunity(ST_ConceptDefOf.SurvivalToolDegradation, OpportunityType.GoodToKnow);
                 tool.workTicksDone++;
                 if (tool.workTicksDone >= tool.WorkTicksToDegrade)
                 {

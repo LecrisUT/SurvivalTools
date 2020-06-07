@@ -46,6 +46,8 @@
     <Compile Include="AI\WorkGiver_PlantCut_Original.cs" />
     <Compile Include="AI\WorkGiver_PlantCut_NoTrees.cs" />
     <Compile Include="AutoPatcher\JobDriver_Utility.cs" />
+    <Compile Include="Harmony\Patch_PawnRenderer.cs" />
+    <Compile Include="Harmony\Patch_AwesomeInventory.cs" />
     <Compile Include="Harmony\Patch_WorkGiver_GrowerHarvest.cs" />
     <Compile Include="SurvivalToolStuffStatInjector.cs" />
     <Compile Include="SurvivalToolTypeModifier.cs" />

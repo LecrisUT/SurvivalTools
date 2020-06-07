@@ -43,6 +43,8 @@ namespace SurvivalTools
         }
 
         public int nextSurvivalToolOptimizeTick = -99999;
+        public bool drawTool = false;
+        public ThingWithComps memoryEquipment = null;
         public SurvivalToolForcedHandler forcedHandler;
         public SurvivalToolUsedHandler usedHandler;
         private SurvivalToolAssignment curSurvivalToolAssignment;
