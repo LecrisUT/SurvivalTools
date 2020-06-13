@@ -37,6 +37,7 @@ namespace SurvivalTools
             if (SurvivalToolsSettings.toolOptimization)
             {
                 // Return a job based on whether or not a better tool was located
+            SearchTool:
                 (SurvivalTool oldTool, SurvivalTool newTool) = SearchForBetterTools(pawn, assignmentTracker).FirstOrFallback();
                 // Failure
                 if (newTool == null)
@@ -48,7 +49,7 @@ namespace SurvivalTools
                 // Success
                 if (oldTool != null && !assignmentTracker.forcedHandler.IsForced(oldTool))
                     pawn.jobs.jobQueue.EnqueueFirst(pawn.DequipAndTryStoreSurvivalTool(oldTool, false));
-                Job pickupJob = new Job(JobDefOf.TakeInventory, newTool)
+                Job pickupJob = new Job(ST_JobDefOf.PickSurvivalTool, newTool)
                 {
                     count = 1
                 };
@@ -62,11 +63,12 @@ namespace SurvivalTools
         }
         private static IEnumerable<(SurvivalTool oldTool, SurvivalTool newTool)> SearchForBetterTools(Pawn pawn, Pawn_SurvivalToolAssignmentTracker assignmentTracker)
         {
-
+            
             SurvivalToolAssignment toolAssignment = assignmentTracker.CurrentSurvivalToolAssignment;
             List<SurvivalToolType> requiredToolTypes = assignmentTracker.RequiredToolTypes;
             // Tick rare update the list
-            List<Thing> mapTools = pawn.MapHeld.listerThings.AllThings.Where(t => t is SurvivalTool).ToList();
+            ReservationManager reservation = pawn.Map.reservationManager;
+            List<Thing> mapTools = pawn.Map.listerThings.AllThings.Where(t => t is SurvivalTool).ToList();
 
             Dictionary<SurvivalToolType, (float score, SurvivalTool oldTool, SurvivalTool newTool)> curTools
                 = new Dictionary<SurvivalToolType, (float, SurvivalTool, SurvivalTool)>(requiredToolTypes.Select(
@@ -75,7 +77,7 @@ namespace SurvivalTools
             foreach (SurvivalTool potentialTool in mapTools)
             {
                 if (potentialTool == null || !toolAssignment.filter.Allows(potentialTool) || !potentialTool.BetterThanWorkingToolless() ||
-                    potentialTool.IsForbidden(pawn) || potentialTool.IsBurning() || !potentialTool.IsInAnyStorage())
+                    potentialTool.IsForbidden(pawn) || potentialTool.IsBurning() || !potentialTool.IsInAnyStorage() || reservation.IsReservedByAnyoneOf(potentialTool, pawn.Faction))
                     continue;
                 foreach (SurvivalToolType toolType in potentialTool.def.GetModExtension<SurvivalToolProperties>().toolTypes)
                 {

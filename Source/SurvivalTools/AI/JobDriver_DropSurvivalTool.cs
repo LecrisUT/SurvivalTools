@@ -11,9 +11,7 @@ namespace SurvivalTools
         private const int DurationTicks = 30;
 
         public override bool TryMakePreToilReservations(bool errorOnFailed)
-        {
-            return true;
-        }
+            => true;
 
         protected override IEnumerable<Toil> MakeNewToils()
         {
