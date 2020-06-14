@@ -1,7 +1,9 @@
-﻿using RimWorld;
+﻿using HarmonyLib;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using Verse;
 
 namespace SurvivalTools
@@ -43,7 +45,7 @@ namespace SurvivalTools
                     allNoToolDrictionaryHardCore[jobDef].Add(modifier);
                 }
             else
-                allNoToolDrictionaryHardCore.Add(jobDef, noToolStatFactorsRegular);
+                allNoToolDrictionaryHardCore.Add(jobDef, noToolStatFactorsHardCore);
             Skip2:
             jobList.AddDistinct(jobDef);
             allAffectedJobs.AddDistinct(jobDef);
@@ -56,7 +58,7 @@ namespace SurvivalTools
         public List<StatModifier> noToolStatFactors
             => (SurvivalToolsSettings.hardcoreMode) ? noToolStatFactorsHardCore : noToolStatFactorsRegular;
         private float noToolFactorRegular = 0.3f;
-        private float noToolFactorHardcore = -1f;
+        private float noToolFactorHardcore = 0f;
         public float noToolFactor
             => (SurvivalToolsSettings.hardcoreMode) ? noToolFactorHardcore : noToolFactorRegular;
         public List<JobDef> jobList = new List<JobDef>();
@@ -66,7 +68,7 @@ namespace SurvivalTools
         private List<Type> jobDriverException = new List<Type>();
         public List<WorkGiverDef> relevantWorkGivers = new List<WorkGiverDef>();
         private float NoToolFactorHardcore =>
-            (noToolFactorHardcore != -1f) ? noToolFactorHardcore : noToolFactorRegular;
+            (noToolFactorHardcore < 0f) ? noToolFactorRegular : noToolFactorHardcore;
 
         [NoTranslate]
         public List<string> defaultSurvivalToolAssignmentTags;
