@@ -29,8 +29,12 @@ namespace SurvivalTools
         public List<SurvivalToolAssignment> AllSurvivalToolAssignments =>
             survivalToolAssignments;
 
-        public SurvivalToolAssignment DefaultSurvivalToolAssignment() =>
-            survivalToolAssignments.Count == 0 ? MakeNewSurvivalToolAssignment() : survivalToolAssignments[0];
+        public SurvivalToolAssignment DefaultSurvivalToolAssignment(Pawn pawn)
+        {
+            SurvivalToolAssignment assignment = survivalToolAssignments.Count == 0 ? MakeNewSurvivalToolAssignment() : survivalToolAssignments[0];
+            assignment.Initialize(pawn);
+            return assignment;
+        }
 
         public AcceptanceReport TryDelete(SurvivalToolAssignment toolAssignment)
         {
@@ -44,7 +48,6 @@ namespace SurvivalTools
             survivalToolAssignments.Remove(toolAssignment);
             return AcceptanceReport.WasAccepted;
         }
-
         public SurvivalToolAssignment MakeNewSurvivalToolAssignment()
         {
             int uniqueId = survivalToolAssignments.Any() ? survivalToolAssignments.Max(a => a.uniqueId) + 1 : 1;
@@ -71,6 +74,7 @@ namespace SurvivalTools
             staPlantWorker.label = "SurvivalToolAssignmentPlantWorker".Translate();
             staPlantWorker.filter.SetDisallowAll(null, null);
 
+            // There is a much better way now?
             foreach (ThingDef tDef in DefDatabase<ThingDef>.AllDefs)
             {
                 SurvivalToolProperties toolProps = tDef.GetModExtension<SurvivalToolProperties>();

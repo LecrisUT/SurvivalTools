@@ -41,7 +41,6 @@ namespace SurvivalTools
                 if (tDef.comps == null)
                     tDef.comps = new List<CompProperties>();
                 tDef.comps.Add(new CompProperties(typeof(Pawn_SurvivalToolAssignmentTracker)));
-                tDef.comps.Add(new CompProperties(typeof(ThingComp_WorkSettings)));
             }
         }
 

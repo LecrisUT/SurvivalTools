@@ -153,6 +153,9 @@ namespace SurvivalTools
         }
         public void CheckToolsInUse()
         {
+            int maxTools = pawn.GetMaxTools();
+            if (usedTools.Count > maxTools)
+                usedTools.RemoveRange(maxTools, usedTools.Count - maxTools);
             // Check currently used tools if allowed
             foreach (SurvivalTool tool in usedTools.ToList())
             {
@@ -166,7 +169,6 @@ namespace SurvivalTools
             }
 
             // Check other held tools if can be used
-            float maxTools = pawn.GetStatValue(ST_StatDefOf.SurvivalToolCarryCapacity, false);
             if (usedTools.Count < maxTools)
                 foreach (SurvivalTool tool in bestHeldAllowedTools)
                 {
@@ -240,9 +242,8 @@ namespace SurvivalTools
                 SetUsed(tool, false);
                 return;
             }
-            float maxTools = pawn.GetStatValue(ST_StatDefOf.SurvivalToolCarryCapacity, false);
             if (bestHeldTools.Contains(tool) &&
-                (usedTools.Count < maxTools || usedTools.Contains(tool)))
+                (usedTools.Count < pawn.GetMaxTools() || usedTools.Contains(tool)))
                 SetUsed(tool, true);
             else
                 SetUsed(tool, false);

@@ -22,4 +22,16 @@
         <minValue>0</minValue>
         <showIfUndefined>false</showIfUndefined>
     </StatDef>
+
+    <StatDef>
+        <defName>ToolWearModifier</defName>
+        <label>tool wear modifier</label>
+        <description>Modifies the speed at which the tool decays.</description>
+        <category>StuffStatFactors</category>
+        <showIfUndefined>false</showIfUndefined>
+        <displayPriorityInCategory>30</displayPriorityInCategory>
+        <defaultBaseValue>1</defaultBaseValue>
+        <minValue>0.5</minValue>
+        <toStringStyle>PercentZero</toStringStyle>
+    </StatDef>
 </Defs>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UnityEngine;
 using Verse;
 using Verse.AI;
 
@@ -28,6 +29,8 @@ namespace SurvivalTools
             pawn.RaceProps.intelligence >= Intelligence.ToolUser && pawn.Faction == Faction.OfPlayer &&
             (pawn.equipment != null || pawn.inventory != null) && pawn.TraderKind == null &&
             !(MiscDef.IgnoreRaceList.Find(t => t.race == pawn.kindDef.race)?.all == true);
+        public static bool CanUseSurvivalTools(this Pawn pawn, out Pawn_SurvivalToolAssignmentTracker tracker)
+            => (tracker = pawn.TryGetComp<Pawn_SurvivalToolAssignmentTracker>()) != null;
 
         public static IEnumerable<SurvivalTool> GetHeldSurvivalTools(this Pawn pawn)
         {
@@ -41,9 +44,16 @@ namespace SurvivalTools
 
         // Save a list in assingment tracker
         public static bool CanUseSurvivalTool(this Pawn pawn, SurvivalToolType toolType)
-            => pawn.GetComp<Pawn_SurvivalToolAssignmentTracker>().CanUseToolType(toolType);
+            => pawn.GetToolTracker().CurrentSurvivalToolAssignment.CanUseToolType(toolType);
         public static bool CanUseSurvivalTool(this Pawn pawn, SurvivalTool tool)
-            => pawn.GetComp<Pawn_SurvivalToolAssignmentTracker>().CanUseTool(tool);
+            => pawn.GetToolTracker().CurrentSurvivalToolAssignment.CanUseTool(tool);
+
+        public static int GetMaxTools(this Pawn pawn)
+        {
+            if (!SurvivalToolsSettings.toolLimit)
+                return int.MaxValue;
+            return Mathf.RoundToInt(pawn.GetStatValue(ST_StatDefOf.SurvivalToolCarryCapacity, false));
+        }
 
         public static string GetSurvivalToolOverrideReportText(SurvivalTool tool, SurvivalToolTypeModifier modifier)
         {
@@ -57,10 +67,6 @@ namespace SurvivalTools
             builder.AppendLine();
             builder.AppendLine(ST_StatDefOf.ToolEffectivenessFactor.LabelCap + ": " +
                 tool.GetStatValue(ST_StatDefOf.ToolEffectivenessFactor, false).ToStringByStyle(ToStringStyle.Integer, ToStringNumberSense.Factor));
-            /* Let's add Estimated LifeSpan to the override report*/
-            builder.AppendLine();
-            builder.AppendLine(ST_StatDefOf.ToolEstimatedLifespan.LabelCap + ": " +
-                tool.GetStatValue(ST_StatDefOf.ToolEstimatedLifespan, false).ToStringByStyle(ToStringStyle.Integer, ToStringNumberSense.Factor));
 
             ThingDef stuff = tool.Stuff;
             if (stuff != null)

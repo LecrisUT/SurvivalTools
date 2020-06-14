@@ -48,12 +48,13 @@
     <Compile Include="AutoPatcher\JobDriver_Utility.cs" />
     <Compile Include="Harmony\Patch_PawnRenderer.cs" />
     <Compile Include="Harmony\Patch_AwesomeInventory.cs" />
+    <Compile Include="Harmony\Patch_Alert_HunterLacksRangedWeapon.cs" />
     <Compile Include="Harmony\Patch_WorkGiver_GrowerHarvest.cs" />
+    <Compile Include="Harmony\Patch_StatWorker.cs" />
     <Compile Include="SurvivalToolStuffStatInjector.cs" />
     <Compile Include="SurvivalToolTypeModifier.cs" />
     <Compile Include="Defs\SurvivalToolType.cs" />
     <Compile Include="SurvivalToolUsedHandler.cs" />
-    <Compile Include="ThingComp\ThingComp_WorkSettings.cs" />
     <Compile Include="AI\ThinkNode_WorkSettingsChange.cs" />
     <Compile Include="AI\ThinkNode_UseTools.cs" />
     <Compile Include="Alerts\Alert_SurvivalToolNeedsReplacing.cs" />
@@ -86,7 +87,6 @@
       <DependentUpon>AssemblyInfo.tt</DependentUpon>
     </Compile>
     <Compile Include="SpecialThingFilterWorker_NonSmeltableTools.cs" />
-    <Compile Include="Stats\StatPart_SurvivalTool.cs" />
     <Compile Include="Stats\StatWorker_EstimatedLifespan.cs" />
     <Compile Include="DefOfs\ST_JobDefOf.cs" />
     <Compile Include="DefOfs\ST_StatCategoryDefOf.cs" />

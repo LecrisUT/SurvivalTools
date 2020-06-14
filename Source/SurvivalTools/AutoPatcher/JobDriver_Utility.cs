@@ -90,9 +90,11 @@ namespace SurvivalTools.AutoPatcher
         private static readonly MethodInfo thisGetStatValue_Info = AccessTools.Method(thisType, "GetStatValue");
         public static float GetStatValue(this Pawn pawn, StatDef stat, Job job, bool applyPostProcess = true)
         {
-            JobDef jobDef = job.def;
             float val = pawn.GetStatValue(stat, applyPostProcess);
-            if (pawn.GetToolTracker().usedHandler.BestTool.TryGetValue(jobDef, out SurvivalTool tool))
+            if (!pawn.CanUseSurvivalTools(out Pawn_SurvivalToolAssignmentTracker tracker))
+                return val;
+            JobDef jobDef = job.def;
+            if (tracker.usedHandler.BestTool.TryGetValue(jobDef, out SurvivalTool tool))
             {
                 tool.TryGetJobValue(jobDef, stat, out float effect);
                 return val * effect;

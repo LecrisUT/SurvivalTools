@@ -6,7 +6,7 @@ namespace SurvivalTools
     public class SurvivalToolForcedHandler : IExposable
     {
         private List<SurvivalTool> forcedTools = new List<SurvivalTool>();
-        public bool SomethingIsForced => forcedTools.Count > 0;
+        public bool SomethingIsForced => !forcedTools.NullOrEmpty();
         public List<SurvivalTool> ForcedTools => forcedTools;
         public void Reset() => forcedTools.Clear();
         public bool AllowedToAutomaticallyDrop(SurvivalTool tool)

@@ -29,6 +29,9 @@
             <MiningSpeed>1.0</MiningSpeed>
             <MiningYield>1.0</MiningYield>
         </baseWorkStatFactors>
+        <noToolStatFactorsHardCore>
+            <MiningYield>0.3</MiningYield>
+        </noToolStatFactorsHardCore>
         <efficiencyModifiers>
             <ST_Sharpness>0.3</ST_Sharpness>
             <ST_Hardness>0.7</ST_Hardness>

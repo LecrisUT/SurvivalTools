@@ -16,7 +16,7 @@ namespace SurvivalTools
             get
             {
                 if (curSurvivalToolAssignment == null)
-                    curSurvivalToolAssignment = Current.Game.GetComponent<SurvivalToolAssignmentDatabase>().DefaultSurvivalToolAssignment();
+                    curSurvivalToolAssignment = Current.Game.GetComponent<SurvivalToolAssignmentDatabase>().DefaultSurvivalToolAssignment(Pawn);
                 return curSurvivalToolAssignment;
             }
             set
@@ -31,7 +31,6 @@ namespace SurvivalTools
             base.Initialize(props);
             forcedHandler = new SurvivalToolForcedHandler();
             usedHandler = new SurvivalToolUsedHandler(Pawn, this);
-            checkAlowedToolTypes();
         }
 
         public void ExposeData()
@@ -60,7 +59,6 @@ namespace SurvivalTools
         }
 
         // Save allowed ToolTypes based on race, etc.
-        public List<SurvivalToolType> allowedToolTypes = new List<SurvivalToolType>();
         private List<SurvivalToolType> requiredToolTypes = new List<SurvivalToolType>();
         public List<SurvivalToolType> RequiredToolTypes
         {
@@ -99,7 +97,7 @@ namespace SurvivalTools
             List<JobDef> jobList = new List<JobDef>();
             foreach (WorkGiver giver in Pawn.workSettings.WorkGiversInOrderNormal)
             {
-                if (!allowedWorkGiver(Pawn, giver))
+                if (!SurvivalToolAssignment.allowedWorkGiver(Pawn, giver))
                     continue;
                 WorkGiverExtension extension = giver.def.GetModExtension<WorkGiverExtension>();
                 if (extension != null)
@@ -116,37 +114,5 @@ namespace SurvivalTools
             busy = false;
             usedHandler.dirtyCache = true;
         }
-        public void checkAlowedToolTypes()
-        {
-            allowedToolTypes = SurvivalToolType.allDefs.ToList();
-            RaceExemption rule = MiscDef.IgnoreRaceList.FirstOrFallback(t => t.race == Pawn.kindDef.race);
-            if (rule != null)
-            {
-                if (rule.all)
-                    return;
-                else
-                    foreach (SurvivalToolType toolType in SurvivalToolType.allDefs)
-                        if (!rule.checkIfAllowed(toolType) && toolType.relevantWorkGivers.All(t => allowedWorkGiver(Pawn, t.Worker)))
-                            allowedToolTypes.Remove(toolType);
-            }
-        }
-        public static MethodInfo WorkTab_CapableOf = AccessTools.Method(typeof(Pawn), "WorkTab.Pawn_Extensions.CapableOf");
-        private bool allowedWorkGiver(Pawn pawn, WorkGiver wg)
-        {
-            if (WorkTab_CapableOf != null)
-                return (bool)WorkTab_CapableOf.Invoke(null, new object[] { pawn, wg });
-            if (pawn.WorkTypeIsDisabled(wg.def.workType))
-                return false;
-            return true;
-        }
-        public bool CanUseTool(SurvivalTool tool)
-        {
-            List<SurvivalToolType> toolTypes = tool.GetToolProperties().toolTypes;
-            if (allowedToolTypes.Any(t => toolTypes.Contains(t)))
-                return true;
-            return false;
-        }
-        public bool CanUseToolType(SurvivalToolType toolType)
-            => allowedToolTypes.Contains(toolType);
     }
 }

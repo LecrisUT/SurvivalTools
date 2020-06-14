@@ -9,8 +9,9 @@ namespace SurvivalTools
         public static StatDef SurvivalToolCarryCapacity;
 
         // Thing
+        // Tool lifespan can be applied to stuff as well
         public static StatDef ToolEstimatedLifespan;
-        public static StatDef ToolWearFactor;
+        // public static StatDef ToolWearModifier;
         public static StatDef ToolEffectivenessFactor;
 
         // Stuff
