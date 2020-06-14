@@ -55,7 +55,7 @@ namespace SurvivalTools
                     }
                 }
                 SurvivalToolType tooltype = tools.First();
-                List<StatModifier> toolTypeStatModifiers = new List<StatModifier>(tooltype.baseWorkStatFactors);
+                List<StatModifier> toolTypeStatModifiers = tooltype.baseWorkStatFactors.ConvertAll(t => new StatModifier() { stat = t.stat, value = t.value });
                 float bonus = jobBonus.FirstOrFallback(t => t.Key == job, new KeyValuePair<JobDef, float>(job, 1f)).Value;
                 float toolTypeFactor = toolTypesValue.First(t => t.toolType == tooltype).value;
                 foreach (StatModifier modifier in toolTypeStatModifiers)
