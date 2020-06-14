@@ -17,7 +17,7 @@ namespace SurvivalTools.HarmonyPatches
     internal class Controller : ModBase
     {
         private static readonly Type patchType = typeof(Controller);
-        public static Harmony harmony = new Harmony("Lecris.survivaltools");
+        public static Harmony harmony = new Harmony("Lecris.survivaltools.AutoPatch");
         public static Harmony tempHarmony = new Harmony("Lecris.survivaltools.TempPatch");
         //static string modIdentifier;
         public override void DefsLoaded()
@@ -28,7 +28,7 @@ namespace SurvivalTools.HarmonyPatches
             SurvivalToolType.allDefs.Do(t => t.Initialize());
             IEnumerable<ThingDef> things = DefDatabase<ThingDef>.AllDefsListForReading.Where(t => t.HasModExtension<SurvivalToolProperties>());
             // things.Do(t=> t.GetModExtension<SurvivalToolProperties>().Initialize());
-            harmony.PatchAll(Assembly.GetExecutingAssembly());
+            // harmony.PatchAll(Assembly.GetExecutingAssembly());
             AutoPatchInitialize();
             PatchJobDrivers();
             FindJobDefs();
@@ -36,20 +36,14 @@ namespace SurvivalTools.HarmonyPatches
             things.Do(t => t.GetModExtension<SurvivalToolProperties>().Initialize());
             PrintPatchDebug();
             Stat_Injector.Inject();
-            foreach(StatDef stat in DefDatabase<StatDef>.AllDefsListForReading)
-            {
-                if (stat.parts.NullOrEmpty())
-                    continue;
-                StatPart_SurvivalTool statPart = stat.GetStatPart<StatPart_SurvivalTool>();
-                if (statPart != null)
-                    statPart.Initialize();
-            }
             foreach(WorkGiverDef workGiverDef in DefDatabase<WorkGiverDef>.AllDefsListForReading.Where(t => t.HasModExtension<WorkGiverExtension>()))
             {
                 WorkGiverExtension extension = workGiverDef.GetModExtension<WorkGiverExtension>();
                 extension.Initialize();
-                extension.requiredToolTypes.Do(t => t.relevantWorkGivers.Add(workGiverDef));
+                extension.requiredToolTypes.Do(t => t.relevantWorkGivers.AddDistinct(workGiverDef));
             }
+            Patch_StatWorker_GetExplanationFinalizePart.StatsWithTools = SurvivalToolType.allDefs.SelectMany(t => t.stats).ToList();
+            Patch_StatWorker_GetExplanationFinalizePart.StatsWithTools.RemoveDuplicates();
             // Search and add LTS's Degrade mod
             Type LTS_Degradation_Utility = GenTypes.GetTypeInAnyAssembly("Degradation.Utility.Utility", null);
             if (LTS_Degradation_Utility != null)
@@ -160,20 +154,25 @@ namespace SurvivalTools.HarmonyPatches
             }
             return result;
         }
-        private static List<StatPatchDef> SearchForJob(MethodInfo method)
+        private static Dictionary<StatPatchDef, List<JobDef>> SearchForJob(MethodInfo method)
         {
             List<CodeInstruction> instructions = new List<CodeInstruction>();
             try { instructions = PatchProcessor.GetCurrentInstructions(method); }
             catch { instructions = PatchProcessor.GetOriginalInstructions(method); }
-            List<StatPatchDef> fPatch = new List<StatPatchDef>();
+            Dictionary<StatPatchDef,List<JobDef>> fPatch = new Dictionary<StatPatchDef, List<JobDef>>();
             foreach (CodeInstruction instruction in instructions)
             {
                 if (instruction.opcode == OpCodes.Ldsfld)
                 {
                     FieldInfo field = instruction.operand as FieldInfo;
                     foreach (StatPatchDef patch in AutoPatch.StatsToPatch.Where(t => !t.skip))
-                        if (patch.FoundJobDef.Exists(t => t.fieldInfo == field))
-                            fPatch.AddDistinct(patch);
+                        if (patch.FoundJobDef.FirstOrFallback(t => t.fieldInfo == field) is JobDefPatch jdPatch)
+                        {
+                            if (fPatch.ContainsKey(patch))
+                                fPatch[patch].AddDistinct(jdPatch.def);
+                            else
+                                fPatch.Add(patch, new List<JobDef>() { jdPatch.def });
+                        }
                 }
             }
             return fPatch;
@@ -689,7 +688,7 @@ namespace SurvivalTools.HarmonyPatches
                 foreach (StatPatchDef patch in AutoPatch.StatsToPatch)
                 {
                     foreach (JobDriverPatch jdPatch in patch.FoundJobDrivers)
-                        if (jdPatch.driver.IsAssignableFrom(jobDef.driverClass))
+                        if (jdPatch.driver.IsAssignableFrom(jobDef.driverClass) && !patch.JobDefExemption.Contains(jobDef))
                         {
                             found = true;
                             foreach (Type defOfType in JobDefOfTypes)
@@ -774,16 +773,17 @@ namespace SurvivalTools.HarmonyPatches
                 {
                     if (wgMethod.IsAbstract)
                         continue;
-
-                    foreach (StatPatchDef patch in SearchForJob(wgMethod))
+                    Dictionary<StatPatchDef, List<JobDef>> dict = SearchForJob(wgMethod);
+                    foreach (StatPatchDef patch in dict.Keys)
                     {
-                        WorkGiverPatch wgpatch = patch.FoundWorkGivers.Find(t => t.giver == workGiver);
+                        WorkGiverPatch wgpatch = patch.FoundWorkGivers.FirstOrFallback(t => t.giver == workGiver);
                         if (wgpatch is null)
                         {
                             wgpatch = new WorkGiverPatch(workGiver);
                             patch.FoundWorkGivers.Add(wgpatch);
                         }
                         wgpatch.methods.Add(wgMethod);
+                        dict[patch].Do(t => wgpatch.jobDefs.AddDistinct(t));
                     }
                 }
                 Type[] nestedTypes = workGiver.GetNestedTypes(BindingFlags.NonPublic | BindingFlags.Instance);
@@ -794,15 +794,17 @@ namespace SurvivalTools.HarmonyPatches
                     {
                         if (wgMethod.IsAbstract)
                             continue;
-                        foreach (StatPatchDef patch in SearchForJob(wgMethod))
+                        Dictionary<StatPatchDef, List<JobDef>> dict = SearchForJob(wgMethod);
+                        foreach (StatPatchDef patch in dict.Keys)
                         {
-                            WorkGiverPatch wgpatch = patch.FoundWorkGivers.Find(t => t.giver == workGiver);
+                            WorkGiverPatch wgpatch = patch.FoundWorkGivers.FirstOrFallback(t => t.giver == workGiver);
                             if (wgpatch is null)
                             {
                                 wgpatch = new WorkGiverPatch(workGiver);
                                 patch.FoundWorkGivers.Add(wgpatch);
                             }
                             wgpatch.methods.Add(wgMethod);
+                            dict[patch].Do(t => wgpatch.jobDefs.AddDistinct(t));
                         }
                     }
                 }
@@ -810,7 +812,8 @@ namespace SurvivalTools.HarmonyPatches
             List<WorkGiverDef> workGiverDefList = DefDatabase<WorkGiverDef>.AllDefsListForReading;
             foreach (WorkGiverDef workGiverDef in workGiverDefList)
                 foreach (StatPatchDef patch in AutoPatch.StatsToPatch)
-                    if (patch.FoundWorkGivers.Exists(t => t.giver == workGiverDef.giverClass))
+                    if (patch.FoundWorkGivers.FirstOrFallback(t => t.giver.IsAssignableFrom(workGiverDef.giverClass)) is WorkGiverPatch wgPatach &&
+                        !patch.WorkGiverExemption.Exists(t => t.IsAssignableFrom(workGiverDef.giverClass)))
                     {
                         if (workGiverDef.modExtensions is null)
                             workGiverDef.modExtensions = new List<DefModExtension>();
@@ -819,7 +822,7 @@ namespace SurvivalTools.HarmonyPatches
                             workGiverDef.modExtensions.Add(extension);
                         else
                             extension = workGiverDef.GetModExtension<WorkGiverExtension>();
-                        extension.relevantJobs.AddRange(patch.FoundJobDef.Select(t => t.def));
+                        wgPatach.jobDefs.Do(t => extension.relevantJobs.AddDistinct(t));
                     }
         }
         #endregion

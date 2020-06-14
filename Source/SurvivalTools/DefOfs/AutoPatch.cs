@@ -41,9 +41,10 @@ namespace SurvivalTools
         private List<Type> JobDriverExemption = new List<Type>();
         private List<Type> JobDriverList = new List<Type>();
         public List<Type> OtherTypes = new List<Type>();
+        public List<JobDef> JobDefExemption = new List<JobDef>();
         // Patch workGivers to require tool
         public bool patchAllWorkGivers = true;
-        private List<Type> WorkGiverExemption = new List<Type>();
+        public List<Type> WorkGiverExemption = new List<Type>();
         public List<Type> WorkGiverList = new List<Type>();
         public List<JobDriverPatch> FoundJobDrivers = new List<JobDriverPatch>();
         public List<WorkGiverPatch> FoundWorkGivers = new List<WorkGiverPatch>();
@@ -174,6 +175,7 @@ namespace SurvivalTools
         public List<MethodInfo> methods = new List<MethodInfo>();
         public List<PropertyInfo> properties = new List<PropertyInfo>();
         public List<FieldInfo> fields = new List<FieldInfo>();
+        public List<JobDef> jobDefs = new List<JobDef>();
         public WorkGiverPatch(Type Giver) { giver = Giver; }
     }
 }

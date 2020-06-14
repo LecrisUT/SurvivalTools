@@ -39,6 +39,9 @@
             <li>ST_HammerType</li>
         </toolTypes>
         <patchAllWorkGivers>true</patchAllWorkGivers>
+        <WorkGiverExemption>
+            <li>WorkGiver_ConstructDeliverResources</li>
+        </WorkGiverExemption>
     </SurvivalTools.StatPatchDef>
 
     <SurvivalTools.StatPatchDef>
@@ -54,9 +57,17 @@
             <li>ST_AxeType</li>
             <li>ST_SickleType</li>
         </toolTypes>
+        <JobDefExemption>
+            <li>FellTree</li>
+            <li>FellTreeDesignated</li>
+            <li>HarvestTree</li>
+            <li>HarvestTreeDesignated</li>
+        </JobDefExemption>
         <patchAllWorkGivers>true</patchAllWorkGivers>
         <WorkGiverExemption>
+            <li>WorkGiver_GrowerSow</li>
             <li>SurvivalTools.WorkGiver_FellTrees</li>
+            <li>SurvivalTools.WorkGiver_HarvestTrees</li>
         </WorkGiverExemption>
     </SurvivalTools.StatPatchDef>
 </Defs>
