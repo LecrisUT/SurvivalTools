@@ -7,7 +7,7 @@ using Verse;
 
 namespace SurvivalTools
 {
-    public class Pawn_SurvivalToolAssignmentTracker : ThingComp, IExposable
+    public class Pawn_SurvivalToolAssignmentTracker : ThingComp
     {
         private Pawn Pawn => (Pawn)parent;
 
@@ -33,17 +33,19 @@ namespace SurvivalTools
             usedHandler = new SurvivalToolUsedHandler(Pawn, this);
         }
 
-        public void ExposeData()
+        public override void PostExposeData()
         {
             Scribe_Values.Look(ref nextSurvivalToolOptimizeTick, "nextSurvivalToolOptimizeTick", -99999);
             Scribe_Deep.Look(ref forcedHandler, "forcedHandler");
-            Scribe_Deep.Look(ref usedHandler, "usedHandler");
+            Scribe_Deep.Look(ref usedHandler, "usedHandler", Pawn, this);
             Scribe_References.Look(ref curSurvivalToolAssignment, "curSurvivalToolAssignment");
         }
 
         public int nextSurvivalToolOptimizeTick = -99999;
         public bool drawTool = false;
         public ThingWithComps memoryEquipment = null;
+        public ThingWithComps memoryEquipmentOffHand = null;
+        public SurvivalTool toolInUse = null;
         public SurvivalToolForcedHandler forcedHandler;
         public SurvivalToolUsedHandler usedHandler;
         private SurvivalToolAssignment curSurvivalToolAssignment;
@@ -79,7 +81,7 @@ namespace SurvivalTools
                 return assignedJobs;
             }
         }
-        public bool dirtyCache = false;
+        public bool dirtyCache = true;
         private bool busy = false;
         public void Update()
         {

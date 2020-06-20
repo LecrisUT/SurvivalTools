@@ -60,13 +60,17 @@ namespace SurvivalTools
             }
         }
         public List<SurvivalTool> heldTools = new List<SurvivalTool>();
-        private readonly Pawn pawn;
-        private readonly Pawn_SurvivalToolAssignmentTracker assignmentTracker;
-        public bool dirtyCache = false;
+        private Pawn pawn;
+        private Pawn_SurvivalToolAssignmentTracker assignmentTracker;
+        public bool dirtyCache = true;
         public SurvivalToolUsedHandler(Pawn p, Pawn_SurvivalToolAssignmentTracker tracker)
         {
             pawn = p;
             assignmentTracker = tracker;
+        }
+        public void ExposeData()
+        {
+            Scribe_Collections.Look(ref usedTools, "usedTools", LookMode.Reference);
         }
         public void Reset() => usedTools.Clear();
         private bool busy = false;
@@ -209,10 +213,6 @@ namespace SurvivalTools
             }
             bestTool = toolList;
             bestTool_Type = tool_TypeList;
-        }
-        public void ExposeData()
-        {
-            Scribe_Collections.Look(ref usedTools, "usedTools", LookMode.Reference);
         }
         public bool IsUsed(SurvivalTool tool)
         {

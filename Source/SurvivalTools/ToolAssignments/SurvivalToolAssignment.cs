@@ -24,6 +24,7 @@ namespace SurvivalTools
             Scribe_Values.Look(ref label, "label");
             Scribe_References.Look(ref pawn, "pawn");
             Scribe_Deep.Look(ref filter, "filter", new object[0]);
+            Scribe_Collections.Look(ref ToolTypeBlacklist, "ToolTypeBlacklist", LookMode.Def);
         }
 
         public string GetUniqueLoadID()
