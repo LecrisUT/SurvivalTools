@@ -71,7 +71,7 @@ namespace SurvivalTools.AutoPatcher
         }
         public static bool Transpile(ref List<CodeInstruction> instructions, int pos)
         {
-            if (pos + 2 >= instructions.Count || 
+            if (pos + 2 >= instructions.Count ||
                 !instructions[pos + 2].Is(OpCodes.Call, GetStatValue_Info) ||
                 !InstructionIsStatDef(instructions[pos]))
                 return false;
@@ -94,7 +94,8 @@ namespace SurvivalTools.AutoPatcher
             if (!pawn.CanUseSurvivalTools(out Pawn_SurvivalToolAssignmentTracker tracker))
                 return val;
             JobDef jobDef = job.def;
-            if (tracker.usedHandler.BestTool.TryGetValue(jobDef, out SurvivalTool tool))
+            SurvivalTool tool = tracker.toolInUse;
+            if (tool != null)
             {
                 tool.TryGetJobValue(jobDef, stat, out float effect);
                 return val * effect;
@@ -124,45 +125,66 @@ namespace SurvivalTools.AutoPatcher
             if (tracker != null)
             {
                 JobDef job = driver.job.def;
-                if (tracker.usedHandler.BestTool.TryGetValue(job, out SurvivalTool tool) && tool.GetStatList().Contains(stat))
+                toil.AddPreInitAction(delegate
                 {
-                    toil.AddPreInitAction(delegate
+                    if (tracker.usedHandler.BestTool.TryGetValue(job, out SurvivalTool tool) && tool.GetStatList().Contains(stat))
                     {
-                        // Thing primary = 
-                        tracker.memoryEquipment = pawn.equipment.Primary;
-                        if (tracker.memoryEquipment != tool)
+                        tracker.toolInUse = tool;
+                        if (TryGetOffHandEquipment == null)
                         {
-                            if (pawn.equipment.Primary != null)
-                                pawn.equipment.TryTransferEquipmentToContainer(pawn.equipment.Primary, pawn.inventory.innerContainer);
-                            pawn.inventory.innerContainer.TryTransferToContainer(tool, pawn.equipment.GetDirectlyHeldThings());
+                            tracker.memoryEquipment = pawn.equipment.Primary;
+                            /*if (TryGetOffHandEquipment != null)
+                            {
+                                object[] param = new object[] { pawn.equipment, null };
+                                if ((bool)TryGetOffHandEquipment.Invoke(null, param))
+                                    tracker.memoryEquipmentOffHand = (ThingWithComps)param[1];
+                            }*/
+                            if (tracker.memoryEquipment != tool && tracker.memoryEquipmentOffHand != tool)
+                            {
+                                if (tracker.memoryEquipment != null)
+                                    pawn.equipment.TryTransferEquipmentToContainer(tracker.memoryEquipment, pawn.inventory.innerContainer);
+                                if (tracker.memoryEquipmentOffHand != null)
+                                    pawn.equipment.TryTransferEquipmentToContainer(tracker.memoryEquipmentOffHand, pawn.inventory.innerContainer);
+                                pawn.inventory.innerContainer.TryTransferToContainer(tool, pawn.equipment.GetDirectlyHeldThings());
+                            }
+                            tracker.drawTool = true;
                         }
-                        tracker.drawTool = true;
-                    });
-                    if (tool.def.useHitPoints)
-                    {
-                        LessonAutoActivator.TeachOpportunity(ST_ConceptDefOf.SurvivalToolDegradation, OpportunityType.GoodToKnow);
-                        toil.AddPreTickAction(delegate
-                        {
-                            pawn.TryDegradeTool(tool);
-                        });
+                        if (tool.def.useHitPoints && SurvivalToolsSettings.ToolDegradation)
+                            LessonAutoActivator.TeachOpportunity(ST_ConceptDefOf.SurvivalToolDegradation, OpportunityType.GoodToKnow);
                     }
-                    toil.AddFinishAction(delegate
+                });
+                if (SurvivalToolsSettings.ToolDegradation)
+                    toil.AddPreTickAction(delegate
                     {
-                        tracker.drawTool = false;
-                        if (tracker.memoryEquipment != tool)
+                        pawn.TryDegradeTool(tracker.toolInUse);
+                    });
+                toil.AddFinishAction(delegate
+                {
+                    tracker.drawTool = false;
+                    SurvivalTool tool = tracker.toolInUse;
+                    if (AddOffHandEquipment == null)
+                    {
+                        if (tracker.memoryEquipment != tool && tracker.memoryEquipmentOffHand != tool)
                         {
-                            pawn.equipment.TryTransferEquipmentToContainer(pawn.equipment.Primary, pawn.inventory.innerContainer);
+                            if (tool != null)
+                                pawn.equipment.TryTransferEquipmentToContainer(pawn.equipment.Primary, pawn.inventory.innerContainer);
                             if (tracker.memoryEquipment != null)
                                 pawn.inventory.innerContainer.TryTransferToContainer(tracker.memoryEquipment, pawn.equipment.GetDirectlyHeldThings());
+                            if (tracker.memoryEquipmentOffHand != null)
+                            {
+                                TryGetOffHandEquipment.Invoke(null, new object[] { pawn.equipment, tracker.memoryEquipmentOffHand });
+                            }
+                            tracker.memoryEquipment = null;
+                            tracker.memoryEquipmentOffHand = null;
                         }
-                        tracker.memoryEquipment = null;
-                    });
-                }
+                    }
+                    tracker.toolInUse = null;
+                });
             }
         }
         public static void TryDegradeTool(this Pawn pawn, SurvivalTool tool)
         {
-            if (tool.def.useHitPoints)
+            if (tool != null && tool.def.useHitPoints)
             {
                 tool.workTicksDone++;
                 if (tool.workTicksDone >= tool.WorkTicksToDegrade)
@@ -172,6 +194,8 @@ namespace SurvivalTools.AutoPatcher
                 }
             }
         }
+        public static MethodInfo AddOffHandEquipment;
+        public static MethodInfo TryGetOffHandEquipment;
         public static MethodInfo modDegrade;
         public static void ST_Degrade(Thing item, Pawn pawn)
         {

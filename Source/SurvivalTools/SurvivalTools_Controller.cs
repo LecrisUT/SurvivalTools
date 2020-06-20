@@ -48,6 +48,12 @@ namespace SurvivalTools.HarmonyPatches
             Type LTS_Degradation_Utility = GenTypes.GetTypeInAnyAssembly("Degradation.Utility.Utility", null);
             if (LTS_Degradation_Utility != null)
                 JobDriver_AddToolDegrade.modDegrade = AccessTools.Method(LTS_Degradation_Utility, "DegradeTool");
+            Type DualWield_Ext_Pawn_EquipmentTracker = GenTypes.GetTypeInAnyAssembly("DualWield.Ext_Pawn_EquipmentTracker", null);
+            if (DualWield_Ext_Pawn_EquipmentTracker != null)
+            {
+                JobDriver_AddToolDegrade.TryGetOffHandEquipment = AccessTools.Method(DualWield_Ext_Pawn_EquipmentTracker, "TryGetOffHandEquipment");
+                JobDriver_AddToolDegrade.AddOffHandEquipment = AccessTools.Method(DualWield_Ext_Pawn_EquipmentTracker, "AddOffHandEquipment");
+            }
             // Manual patches
             // Plants that obstruct construction zones
             // erdelf never fails to impress :)
@@ -230,6 +236,10 @@ namespace SurvivalTools.HarmonyPatches
                 {
                     methodsWithStat.AddDistinct(method);
                 }
+                else if (method.ReturnType == typeof(Toil))
+                {
+                    actionsWithStat.Add((method, statFound, methodFound));
+                }
                 else
                     Log.Warning($"[AutoPatcher] SearchMethodWithStat: Could not backtrack stat method\n{info.jobDriver} : {info.nType} : {method}");
                 return true;
@@ -296,6 +306,11 @@ namespace SurvivalTools.HarmonyPatches
                     result.Add((i, foundItem.actionFound, foundItem.statFound, foundItem.methodFound));
                     foundItem = default;
                     continue;
+                }
+                if (foundItem.actionFound == null && (instruction.opcode == OpCodes.Call || instruction.opcode == OpCodes.Callvirt) &&
+                    instruction.operand is MethodInfo foundMethod)
+                {
+                    foundItem = actionsWithStat.FirstOrFallback(t => t.actionMethod == foundMethod);
                 }
                 if (foundItem.actionFound == null && instruction.Is(OpCodes.Newobj, action_ctor))
                 {
@@ -474,6 +489,7 @@ namespace SurvivalTools.HarmonyPatches
                 baseType = jobDriver;
             List<(MethodInfo actionMethod, StatDef statFound, MethodInfo methodFound)> actionsWithStat =
                 patch.FoundStatActions.Select(t => (t, patch.oldStat, (MethodInfo)null)).ToList();
+
             if (!SearchMethodWithStat(baseType, new List<StatDef>() { patch.oldStat }, ref patch.FoundStatMethods,
                 ref actionsWithStat))
             {
