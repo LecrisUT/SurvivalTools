@@ -11,7 +11,7 @@ namespace SurvivalTools.HarmonyPatches
     {
         public static void Postfix(ThingOwner<Thing> __instance, bool __result, Thing item)
         {
-            if (__result == true && item is SurvivalTool tool && item != null)
+            if (__result == true && item is SurvivalTool tool)
             {
                 Pawn pawn = null;
                 if (__instance.Owner is Pawn_EquipmentTracker eq)
@@ -32,14 +32,12 @@ namespace SurvivalTools.HarmonyPatches
     }
 
     [HarmonyPatch(typeof(ThingOwner))]
-    [HarmonyPatch(nameof(ThingOwner.TryDrop))]
-    [HarmonyPatch(new Type[] { typeof(Thing), typeof(IntVec3), typeof(Map), typeof(ThingPlaceMode), typeof(Thing), typeof(Action<Thing,int>), typeof(Predicate<IntVec3>)}, 
-        new ArgumentType[] { ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Normal, ArgumentType.Out, ArgumentType.Normal, ArgumentType.Normal })]
-    public static class Patch_ThingOwner_TryDrop
+    [HarmonyPatch(nameof(ThingOwner.TryDrop_NewTmp))]
+    public static class Patch_ThingOwner_TryDrop_NewTmp
     {
         public static void Postfix(ThingOwner __instance, bool __result, Thing thing)
         {
-            if (__result == true && thing is SurvivalTool tool && thing != null)
+            if (__result == true && thing is SurvivalTool tool)
             {
                 Pawn pawn = null;
                 if (__instance.Owner is Pawn_EquipmentTracker eq)
@@ -71,7 +69,7 @@ namespace SurvivalTools.HarmonyPatches
     {
         public static void Postfix(ThingOwner __instance, int __result, Thing item, ThingOwner otherContainer)
         {
-            if (__result >0 && item is SurvivalTool tool && item != null)
+            if (__result >0 && item is SurvivalTool tool)
             {
                 Pawn pawn = null;
                 if (__instance.Owner is Pawn_EquipmentTracker eq)
