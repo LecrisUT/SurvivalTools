@@ -1,4 +1,5 @@
-﻿using RimWorld;
+﻿using HarmonyLib;
+using RimWorld;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -67,6 +68,9 @@ namespace SurvivalTools
         private static void InjectStatBase(IEnumerable<ThingDef> list)
         {
             StringBuilder stringBuilder = new StringBuilder("[[LC]SurvivalTools] Added stuff stats to the following items:\n");
+            StringBuilder DataCollection1 = new StringBuilder("[[LC]SurvivalTools] Data collection Categories:\nDefName, {Categories}\n");
+            StringBuilder DataCollection2 = new StringBuilder("[[LC]SurvivalTools] Data collection Sharpness:\nDefName, {SharpDamageMultiplier}, {ArmorRating_Sharp}, {StuffPower_Armor_Sharp}\n");
+            StringBuilder DataCollection3 = new StringBuilder("[[LC]SurvivalTools] Data collection Hardness:\nDefName, {BluntDamageMultiplier}, {ArmorRating_Blunt}, {StuffPower_Armor_Blunt}\n");
             foreach (ThingDef thingDef in list)
             {
                 StatModifier Sharpness, Hardness;
@@ -85,8 +89,16 @@ namespace SurvivalTools
                 else
                     Hardness = thingDef.stuffProps.statFactors.First(t => t.stat == ST_StatDefOf.ST_Hardness);
                 stringBuilder.Append(thingDef.defName + " (" + Sharpness.value + ":" + Hardness.value + "), ");
+                DataCollection1.Append($"{thingDef.defName}");
+                thingDef.stuffProps.categories.Do(t => DataCollection1.AppendWithComma($"{t.defName}"));
+                DataCollection1.AppendLine();
+                DataCollection2.AppendLine($"{thingDef.defName}, {thingDef.statBases.GetStatOffsetFromList(StatDefOf.SharpDamageMultiplier)}, {thingDef.statBases.GetStatOffsetFromList(StatDefOf.ArmorRating_Sharp)}, {thingDef.statBases.GetStatOffsetFromList(StatDefOf.StuffPower_Armor_Sharp)}");
+                DataCollection3.AppendLine($"{thingDef.defName}, {thingDef.statBases.GetStatOffsetFromList(StatDefOf.BluntDamageMultiplier)}, {thingDef.statBases.GetStatOffsetFromList(StatDefOf.ArmorRating_Blunt)}, {thingDef.statBases.GetStatOffsetFromList(StatDefOf.StuffPower_Armor_Blunt)}");
             }
             Log.Message(stringBuilder.ToString().TrimEnd(new char[] { ' ', ',' }), false);
+            Log.Message(DataCollection1.ToString());
+            Log.Message(DataCollection2.ToString());
+            Log.Message(DataCollection3.ToString());
         }
 
     }
